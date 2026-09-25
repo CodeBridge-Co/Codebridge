@@ -1,1 +1,39 @@
+version: '3.8'
 
+services: 
+postgres:
+image: postgres:15-alphine
+container_name: codebridge_postgres
+restart: always
+env_file:
+-env/postgres.env
+volumes:
+-./postgres/init:/docker-eentrypoint/initdb.d
+-pgdata:/var/lib/potsgresql/data
+ports:
+-"5432:5432"
+
+backend:
+build: .
+container_name: codebridge_backend
+command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+env_file:
+-env/backend.env
+ports:
+-"8000:8000"
+depennds_on:
+-postgres
+
+pgadmin:
+image: dpage/pgadmin4
+container_name: codebridge_pgadmin
+environment:
+PGADMIN_DEFAULT_EMAIL: adin@codebridge.com
+PGADMIN_DEFAULT_PASSWORD: wewillchangeit
+ports: 
+-"8080:80"
+depends_on:
+-postgres
+
+volumes:
+pgdata:
