@@ -37,15 +37,12 @@ public class NetworkTest {
 
     @Test
     public void testHealthCheckReturns200OK() throws IOException {
-        // Arrange
-        MockResponse mockResponse = new MockResponse()
+        mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(200)
-                .setBody("{\"data\":\"OK\",\"error\":null,\"status\":\"success\"}");
-        mockWebServer.enqueue(mockResponse);
+                .setBody("{\"data\":\"OK\",\"error\":null,\"status\":\"success\"}"));
 
-        // Act
         Response<ApiResponse<String>> response = apiService.healthCheck().execute();
-        // Assert
+
         Assert.assertEquals(200, response.code());
         Assert.assertNotNull(response.body());
         Assert.assertEquals("OK", response.body().getData());
