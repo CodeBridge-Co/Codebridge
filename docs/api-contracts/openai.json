@@ -1,1 +1,309 @@
-
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CodeBridge API",
+    "version": "1.0.0",
+    "description": "API contract for the CodeBridge mobile application and employer portal."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new student",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful registration",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LoginResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login an existing student",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LoginResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/problems": {
+      "get": {
+        "summary": "Get list of problems",
+        "responses": {
+          "200": {
+            "description": "List of problems",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ProblemDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions": {
+      "post": {
+        "summary": "Create a new assessment session",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SessionDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SessionDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync": {
+      "post": {
+        "summary": "Sync offline data",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SyncPayload" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sync status",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SyncResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/leaderboard": {
+      "get": {
+        "summary": "Get cohort leaderboard",
+        "responses": {
+          "200": {
+            "description": "Leaderboard list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LeaderboardDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events": {
+      "get": {
+        "summary": "Get company events",
+        "responses": {
+          "200": {
+            "description": "Event list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EventDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/speech/transcribe": {
+      "post": {
+        "summary": "Transcribe audio and calculate keyword density",
+        "responses": {
+          "200": {
+            "description": "Transcription result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SpeechResultDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai-assist": {
+      "post": {
+        "summary": "Request AI assistance",
+        "responses": {
+          "200": {
+            "description": "AI assistance response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AiAssistResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "Server is healthy",
+            "content": {
+              "application/json": {
+                "schema": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "student_hash_id": { "type": "string" },
+          "institution_id": { "type": "string" }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "student_hash_id": { "type": "string" },
+          "institution_id": { "type": "string" }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "student_hash_id": { "type": "string" },
+          "token": { "type": "string" }
+        }
+      },
+      "ProblemDto": {
+        "type": "object",
+        "properties": {
+          "problem_id": { "type": "integer" },
+          "title": { "type": "string" },
+          "difficulty_level": { "type": "string", "enum": ["Easy", "Medium", "Hard"] },
+          "test_cases_json": { "type": "string" }
+        }
+      },
+      "SessionDto": {
+        "type": "object",
+        "properties": {
+          "session_id": { "type": "integer", "nullable": true },
+          "student_hash_id": { "type": "string" },
+          "problem_id": { "type": "integer" },
+          "start_time": { "type": "string", "format": "date-time" },
+          "end_time": { "type": "string", "format": "date-time", "nullable": true },
+          "is_offline": { "type": "boolean" }
+        }
+      },
+      "TelemetryDto": {
+        "type": "object",
+        "properties": {
+          "log_id": { "type": "integer", "nullable": true },
+          "session_id": { "type": "integer" },
+          "execution_speed_ms": { "type": "integer" },
+          "correctness_score": { "type": "number", "format": "float" },
+          "git_error_count": { "type": "integer" },
+          "speech_keyword_density": { "type": "number", "format": "float" },
+          "ai_access_attempts": { "type": "integer" }
+        }
+      },
+      "SyncPayload": {
+        "type": "object",
+        "properties": {
+          "sessions": { "type": "array", "items": { "$ref": "#/components/schemas/SessionDto" } },
+          "telemetry_logs": { "type": "array", "items": { "$ref": "#/components/schemas/TelemetryDto" } }
+        }
+      },
+      "SyncResponse": {
+        "type": "object",
+        "properties": {
+          "synced": { "type": "integer" },
+          "failed": { "type": "integer" }
+        }
+      },
+      "LeaderboardDto": {
+        "type": "object",
+        "properties": {
+          "hash_id": { "type": "string" },
+          "xp": { "type": "integer" },
+          "streak": { "type": "integer" }
+        }
+      },
+      "EventDto": {
+        "type": "object",
+        "properties": {
+          "event_id": { "type": "integer" },
+          "company_id": { "type": "integer" },
+          "title": { "type": "string" },
+          "event_date": { "type": "string", "format": "date-time" }
+        }
+      },
+      "SpeechResultDto": {
+        "type": "object",
+        "properties": {
+          "transcript": { "type": "string" },
+          "keyword_density": { "type": "number", "format": "float" }
+        }
+      },
+      "AiAssistResponse": {
+        "type": "object",
+        "properties": {
+          "allowed": { "type": "boolean" },
+          "remaining_uses": { "type": "integer" }
+        }
+      }
+    }
+  }
+}
