@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_500">#6200EE</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">CodeBridge</string>
+    <style name="Theme.CodeBridge" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/purple_500</item>
+    </style>
+</resources>
