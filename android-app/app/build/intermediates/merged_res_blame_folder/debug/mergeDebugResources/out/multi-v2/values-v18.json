@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "za.co.eduvos.codebridge.app-mergeDebugResources-39:/values-v18/values-v18.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\thato_n0bdz\\.gradle\\caches\\8.13\\transforms\\7323e62147624aded8d17e6d1ba51179\\transformed\\appcompat-1.7.0\\res\\values-v18\\values-v18.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "48",
+                        "endOffsets": "99"
+                    }
+                }
+            ]
+        }
+    ]
+}

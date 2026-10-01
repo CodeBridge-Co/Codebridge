@@ -1,0 +1,11 @@
+za.co.eduvos.codebridge.test.app-room-testing-2.6.1-0 C:\Users\thato_n0bdz\.gradle\caches\8.13\transforms\1c2526a9c8a5e1369a0b2e8fbe1c6910\transformed\room-testing-2.6.1\res
+za.co.eduvos.codebridge.test.app-annotation-experimental-1.4.0-1 C:\Users\thato_n0bdz\.gradle\caches\8.13\transforms\3cb5d928f1d631dc58470c48c4117745\transformed\annotation-experimental-1.4.0\res
+za.co.eduvos.codebridge.test.app-core-runtime-2.2.0-2 C:\Users\thato_n0bdz\.gradle\caches\8.13\transforms\796a777b62dc72dfd21afeda6285b61b\transformed\core-runtime-2.2.0\res
+za.co.eduvos.codebridge.test.app-room-runtime-2.6.1-3 C:\Users\thato_n0bdz\.gradle\caches\8.13\transforms\96dc301b1eef016019b55cea8f5a84f2\transformed\room-runtime-2.6.1\res
+za.co.eduvos.codebridge.test.app-sqlite-framework-2.4.0-4 C:\Users\thato_n0bdz\.gradle\caches\8.13\transforms\d14c7bba5314f366289ad2515d045c46\transformed\sqlite-framework-2.4.0\res
+za.co.eduvos.codebridge.test.app-sqlite-2.4.0-5 C:\Users\thato_n0bdz\.gradle\caches\8.13\transforms\e06b3e8d7af2b8e74c842e3efad42263\transformed\sqlite-2.4.0\res
+za.co.eduvos.codebridge.test.app-core-1.6.1-6 C:\Users\thato_n0bdz\.gradle\caches\8.13\transforms\f3d0c013996b88176fe4d7164c16e4cc\transformed\core-1.6.1\res
+za.co.eduvos.codebridge.test.app-androidTest-7 C:\Users\thato_n0bdz\Dev\Codebridge\android-app\app\build\generated\res\resValues\androidTest\debug
+za.co.eduvos.codebridge.test.app-mergeDebugAndroidTestResources-8 C:\Users\thato_n0bdz\Dev\Codebridge\android-app\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+za.co.eduvos.codebridge.test.app-mergeDebugAndroidTestResources-9 C:\Users\thato_n0bdz\Dev\Codebridge\android-app\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+za.co.eduvos.codebridge.test.app-debugAndroidTest-10 C:\Users\thato_n0bdz\Dev\Codebridge\android-app\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources
