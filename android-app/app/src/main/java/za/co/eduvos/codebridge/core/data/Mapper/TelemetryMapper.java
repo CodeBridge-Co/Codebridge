@@ -7,12 +7,12 @@ public class TelemetryMapper {
 
     public static TelemetryLogEntity toEntity(TelemetryDto dto) {
         TelemetryLogEntity entity = new TelemetryLogEntity();
-        entity.setSessionId(String.valueOf(dto.getSessionId()));
-        entity.setExecutionSpeedMs(dto.getExecutionSpeedMs());
-        entity.setCorrectnessScore(dto.getCorrectnessScore());
-        entity.setGitErrorCount(dto.getGitErrorCount());
-        entity.setSpeechKeywordDensity(dto.getSpeechKeywordDensity());
-        entity.setAiAccessAttempts(dto.getAiAccessAttempts());
+        entity.sessionId = String.valueOf(dto.getSessionId());
+        entity.executionSpeedMs = dto.getExecutionSpeedMs();
+        entity.correctnessScore = dto.getCorrectnessScore();
+        entity.gitErrorCount = dto.getGitErrorCount();
+        entity.speechKeywordDensity = dto.getSpeechKeywordDensity();
+        entity.aiAccessAttempts = dto.getAiAccessAttempts();
         return entity;
     }
 }
