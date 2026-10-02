@@ -7,19 +7,19 @@ public class ProblemMapper {
 
     public static ProblemEntity toEntity(ProblemDto dto) {
         ProblemEntity entity = new ProblemEntity();
-        entity.setProblemId(dto.getProblemId());
-        entity.setTitle(dto.getTitle());
-        entity.setDifficultyLevel(dto.getDifficultyLevel());
-        entity.setTestCasesJson(dto.getTestCasesJson());
+        entity.problemId = dto.getProblemId();
+        entity.title = dto.getTitle();
+        entity.difficultyLevel = dto.getDifficultyLevel();
+        entity.testCasesJson = dto.getTestCasesJson();
         return entity;
     }
 
     public static ProblemDto toDto(ProblemEntity entity) {
         ProblemDto dto = new ProblemDto();
-        dto.setProblemId(entity.getProblemId());
-        dto.setTitle(entity.getTitle());
-        dto.setDifficultyLevel(entity.getDifficultyLevel());
-        dto.setTestCasesJson(entity.getTestCasesJson());
+        dto.setProblemId(entity.problemId);
+        dto.setTitle(entity.title);
+        dto.setDifficultyLevel(entity.difficultyLevel);
+        dto.setTestCasesJson(entity.testCasesJson);
         return dto;
     }
 }
