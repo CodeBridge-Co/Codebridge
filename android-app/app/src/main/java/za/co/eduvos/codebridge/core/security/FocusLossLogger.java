@@ -5,20 +5,22 @@ import android.view.ViewTreeObserver;
 
 public class FocusLossLogger implements ViewTreeObserver.OnWindowFocusChangeListener {
 
-    private final TelemetryLogger logger;
+    private final TelemetrySink sink;
 
-    public FocusLossLogger(TelemetryLogger logger) {
-        this.logger = logger;
+    public FocusLossLogger(TelemetrySink sink) {
+        this.sink = sink;
     }
 
     public void attachToView(View view) {
         view.getViewTreeObserver().addOnWindowFocusChangeListener(this);
     }
 
+    public void detachFromView(View view) {
+        view.getViewTreeObserver().removeOnWindowFocusChangeListener(this);
+    }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        if (!hasFocus) {
-            logger.logFocusLoss();
-        }
+        if (!hasFocus) sink.onFocusLoss(System.currentTimeMillis());
     }
 }
