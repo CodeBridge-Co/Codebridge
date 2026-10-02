@@ -1,10 +1,10 @@
 package za.co.eduvos.codebridge.core.security;
 
 import android.content.Context;
-import android.util.Base64;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 public class HashIdManager {
 
@@ -15,7 +15,6 @@ public class HashIdManager {
         this.securePreferences = new SecurePreferences(context);
     }
 
-    // Package-private constructor for unit testing
     public HashIdManager(SecurePreferences securePreferences) {
         this.securePreferences = securePreferences;
     }
@@ -24,9 +23,11 @@ public class HashIdManager {
         try {
             String salt = getOrGenerateSalt();
             String saltedInput = salt + studentNumber;
+
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(saltedInput.getBytes(StandardCharsets.UTF_8));
-            return Base64.encodeToString(hash, Base64.NO_WRAP);
+
+            return Base64.getEncoder().withoutPadding().encodeToString(hash);
         } catch (Exception e) {
             throw new RuntimeException("Failed to generate hash ID", e);
         }
@@ -39,7 +40,7 @@ public class HashIdManager {
         SecureRandom random = new SecureRandom();
         byte[] saltBytes = new byte[16];
         random.nextBytes(saltBytes);
-        String newSalt = Base64.encodeToString(saltBytes, Base64.NO_WRAP);
+        String newSalt = Base64.getEncoder().withoutPadding().encodeToString(saltBytes);
         securePreferences.putString(PREF_SALT_KEY, newSalt);
         return newSalt;
     }
