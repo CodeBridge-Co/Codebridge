@@ -23,8 +23,8 @@ public interface ApiService {
     Call<ApiResponse<SessionDto>> createSession(@Body SessionDto session);
 
     @POST("/sync")
-    Call<ApiResponse<Map<String, Integer>>> syncData(@Body SyncPayload payload);
-
+    Call<Map<String, Object>> syncData(@Body SyncPayload payload);
+    
     @GET("/leaderboard")
     Call<ApiResponse<List<LeaderboardDto>>> getLeaderboard();
 
