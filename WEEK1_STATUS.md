@@ -32,8 +32,6 @@ CI is passing but only because there are no tests. The backend still needs:
 - `main.py` rewritten to use the async Postgres engine (current version is SQLite)
 - `scripts/seed_data.py` — 3 problems + 1 demo student
 
-**Deadline: Sunday 22:00.** If those aren't pushed by then, we freeze on the SQLite `main_fixed.py` as the demo backend and Postgres becomes post-MVP. No hard feelings — that's the timeline.
-
 ---
 
 ## Week 2 Goal
