@@ -1,25 +1,34 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+import os
 from typing import List, Dict, Any
-import sqlite3
+from fastapi import FastAPI, HTTPException, Depends
+from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from sqlalchemy import text
+
+DATABASE_URL = os.getenv(
+    "DATABASE_URL", 
+    "postgresql+asyncpg://codebridge_user:password@postgres:5432/codebridge"
+)
+
+engine = create_async_engine(DATABASE_URL, echo=True)
+AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 app = FastAPI(title="Code Bridge Backend")
 
-DB_FILE = "local_app.db"
+async def get_db():
+    async with AsyncSessionLocal() as session:
+        yield session
 
-def init_db():
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS sync_logs (
-            client_id TEXT PRIMARY KEY,
-            data TEXT
-        )
-    """)
-    conn.commit()
-    conn.close()
-
-init_db()
+@app.on_event("startup")
+async def startup_db():
+    """Ensure the sync_logs table exists in PostgreSQL on startup."""
+    async with engine.begin() as conn:
+        await conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS sync_logs (
+                client_id VARCHAR PRIMARY KEY,
+                data TEXT
+            );
+        """))
 
 class SyncItem(BaseModel, extra="allow"):
     client_id: str
@@ -28,35 +37,34 @@ class SyncItem(BaseModel, extra="allow"):
 class SyncPayload(BaseModel):
     items: List[SyncItem]
 
-
 @app.get("/")
 def read_root():
     return {"status": "backend is running"}
 
 @app.post("/sync")
-def sync_data(payload: SyncPayload):
+async def sync_data(payload: SyncPayload, db: AsyncSession = Depends(get_db)):
     """
-    Sync endpoint with idempotency. 
-    Uses client_id as the key to upsert (insert or replace) so duplicates don't create new rows.
+    Sync endpoint with PostgreSQL idempotency.
+    Uses ON CONFLICT (client_id) DO UPDATE (upsert) to handle retries without duplicate errors.
     """
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    
     saved_count = 0
-    for item in payload.items:
-        try:
-            cursor.execute(
-                "INSERT OR REPLACE INTO sync_logs (client_id, data) VALUES (?, ?)",
-                (item.client_id, str(item.payload))
-            )
+    try:
+        for item in payload.items:
+            # PostgreSQL upsert query matching the SQLite logic
+            query = text("""
+                INSERT INTO sync_logs (client_id, data)
+                VALUES (:client_id, :data)
+                ON CONFLICT (client_id) 
+                DO UPDATE SET data = EXCLUDED.data;
+            """)
+            await db.execute(query, {"client_id": item.client_id, "data": str(item.payload)})
             saved_count += 1
-        except Exception as e:
-            conn.close()
-            raise HTTPException(status_code=400, detail=str(e))
-            
-    conn.commit()
-    conn.close()
-    return {"status": "success", "synced_items": saved_count}
+        
+        await db.commit()
+        return {"status": "success", "synced_items": saved_count}
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/whisper-stub")
 def whisper_stub():
