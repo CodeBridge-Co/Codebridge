@@ -2,6 +2,8 @@ fastapi
 uvicorn[standard]
 pydantic
 pydantic-settings
-sqlalchemy
+sqlalchemy[asyncio]
 asyncpg
 python-dotenv
+pytest
+httpx
