@@ -7,7 +7,7 @@ public class TelemetryMapper {
 
     public static TelemetryLogEntity toEntity(TelemetryDto dto) {
         TelemetryLogEntity entity = new TelemetryLogEntity();
-        entity.sessionId = String.valueOf(dto.getSessionId());
+        entity.sessionId = dto.getSessionId();
         entity.executionSpeedMs = dto.getExecutionSpeedMs();
         entity.correctnessScore = dto.getCorrectnessScore();
         entity.gitErrorCount = dto.getGitErrorCount();
