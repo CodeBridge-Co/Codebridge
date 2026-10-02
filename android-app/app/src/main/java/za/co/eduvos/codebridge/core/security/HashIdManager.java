@@ -16,7 +16,7 @@ public class HashIdManager {
     }
 
     // Package-private constructor for unit testing
-    HashIdManager(SecurePreferences securePreferences) {
+    public HashIdManager(SecurePreferences securePreferences) {
         this.securePreferences = securePreferences;
     }
 
