@@ -47,13 +47,13 @@ public class SyncWorker extends Worker {
                 payload = gson.fromJson(entity.getPayloadJson(), mapType);
             } catch (Exception e) {
                 // Corrupt entry — mark as failed so it stops blocking the queue
-                entity.status("FAILED");
+                entity.setStatus("FAILED");
                 dao.update(entity);
                 continue;
             }
             items.add(new SyncItem(
-                    String.valueOf(entity.id),
-                    entity.entityType,
+                    String.valueOf(entity.getId()),
+                    entity.getEntityType(),
                     payload
             ));
         }
@@ -66,12 +66,12 @@ public class SyncWorker extends Worker {
 
             if (response.isSuccessful()) {
                 for (SyncQueueEntity entity : pending) {
-                    dao.markSynced(entity.id);
+                    dao.markSynced(entity.getId());
                 }
                 return Result.success();
             } else {
                 for (SyncQueueEntity entity : pending) {
-                    dao.incrementRetry(entity.id);
+                    dao.incrementRetry(entity.getId());
                 }
                 return Result.retry();
             }

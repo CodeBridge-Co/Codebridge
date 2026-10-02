@@ -8,12 +8,12 @@ public class SessionMapper {
     public static AssessmentSessionEntity toEntity(SessionDto dto) {
         AssessmentSessionEntity entity = new AssessmentSessionEntity();
         if (dto.getSessionId() != null) {
-            entity.sessionId = String.valueOf(dto.getSessionId());
+            entity.sessionId = dto.getSessionId() != null ? dto.getSessionId() : 0;
         }
         entity.studentHashId = dto.getStudentHashId();
         entity.problemId = dto.getProblemId();
-        entity.startTime = dto.getStartTime();
-        entity.endTime = dto.getEndTime();
+        entity.startTime = java.time.Instant.parse(dto.getStartTime()).toEpochMilli();
+        entity.endTime = java.time.Instant.parse(dto.getEndTime()).toEpochMilli();
         entity.isOffline = dto.isOffline();
         return entity;
     }
