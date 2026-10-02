@@ -12,10 +12,12 @@ public class RetrofitClient {
 
     private RetrofitClient() {
         OkHttpClient client = OkHttpClientProvider.provide();
-        // Uncomment to enable mock responses for UI development without backend
-        // OkHttpClient.Builder builder = client.newBuilder();
-        // builder.addInterceptor(new MockApiInterceptor());
-        // client = builder.build();
+
+if (BuildConfig.USE_MOCK_API) {
+    client = client.newBuilder()
+            .addInterceptor(new MockApiInterceptor())
+            .build();
+}
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BuildConfig.BASE_URL)
                 .client(client)
