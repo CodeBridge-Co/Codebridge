@@ -8,27 +8,21 @@ import androidx.annotation.Nullable;
 
 public class AppSwitchDetector implements Application.ActivityLifecycleCallbacks {
 
-    private final TelemetryLogger logger;
+    private final TelemetrySink sink;
 
-    public AppSwitchDetector(TelemetryLogger logger) {
-        this.logger = logger;
-    }
-
-    @Override
-    public void onActivityResumed(@NonNull Activity activity) {
-        // App came to foreground
+    public AppSwitchDetector(TelemetrySink sink) {
+        this.sink = sink;
     }
 
     @Override
     public void onActivityPaused(@NonNull Activity activity) {
-        // App went to background or another activity started
-        logger.logAppSwitch();
+        sink.onAppSwitch(System.currentTimeMillis());
     }
 
-    // ... Other lifecycle methods can remain empty
-    @Override public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {}
+    @Override public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle s) {}
     @Override public void onActivityStarted(@NonNull Activity activity) {}
+    @Override public void onActivityResumed(@NonNull Activity activity) {}
     @Override public void onActivityStopped(@NonNull Activity activity) {}
-    @Override public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
+    @Override public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle s) {}
     @Override public void onActivityDestroyed(@NonNull Activity activity) {}
 }
