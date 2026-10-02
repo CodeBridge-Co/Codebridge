@@ -1,341 +1,208 @@
-import json
-import os
-from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException, Depends, Body
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy import select
 from typing import List, Dict, Any
+import json
+import uuid
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException, Depends, Body
-from pydantic import BaseModel
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+asyncpg://codebridge_user:password@postgres:5432/codebridge_db"
+from app.models import SyncLog, Student, AssessmentSession, TelemetryLog, RewardProgress
+from app.schemas import (
+    RegisterRequest, LoginRequest, LoginResponse, ProblemDto, 
+    SessionDto, SyncPayload, LeaderboardDto, EventDto, AiAssistResponse
 )
+from app.db.init_db import init_db, get_db
 
-engine = create_async_engine(DATABASE_URL, echo=False)
-AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+app = FastAPI(title="Code Bridge Backend")
 
+MOCK_PROBLEMS = [
+    ProblemDto(problem_id=1, title="Two Sum", difficulty_level="Easy",
+               test_cases_json=json.dumps({"cases": [{"input": "[2,7,11,15], 9", "expected": "[0,1]"}]})),
+    ProblemDto(problem_id=2, title="Reverse String", difficulty_level="Easy",
+               test_cases_json=json.dumps({"cases": [{"input": "hello", "expected": "olleh"}]})),
+    ProblemDto(problem_id=3, title="Merge Intervals", difficulty_level="Medium",
+               test_cases_json=json.dumps({"cases": [{"input": "[[1,3],[2,6]]", "expected": "[[1,6]]"}]})),
+]
 
-async def get_db():
-    async with AsyncSessionLocal() as session:
-        yield session
-
-
-async def init_schema(conn):
-    await conn.execute(text("""
-        CREATE TABLE IF NOT EXISTS sync_logs (
-            client_id VARCHAR PRIMARY KEY,
-            entity_type VARCHAR,
-            data TEXT,
-            created_at TIMESTAMP DEFAULT NOW()
-        );
-    """))
-    await conn.execute(text("""
-        CREATE TABLE IF NOT EXISTS students (
-            student_hash_id VARCHAR PRIMARY KEY,
-            institution_id VARCHAR,
-            created_at TIMESTAMP DEFAULT NOW()
-        );
-    """))
-    await conn.execute(text("""
-        CREATE TABLE IF NOT EXISTS problems (
-            problem_id INTEGER PRIMARY KEY,
-            title VARCHAR,
-            difficulty_level VARCHAR,
-            test_cases_json TEXT
-        );
-    """))
-    await conn.execute(text("""
-        CREATE TABLE IF NOT EXISTS assessment_sessions (
-            session_id VARCHAR PRIMARY KEY,
-            student_hash_id VARCHAR,
-            problem_id INTEGER,
-            start_time TIMESTAMP,
-            end_time TIMESTAMP,
-            is_offline BOOLEAN DEFAULT FALSE
-        );
-    """))
-    await conn.execute(text("""
-        CREATE TABLE IF NOT EXISTS telemetry_logs (
-            log_id SERIAL PRIMARY KEY,
-            client_id VARCHAR UNIQUE,
-            session_id VARCHAR,
-            execution_speed_ms INTEGER,
-            correctness_score REAL,
-            git_error_count INTEGER,
-            speech_keyword_density REAL,
-            ai_access_attempts INTEGER
-        );
-    """))
-    await conn.execute(text("""
-        CREATE TABLE IF NOT EXISTS reward_progress (
-            student_hash_id VARCHAR PRIMARY KEY,
-            streak_count INTEGER DEFAULT 0,
-            xp_points INTEGER DEFAULT 0,
-            badges_json TEXT DEFAULT '[]'
-        );
-    """))
-
-
-async def seed_data(conn):
-    problems = [
-        (1, "Two Sum", "Easy", json.dumps({"cases": [{"input": "[2,7,11,15], 9", "expected": "[0,1]"}]})),
-        (2, "Reverse String", "Easy", json.dumps({"cases": [{"input": "hello", "expected": "olleh"}]})),
-        (3, "Merge Intervals", "Medium", json.dumps({"cases": [{"input": "[[1,3],[2,6]]", "expected": "[[1,6]]"}]})),
-    ]
-    for pid, title, diff, cases in problems:
-        await conn.execute(text("""
-            INSERT INTO problems (problem_id, title, difficulty_level, test_cases_json)
-            VALUES (:pid, :title, :diff, :cases)
-            ON CONFLICT (problem_id) DO NOTHING;
-        """), {"pid": pid, "title": title, "diff": diff, "cases": cases})
-
-    await conn.execute(text("""
-        INSERT INTO students (student_hash_id, institution_id)
-        VALUES ('demo-student-001', 'eduvos')
-        ON CONFLICT (student_hash_id) DO NOTHING;
-    """))
-    await conn.execute(text("""
-        INSERT INTO reward_progress (student_hash_id, streak_count, xp_points, badges_json)
-        VALUES ('demo-student-001', 5, 1200, '[]')
-        ON CONFLICT (student_hash_id) DO NOTHING;
-    """))
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await init_schema(conn)
-        await seed_data(conn)
-    yield
-
-
-app = FastAPI(title="Code Bridge Backend", lifespan=lifespan)
-
-
-class RegisterRequest(BaseModel):
-    student_hash_id: str
-    institution_id: str
-
-class LoginRequest(BaseModel):
-    student_hash_id: str
-    institution_id: str
-
-class LoginResponse(BaseModel):
-    student_hash_id: str
-    token: str
-
-class ProblemDto(BaseModel):
-    problem_id: int
-    title: str
-    difficulty_level: str
-    test_cases_json: str
-
-class SessionDto(BaseModel):
-    session_id: str | None = None
-    student_hash_id: str
-    problem_id: int
-    start_time: str
-    end_time: str | None = None
-    is_offline: bool = False
-
-class SyncItem(BaseModel):
-    client_id: str
-    entity_type: str
-    payload: Dict[str, Any]
-
-class SyncPayload(BaseModel):
-    items: List[SyncItem]
-
-class LeaderboardDto(BaseModel):
-    hash_id: str
-    xp: int
-    streak: int
-
-class EventDto(BaseModel):
-    event_id: int
-    company_id: int
-    title: str
-    event_date: str
-
-class AiAssistRequest(BaseModel):
-    session_id: str
-
-class AiAssistResponse(BaseModel):
-    allowed: bool
-    remaining_uses: int
-
-class SpeechResult(BaseModel):
-    transcript: str
-    keyword_density: float
-
-
-AI_LIMIT = 3
 ai_usage: Dict[str, int] = {}
+AI_LIMIT = 3
 
+@app.on_event("startup")
+async def on_startup():
+    await init_db()
 
 @app.get("/")
 def read_root():
     return {"status": "backend is running"}
 
-
 @app.get("/health")
 def health():
     return {"data": "OK", "error": None, "status": "success"}
 
-
 @app.post("/auth/register", response_model=LoginResponse)
 async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
-    await db.execute(text("""
-        INSERT INTO students (student_hash_id, institution_id)
-        VALUES (:hash, :inst)
-        ON CONFLICT (student_hash_id) DO NOTHING;
-    """), {"hash": req.student_hash_id, "inst": req.institution_id})
-    await db.execute(text("""
-        INSERT INTO reward_progress (student_hash_id) VALUES (:hash)
-        ON CONFLICT (student_hash_id) DO NOTHING;
-    """), {"hash": req.student_hash_id})
+    stmt_student = insert(Student).values(
+        student_hash_id=req.student_hash_id,
+        institution_id=req.institution_id,
+        created_at=datetime.utcnow().isoformat()
+    ).on_conflict_do_update(
+        index_elements=['student_hash_id'],
+        set_=dict(institution_id=req.institution_id)
+    )
+    stmt_reward = insert(RewardProgress).values(
+        student_hash_id=req.student_hash_id
+    ).on_conflict_do_nothing(index_elements=['student_hash_id'])
+    
+    await db.execute(stmt_student)
+    await db.execute(stmt_reward)
     await db.commit()
-    return LoginResponse(student_hash_id=req.student_hash_id, token="jwt-mock-token")
-
+    
+    return LoginResponse(student_hash_id=req.student_hash_id, token=f"jwt-mock-{uuid.uuid4().hex[:16]}")
 
 @app.post("/auth/login", response_model=LoginResponse)
 async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
-    await db.execute(text("""
-        INSERT INTO students (student_hash_id, institution_id)
-        VALUES (:hash, :inst)
-        ON CONFLICT (student_hash_id) DO NOTHING;
-    """), {"hash": req.student_hash_id, "inst": req.institution_id})
-    await db.execute(text("""
-        INSERT INTO reward_progress (student_hash_id) VALUES (:hash)
-        ON CONFLICT (student_hash_id) DO NOTHING;
-    """), {"hash": req.student_hash_id})
-    await db.commit()
-    return LoginResponse(student_hash_id=req.student_hash_id, token="jwt-mock-token")
-
+    result = await db.execute(select(Student).where(Student.student_hash_id == req.student_hash_id))
+    student = result.scalars().first()
+    
+    if not student:
+        stmt_student = insert(Student).values(
+            student_hash_id=req.student_hash_id,
+            institution_id=req.institution_id,
+            created_at=datetime.utcnow().isoformat()
+        ).on_conflict_do_nothing(index_elements=['student_hash_id'])
+        stmt_reward = insert(RewardProgress).values(
+            student_hash_id=req.student_hash_id
+        ).on_conflict_do_nothing(index_elements=['student_hash_id'])
+        
+        await db.execute(stmt_student)
+        await db.execute(stmt_reward)
+        await db.commit()
+        
+    return LoginResponse(student_hash_id=req.student_hash_id, token=f"jwt-mock-{uuid.uuid4().hex[:16]}")
 
 @app.get("/problems", response_model=List[ProblemDto])
-async def get_problems(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(text(
-        "SELECT problem_id, title, difficulty_level, test_cases_json FROM problems ORDER BY problem_id"
-    ))
-    return [ProblemDto(problem_id=r[0], title=r[1], difficulty_level=r[2], test_cases_json=r[3])
-            for r in result.fetchall()]
-
+def get_problems():
+    return MOCK_PROBLEMS
 
 @app.get("/problems/{problem_id}", response_model=ProblemDto)
-async def get_problem(problem_id: int, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(text(
-        "SELECT problem_id, title, difficulty_level, test_cases_json FROM problems WHERE problem_id = :pid"
-    ), {"pid": problem_id})
-    row = result.fetchone()
-    if not row:
-        raise HTTPException(status_code=404, detail="Problem not found")
-    return ProblemDto(problem_id=row[0], title=row[1], difficulty_level=row[2], test_cases_json=row[3])
-
+def get_problem(problem_id: int):
+    for p in MOCK_PROBLEMS:
+        if p.problem_id == problem_id:
+            return p
+    raise HTTPException(status_code=404, detail="Problem not found")
 
 @app.post("/sessions")
 async def create_session(session: SessionDto, db: AsyncSession = Depends(get_db)):
-    sid = session.session_id or f"sess-{int(datetime.utcnow().timestamp() * 1000)}"
-    await db.execute(text("""
-        INSERT INTO assessment_sessions (session_id, student_hash_id, problem_id, start_time, end_time, is_offline)
-        VALUES (:sid, :hash, :pid, :start, :end, :offline)
-        ON CONFLICT (session_id) DO UPDATE SET end_time = EXCLUDED.end_time;
-    """), {
-        "sid": sid,
-        "hash": session.student_hash_id,
-        "pid": session.problem_id,
-        "start": session.start_time,
-        "end": session.end_time,
-        "offline": session.is_offline,
-    })
+    session_id = session.session_id or f"sess-{uuid.uuid4().hex[:12]}"
+    stmt = insert(AssessmentSession).values(
+        session_id=session_id,
+        student_hash_id=session.student_hash_id,
+        problem_id=session.problem_id,
+        start_time=session.start_time,
+        end_time=session.end_time,
+        is_offline=int(session.is_offline)
+    ).on_conflict_do_update(
+        index_elements=['session_id'],
+        set_=dict(
+            end_time=session.end_time,
+            is_offline=int(session.is_offline)
+        )
+    )
+    await db.execute(stmt)
     await db.commit()
-    return {"session_id": sid, "status": "created"}
-
+    return {"session_id": session_id, "status": "created"}
 
 @app.post("/sync")
 async def sync_data(payload: SyncPayload, db: AsyncSession = Depends(get_db)):
-    saved = 0
+    saved_count = 0
     try:
         for item in payload.items:
-            await db.execute(text("""
-                INSERT INTO sync_logs (client_id, entity_type, data)
-                VALUES (:cid, :etype, :data)
-                ON CONFLICT (client_id) DO UPDATE SET data = EXCLUDED.data;
-            """), {
-                "cid": item.client_id,
-                "etype": item.entity_type,
-                "data": json.dumps(item.payload),
-            })
+            stmt_log = insert(SyncLog).values(
+                client_id=item.client_id,
+                entity_type=item.entity_type,
+                data=json.dumps(item.payload),
+                created_at=datetime.utcnow().isoformat()
+            ).on_conflict_do_update(
+                index_elements=['client_id'],
+                set_=dict(data=json.dumps(item.payload), entity_type=item.entity_type)
+            )
+            await db.execute(stmt_log)
 
             if item.entity_type == "session":
-                p = item.payload
-                await db.execute(text("""
-                    INSERT INTO assessment_sessions (session_id, student_hash_id, problem_id, start_time, end_time, is_offline)
-                    VALUES (:sid, :hash, :pid, :start, :end, :offline)
-                    ON CONFLICT (session_id) DO NOTHING;
-                """), {
-                    "sid": item.client_id,
-                    "hash": p.get("student_hash_id", ""),
-                    "pid": p.get("problem_id", 0),
-                    "start": p.get("start_time"),
-                    "end": p.get("end_time"),
-                    "offline": bool(p.get("is_offline", False)),
-                })
+                s = item.payload
+                stmt_sess = insert(AssessmentSession).values(
+                    session_id=item.client_id,
+                    student_hash_id=s.get("student_hash_id", ""),
+                    problem_id=s.get("problem_id", 0),
+                    start_time=s.get("start_time", ""),
+                    end_time=s.get("end_time"),
+                    is_offline=int(s.get("is_offline", False))
+                ).on_conflict_do_update(
+                    index_elements=['session_id'],
+                    set_=dict(end_time=s.get("end_time"), is_offline=int(s.get("is_offline", False)))
+                )
+                await db.execute(stmt_sess)
             elif item.entity_type == "telemetry":
-                p = item.payload
-                await db.execute(text("""
-                    INSERT INTO telemetry_logs (client_id, session_id, execution_speed_ms, correctness_score, git_error_count, speech_keyword_density, ai_access_attempts)
-                    VALUES (:cid, :sid, :speed, :correct, :giterr, :speech, :ai)
-                    ON CONFLICT (client_id) DO NOTHING;
-                """), {
-                    "cid": item.client_id,
-                    "sid": p.get("session_id", ""),
-                    "speed": p.get("execution_speed_ms", 0),
-                    "correct": p.get("correctness_score", 0.0),
-                    "giterr": p.get("git_error_count", 0),
-                    "speech": p.get("speech_keyword_density", 0.0),
-                    "ai": p.get("ai_access_attempts", 0),
-                })
-            saved += 1
+                t = item.payload
+                stmt_tel = insert(TelemetryLog).values(
+                    log_id=item.client_id,
+                    session_id=t.get("session_id", ""),
+                    execution_speed_ms=t.get("execution_speed_ms", 0),
+                    correctness_score=t.get("correctness_score", 0.0),
+                    git_error_count=t.get("git_error_count", 0),
+                    speech_keyword_density=t.get("speech_keyword_density", 0.0),
+                    ai_access_attempts=t.get("ai_access_attempts", 0)
+                ).on_conflict_do_update(
+                    index_elements=['log_id'],
+                    set_=dict(
+                        execution_speed_ms=t.get("execution_speed_ms", 0),
+                        correctness_score=t.get("correctness_score", 0.0),
+                        git_error_count=t.get("git_error_count", 0),
+                        speech_keyword_density=t.get("speech_keyword_density", 0.0),
+                        ai_access_attempts=t.get("ai_access_attempts", 0)
+                    )
+                )
+                await db.execute(stmt_tel)
+            saved_count += 1
 
         await db.commit()
-        return {"status": "success", "synced_items": saved}
     except Exception as e:
         await db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
-
+    
+    return {"status": "success", "synced_items": saved_count}
 
 @app.get("/leaderboard", response_model=List[LeaderboardDto])
 async def get_leaderboard(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(text(
-        "SELECT student_hash_id, xp_points, streak_count FROM reward_progress ORDER BY xp_points DESC LIMIT 50"
-    ))
-    return [LeaderboardDto(hash_id=r[0], xp=r[1], streak=r[2]) for r in result.fetchall()]
-
+    result = await db.execute(
+        select(RewardProgress.student_hash_id, RewardProgress.xp_points, RewardProgress.streak_count)
+        .order_by(RewardProgress.xp_points.desc())
+        .limit(50)
+    )
+    rows = result.all()
+    if not rows:
+        return [LeaderboardDto(hash_id="demo-hash-1", xp=1200, streak=5)]
+    return [LeaderboardDto(hash_id=r[0], xp=r[1], streak=r[2]) for r in rows]
 
 @app.get("/events", response_model=List[EventDto])
-async def get_events():
+def get_events():
     return [
         EventDto(event_id=1, company_id=1, title="CodeBridge Hackathon 2026", event_date="2026-06-15T09:00:00Z"),
         EventDto(event_id=2, company_id=1, title="Tech Career Fair", event_date="2026-07-20T10:00:00Z"),
     ]
 
-
 @app.post("/ai-assist", response_model=AiAssistResponse)
-async def ai_assist(req: AiAssistRequest = Body(...)):
-    used = ai_usage.get(req.session_id, 0)
+def ai_assist(session_id: str = Body(..., embed=True)):
+    used = ai_usage.get(session_id, 0)
     if used >= AI_LIMIT:
         return AiAssistResponse(allowed=False, remaining_uses=0)
-    ai_usage[req.session_id] = used + 1
+    ai_usage[session_id] = used + 1
     return AiAssistResponse(allowed=True, remaining_uses=AI_LIMIT - (used + 1))
 
-
-@app.post("/speech/transcribe", response_model=SpeechResult)
-async def transcribe():
-    return SpeechResult(
-        transcript="This is a mocked transcript of the assessment audio recording.",
-        keyword_density=0.4,
-    )
+@app.post("/speech/transcribe")
+def whisper_stub():
+    return {
+        "transcript": "This is a mocked transcript of the assessment audio recording.",
+        "keyword_density": 0.4
+    }
