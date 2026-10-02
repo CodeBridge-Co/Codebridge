@@ -8,7 +8,7 @@ import za.co.eduvos.codebridge.core.security.HashIdManager;
 import za.co.eduvos.codebridge.core.security.SecurePreferences;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 public class HashIdManagerTest {
 
@@ -20,26 +20,22 @@ public class HashIdManagerTest {
     @Before
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        // Mock the salt retrieval
         when(mockSecurePreferences.getString("hash_salt", null)).thenReturn("test_salt_123");
         hashIdManager = new HashIdManager(mockSecurePreferences);
     }
 
     @Test
     public void testGenerateHashId_ReturnsConsistentHash() {
-        String studentNumber = "STU12345";
-        String hash1 = hashIdManager.generateHashId(studentNumber);
-        String hash2 = hashIdManager.generateHashId(studentNumber);
-
+        String hash1 = hashIdManager.generateHashId("STU12345");
+        String hash2 = hashIdManager.generateHashId("STU12345");
         assertNotNull(hash1);
-        assertEquals(hash1, hash2); // Same input + salt = same hash
+        assertEquals(hash1, hash2);
     }
 
     @Test
     public void testGenerateHashId_DifferentInputsReturnDifferentHashes() {
         String hash1 = hashIdManager.generateHashId("STU12345");
         String hash2 = hashIdManager.generateHashId("STU67890");
-
         assertNotEquals(hash1, hash2);
     }
 }
