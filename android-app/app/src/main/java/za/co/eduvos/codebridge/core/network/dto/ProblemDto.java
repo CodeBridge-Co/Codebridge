@@ -11,6 +11,8 @@ public class ProblemDto {
     @SerializedName("test_cases_json")
     private String testCasesJson;
 
+    public ProblemDto() {}
+
     // Getters and Setters
     public int getProblemId() { return problemId; }
     public void setProblemId(int problemId) { this.problemId = problemId; }
