@@ -17,6 +17,14 @@ class Student(Base):
     institution_id = Column(String)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
+# Added Problem model for problem/ endpoints
+class Problem(Base):
+    __tablename__ = "problems"
+    problem_id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    difficulty_level = Column(String)
+    test_cases_json = Column(Text)
+
 class AssessmentSession(Base):
     __tablename__ = "assessment_sessions"
     session_id = Column(String, primary_key=True, index=True)
