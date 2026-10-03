@@ -51,3 +51,12 @@ class EventDto(BaseModel):
 class AiAssistResponse(BaseModel):
     allowed: bool
     remaining_uses: int
+
+# Added new AI assistance and Speech classes
+class AiAssistRequest(BaseModel):
+    session_id: str
+
+
+class SpeechResult(BaseModel):
+    transcript: str
+    keyword_density: float
