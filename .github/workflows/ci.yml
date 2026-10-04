@@ -72,7 +72,7 @@ jobs:
       - name: Start full stack
         run: |
           cd infra
-          docker-compose up -d --build
+          docker compose up -d --build
 
       - name: Wait for backend health
         run: |
@@ -83,7 +83,7 @@ jobs:
             fi
             if [ "$i" -eq 60 ]; then
               echo "::error::Backend did not become healthy in 60s"
-              docker-compose -f infra/docker-compose.yml logs backend
+              docker compose -f infra/docker-compose.yml logs backend
               exit 1
             fi
             sleep 1
@@ -100,4 +100,4 @@ jobs:
         if: always()
         run: |
           cd infra
-          docker-compose down -v
+          docker compose down -v
