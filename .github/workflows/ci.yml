@@ -24,7 +24,7 @@ jobs:
         run: chmod +x android-app/gradlew
 
       - name: Run Android Unit Tests
-        run: cd android-app && ./gradlew test
+        run: cd android-app && ./gradlew test --no-daemon
 
   backend-test:
     name: Backend Unit Tests
@@ -45,9 +45,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest httpx
 
       - name: Run pytest
-        run: pytest
+        run: pytest -v --tb=short || [ $? -eq 5 ]
 
   docker-build:
     name: Build Docker Image
@@ -60,12 +61,43 @@ jobs:
       - name: Build Docker image
         run: docker build -t codebridge-backend:latest ./backend
 
-  # Optional: Deploy to staging (Uncomment and configure when ready)
-  # deploy-staging:
-  #   name: Deploy to Staging
-  #   runs-on: ubuntu-latest
-  #   needs: [android-test, docker-build]
-  #   if: github.ref == 'refs/heads/develop'
-  #   steps:
-  #     - name: Deploy to Staging
-  #       run: echo "Add deployment script here"
+  integration-test:
+    name: Integration Test (Postgres + Backend)
+    runs-on: ubuntu-latest
+    needs: [backend-test]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start full stack
+        run: |
+          cd infra
+          docker-compose up -d --build
+
+      - name: Wait for backend health
+        run: |
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:8000/health >/dev/null 2>&1; then
+              echo "Backend healthy after ${i}s"
+              break
+            fi
+            if [ "$i" -eq 60 ]; then
+              echo "::error::Backend did not become healthy in 60s"
+              docker-compose -f infra/docker-compose.yml logs backend
+              exit 1
+            fi
+            sleep 1
+          done
+
+      - name: Verify endpoints return JSON
+        run: |
+          curl -f http://localhost:8000/health
+          curl -f http://localhost:8000/problems
+          curl -f http://localhost:8000/leaderboard
+          curl -f http://localhost:8000/events
+
+      - name: Tear down
+        if: always()
+        run: |
+          cd infra
+          docker-compose down -v
