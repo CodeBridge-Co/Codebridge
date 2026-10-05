@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="za.co.eduvos.codebridge.core.sandbox.OutputCaptureTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-05T14:54:10.950Z" hostname="Thato" time="0.002">
+  <properties/>
+  <testcase name="drainReturnsLinesAndClears" classname="za.co.eduvos.codebridge.core.sandbox.OutputCaptureTest" time="0.001"/>
+  <testcase name="capsOutputAndFlagsTruncation" classname="za.co.eduvos.codebridge.core.sandbox.OutputCaptureTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

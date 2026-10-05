@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-10-05T14:54:06.611Z" hostname="Thato" time="4.329">
+  <properties/>
+  <testcase name="javaClassesAreNotReachable" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.225"/>
+  <testcase name="runtimeErrorIsReportedPerCase" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.017"/>
+  <testcase name="emptySuiteAndEmptyCodeAreFatal" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.0"/>
+  <testcase name="infiniteLoopTimesOutWithinBudgetAndSkipsRest" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="2.001"/>
+  <testcase name="wrongAnswerIsFailedWithActualValue" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.007"/>
+  <testcase name="jsTryCatchCannotSwallowTimeout" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="2.001"/>
+  <testcase name="standardSuiteRunsUnderTwoSeconds" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.036"/>
+  <testcase name="syntaxErrorIsFatal" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.0"/>
+  <testcase name="correctSolutionPassesAllCases" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.01"/>
+  <testcase name="asyncDeliversResult" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.007"/>
+  <testcase name="missingFunctionIsAnError" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.004"/>
+  <testcase name="stateDoesNotLeakBetweenCases" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.006"/>
+  <testcase name="bareStringInputAndExpectedWork" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.005"/>
+  <testcase name="capturesConsoleLogAndPrint" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.003"/>
+  <testcase name="runawayRecursionIsAnErrorNotACrash" classname="za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngineTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
