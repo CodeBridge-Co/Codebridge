@@ -52,9 +52,6 @@ dependencies {
     // WorkManager (sync retries)
     implementation 'androidx.work:work-runtime:2.9.0'
 
-    // Rhino (JS runtime for the code sandbox)
-    implementation 'org.mozilla:rhino:1.7.15'
-
     // Lifecycle (LiveData in NetworkMonitor)
     implementation 'androidx.lifecycle:lifecycle-livedata:2.7.0'
 
