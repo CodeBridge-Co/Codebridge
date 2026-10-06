@@ -17,12 +17,12 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 /**
- * MockInterceptor for UI/UX to build UI without the real backend.
+ * MockInterceptor for Person B to build UI without the real backend.
  * Enable by setting USE_MOCK_API = true in app/build.gradle.
  *
- * Responses match docs/api-contracts/openapi.json.
- * The /problems and /problems/{id} endpoints return realistic test_cases_json
- * identical to what Backend Lead's backend seed data returns.
+ * Responses match docs/api-contracts/openapi.json and the
+ * test_cases_json format defined by Person A's sandbox:
+ *   {"cases":[{"input":"...","expected":"..."}], "entryPoint":"solve"}
  */
 public class MockApiInterceptor implements Interceptor {
 
@@ -35,7 +35,6 @@ public class MockApiInterceptor implements Interceptor {
         String path = request.url().encodedPath();
         String method = request.method();
 
-        // Simulate the network latency
         try { TimeUnit.MILLISECONDS.sleep(300); } catch (InterruptedException ignored) {}
 
         if (path.endsWith("/health")) {
@@ -51,7 +50,6 @@ public class MockApiInterceptor implements Interceptor {
             return json(request, 200, buildProblemsListJson());
         }
         if (path.startsWith("/problems/")) {
-            // Extract problem_id from the path
             int problemId = 1;
             try {
                 problemId = Integer.parseInt(path.substring(path.lastIndexOf('/') + 1));
@@ -90,8 +88,6 @@ public class MockApiInterceptor implements Interceptor {
         return json(request, 404, "{\"error\":\"Mock not implemented for " + method + " " + path + "\"}");
     }
 
-    // ---------- Helpers ----------
-
     private Response json(Request request, int code, String body) {
         return new Response.Builder()
                 .request(request)
@@ -102,43 +98,36 @@ public class MockApiInterceptor implements Interceptor {
                 .build();
     }
 
-    /** Builds the full /problems list with realistic test_cases_json. */
     private String buildProblemsListJson() {
         List<Map<String, Object>> problems = new ArrayList<>();
         problems.add(buildProblemMap(1, "Two Sum", "Easy",
-                "[2,7,11,15], 9", "[0,1]"));
+                "[2,7,11,15], 9", "[0,1]", "twoSum"));
         problems.add(buildProblemMap(2, "Reverse String", "Easy",
-                "hello", "olleh"));
+                "hello", "olleh", "reverseString"));
         problems.add(buildProblemMap(3, "Merge Intervals", "Medium",
-                "[[1,3],[2,6]]", "[[1,6]]"));
+                "[[1,3],[2,6]]", "[[1,6]]", "mergeIntervals"));
         return GSON.toJson(problems);
     }
 
-    /** Builds a single /problems/{id} response. Falls back to Two Sum if id not found. */
     private String buildProblemJson(int problemId) {
         switch (problemId) {
             case 1:
                 return GSON.toJson(buildProblemMap(1, "Two Sum", "Easy",
-                        "[2,7,11,15], 9", "[0,1]"));
+                        "[2,7,11,15], 9", "[0,1]", "twoSum"));
             case 2:
                 return GSON.toJson(buildProblemMap(2, "Reverse String", "Easy",
-                        "hello", "olleh"));
+                        "hello", "olleh", "reverseString"));
             case 3:
                 return GSON.toJson(buildProblemMap(3, "Merge Intervals", "Medium",
-                        "[[1,3],[2,6]]", "[[1,6]]"));
+                        "[[1,3],[2,6]]", "[[1,6]]", "mergeIntervals"));
             default:
                 return GSON.toJson(buildProblemMap(1, "Two Sum", "Easy",
-                        "[2,7,11,15], 9", "[0,1]"));
+                        "[2,7,11,15], 9", "[0,1]", "twoSum"));
         }
     }
 
-    /**
-     * Builds a ProblemDto-shaped map. The test_cases_json field is a properly
-     * escaped JSON string, exactly matching what Person C's backend returns.
-     */
     private Map<String, Object> buildProblemMap(int id, String title, String difficulty,
-                                                String input, String expected) {
-        // Inner JSON: {"cases":[{"input":"...","expected":"..."}]}
+                                                String input, String expected, String entryPoint) {
         Map<String, Object> caseMap = new HashMap<>();
         caseMap.put("input", input);
         caseMap.put("expected", expected);
@@ -146,10 +135,11 @@ public class MockApiInterceptor implements Interceptor {
         List<Map<String, Object>> casesList = new ArrayList<>();
         casesList.add(caseMap);
 
-        Map<String, Object> casesWrapper = new HashMap<>();
-        casesWrapper.put("cases", casesList);
+        Map<String, Object> suite = new HashMap<>();
+        suite.put("cases", casesList);
+        suite.put("entryPoint", entryPoint);
 
-        String testCasesJson = GSON.toJson(casesWrapper);
+        String testCasesJson = GSON.toJson(suite);
 
         Map<String, Object> problem = new HashMap<>();
         problem.put("problem_id", id);
