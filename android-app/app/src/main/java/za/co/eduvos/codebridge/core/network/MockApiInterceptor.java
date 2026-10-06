@@ -35,7 +35,7 @@ public class MockApiInterceptor implements Interceptor {
         String path = request.url().encodedPath();
         String method = request.method();
 
-        // Simulate network latency
+        // Simulate the network latency
         try { TimeUnit.MILLISECONDS.sleep(300); } catch (InterruptedException ignored) {}
 
         if (path.endsWith("/health")) {
