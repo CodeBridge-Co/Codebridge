@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.MainActivity
+import za.co.eduvos.codebridge.ui.Week3Label
 import za.co.eduvos.codebridge.databinding.FragmentResultsBinding
 
 class ResultsFragment : Fragment() {
@@ -24,6 +25,7 @@ class ResultsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Week3Label.attach(binding.root, "scoring coming. Sample data shown")
         binding.stepper.setStep(3)
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
 

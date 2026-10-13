@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.MainActivity
+import za.co.eduvos.codebridge.ui.Week3Label
 import za.co.eduvos.codebridge.databinding.FragmentSpeechBinding
 import za.co.eduvos.codebridge.feature.results.ResultsFragment
 import kotlin.math.abs
@@ -49,6 +50,7 @@ class SpeechFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Week3Label.attach(binding.root, "recording and analysis coming. Demo only")
         binding.stepper.setStep(2)
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
 
