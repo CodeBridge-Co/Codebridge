@@ -14,12 +14,14 @@ import java.util.Locale;
  */
 public class DailyChallengeManager {
 
+    /** Null until problems have been loaded from the API or cache. */
     public static ProblemDetail getDailyChallenge() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.US);
         String dateStr = sdf.format(new Date());
 
         int dateHash = Math.abs(dateStr.hashCode());
         int total = ProblemRepository.INSTANCE.getProblems().size();
+        if (total == 0) return null;
 
         int dailyIndex = dateHash % total;
         return ProblemRepository.INSTANCE.getProblems().get(dailyIndex);
@@ -27,6 +29,7 @@ public class DailyChallengeManager {
 
     public static boolean isDailyChallengeCompleted(String userHashId) {
         ProblemDetail daily = getDailyChallenge();
+        if (daily == null) return false;
         return ProgressRepository.isProblemCompleted(userHashId, daily.getId());
     }
 }

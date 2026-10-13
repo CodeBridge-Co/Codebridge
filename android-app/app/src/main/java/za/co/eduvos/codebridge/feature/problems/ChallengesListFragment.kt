@@ -6,10 +6,12 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.MainActivity
 import za.co.eduvos.codebridge.data.Challenge
 import za.co.eduvos.codebridge.data.ChallengeAdapter
+import za.co.eduvos.codebridge.data.ProblemRepository
 import za.co.eduvos.codebridge.databinding.FragmentChallengesListBinding
 import za.co.eduvos.codebridge.feature.company.CompanyChallengesFragment
 
@@ -20,13 +22,8 @@ class ChallengesListFragment : Fragment() {
 
     private var topicName: String? = null
 
-    private val allChallenges = listOf(
-        Challenge(1, "Two Sum", "Easy", "Arrays", "52%"),
-        Challenge(2, "Reverse Linked List", "Medium", "Linked Lists", "75%"),
-        Challenge(3, "Valid Parentheses", "Easy", "Stacks", "63%"),
-        Challenge(4, "Merge Two Sorted Lists", "Medium", "Linked Lists", "68%"),
-        Challenge(5, "Container With Most Water", "Medium", "Arrays", "54%")
-    )
+    // Filled from ApiService.getProblems() (Room cache when offline) by ProblemRepository.load().
+    private var allChallenges: List<Challenge> = emptyList()
 
     private var currentFilter = "All"
     private lateinit var adapter: ChallengeAdapter
@@ -66,7 +63,7 @@ class ChallengesListFragment : Fragment() {
             (requireActivity() as MainActivity).open(CompanyChallengesFragment())
         }
 
-        adapter = ChallengeAdapter(allChallenges) { challenge ->
+        adapter = ChallengeAdapter(emptyList()) { challenge ->
             // Open Problem Overview screen matching Screen 2 Right in your wireframe!
             (requireActivity() as MainActivity).open(
                 ProblemOverviewFragment.newInstance(challenge.id)
@@ -90,6 +87,18 @@ class ChallengesListFragment : Fragment() {
         })
 
         applyFilter("")
+        binding.tvCount.text = "Loading..."
+
+        ProblemRepository.load(requireContext()) { problems, fromCache, error ->
+            if (_binding == null) return@load
+            allChallenges = problems.map { Challenge(it.id, it.title, it.difficulty, it.category, "-") }
+            applyFilter(binding.etSearch.text?.toString().orEmpty())
+            if (problems.isEmpty()) {
+                binding.tvCount.text = "Couldn't load problems"
+            } else if (fromCache) {
+                Toast.makeText(requireContext(), "Offline: showing saved problems", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun filter(cat: String) {

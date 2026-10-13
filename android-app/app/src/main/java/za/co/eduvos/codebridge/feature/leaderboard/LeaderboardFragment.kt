@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import za.co.eduvos.codebridge.R
-import za.co.eduvos.codebridge.backend.HashIdManager
+import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.databinding.FragmentLeaderboardBinding
 import za.co.eduvos.codebridge.databinding.ItemLeaderboardEntryBinding
 
@@ -81,7 +81,7 @@ class LeaderboardFragment : Fragment() {
 
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
 
-        val myHashId = HashIdManager.getOrGenerateHashId(requireContext())
+        val myHashId = UserIdentity.displayId(requireContext())
 
         // Populate sample leaderboard matching screenshot 2
         allEntries = mutableListOf(

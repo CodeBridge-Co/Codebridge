@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.MainActivity
 import za.co.eduvos.codebridge.R
-import za.co.eduvos.codebridge.backend.HashIdManager
+import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.backend.ProgressRepository
 import za.co.eduvos.codebridge.core.sandbox.CodeExecutionEngine
 import za.co.eduvos.codebridge.core.sandbox.ExecutionResult
@@ -55,7 +55,6 @@ class ProblemsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         problemId = arguments?.getInt("problem_id") ?: 1
-        detail = ProblemRepository.getById(problemId)
     }
 
     private val problem = Triple(
@@ -81,6 +80,11 @@ class ProblemsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         engine = CodeExecutionEngine()
+        detail = ProblemRepository.getById(problemId) ?: run {
+            Toast.makeText(requireContext(), "Problem not loaded. Please reopen the list.", Toast.LENGTH_SHORT).show()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+            return
+        }
         binding.stepper.setStep(0)
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
 
@@ -215,7 +219,7 @@ class ProblemsFragment : Fragment() {
 
         val firstBad = result.results.firstOrNull { !it.isPassed }
         if (firstBad == null) {
-            ProgressRepository.recordVerifiedCompletion(HashIdManager.getOrGenerateHashId(requireContext()), detail.id)
+            ProgressRepository.recordVerifiedCompletion(UserIdentity.displayId(requireContext()), detail.id)
             Toast.makeText(requireContext(), "All ${result.totalCount()} cases passed!", Toast.LENGTH_SHORT).show()
         } else {
             val why = when (firstBad.status) {

@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import za.co.eduvos.codebridge.R
-import za.co.eduvos.codebridge.backend.HashIdManager
+import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.databinding.DialogCodemateChatBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -40,7 +40,7 @@ class CodeMateBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val hashId = HashIdManager.getOrGenerateHashId(requireContext())
+        val hashId = UserIdentity.displayId(requireContext())
         binding.tvInitialGreeting.text = "Hey $hashId! 👋"
 
         binding.tvAttemptsLeft.text = "$remainingAttempts left"

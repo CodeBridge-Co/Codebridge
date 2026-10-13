@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import za.co.eduvos.codebridge.MainActivity
-import za.co.eduvos.codebridge.backend.HashIdManager
+import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.databinding.ActivityHashIdGeneratedBinding
 
 class HashIdGeneratedActivity : AppCompatActivity() {
@@ -21,7 +21,7 @@ class HashIdGeneratedActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Retrieve or generate the user's persistent Hash ID (e.g., CB7F4A2D9E)
-        val hashId = HashIdManager.getOrGenerateHashId(this)
+        val hashId = UserIdentity.displayId(this)
         binding.tvGeneratedHashId.text = hashId
 
         binding.btnCopyHashId.setOnClickListener {

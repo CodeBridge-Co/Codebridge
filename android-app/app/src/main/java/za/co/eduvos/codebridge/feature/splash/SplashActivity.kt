@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import za.co.eduvos.codebridge.MainActivity
 import za.co.eduvos.codebridge.R
-import za.co.eduvos.codebridge.backend.HashIdManager
+import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.feature.onboarding.OnboardingActivity
 
 class SplashActivity : AppCompatActivity() {
@@ -30,7 +30,7 @@ class SplashActivity : AppCompatActivity() {
         }
 
         Handler(Looper.getMainLooper()).postDelayed({
-            if (HashIdManager.hasHashId(this)) {
+            if (UserIdentity.isLoggedIn(this)) {
                 startActivity(Intent(this, MainActivity::class.java))
             } else {
                 startActivity(Intent(this, OnboardingActivity::class.java))

@@ -7,17 +7,18 @@ import retrofit2.http.*;
 
 public interface ApiService {
 
+    // The backend (and MockApiInterceptor) return these bare, not wrapped in ApiResponse.
     @POST("/auth/register")
-    Call<ApiResponse<LoginRequest>> register(@Body RegisterRequest request);
+    Call<LoginResponse> register(@Body RegisterRequest request);
 
     @POST("/auth/login")
-    Call<ApiResponse<LoginRequest>> login(@Body LoginRequest request);
+    Call<LoginResponse> login(@Body LoginRequest request);
 
     @GET("/problems")
-    Call<ApiResponse<List<ProblemDto>>> getProblems();
+    Call<List<ProblemDto>> getProblems();
 
     @GET("/problems/{problem_id}")
-    Call<ApiResponse<ProblemDto>> getProblem(@Path("problem_id") int problemId);
+    Call<ProblemDto> getProblem(@Path("problem_id") int problemId);
 
     @POST("/sessions")
     Call<ApiResponse<SessionDto>> createSession(@Body SessionDto session);
