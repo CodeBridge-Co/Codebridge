@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.R
+import za.co.eduvos.codebridge.ui.Week3Label
 import za.co.eduvos.codebridge.databinding.FragmentEventsBinding
 
 class EventsFragment : Fragment() {
@@ -30,6 +31,7 @@ class EventsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Week3Label.attach(binding.root, "live events coming. Sample data shown")
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
         adapter = EventAdapter(all) { /* TODO: open event details */ }
         binding.rvEvents.adapter = adapter

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.MainActivity
 import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.backend.ProgressRepository
+import za.co.eduvos.codebridge.ui.Week3Label
 import za.co.eduvos.codebridge.databinding.FragmentProgressBinding
 import za.co.eduvos.codebridge.feature.problems.ProblemsFragment
 
@@ -25,6 +26,7 @@ class ProgressFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Week3Label.attach(binding.root, "progress sync coming. Sample data shown")
 
         val hashId = UserIdentity.displayId(requireContext())
         val completedCount = ProgressRepository.getCompletedCount(hashId)

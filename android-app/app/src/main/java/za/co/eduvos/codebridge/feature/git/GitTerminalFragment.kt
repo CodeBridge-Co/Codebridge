@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.MainActivity
+import za.co.eduvos.codebridge.ui.Week3Label
 import za.co.eduvos.codebridge.databinding.FragmentGitBinding
 import za.co.eduvos.codebridge.feature.speech.SpeechFragment
 
@@ -29,6 +30,7 @@ class GitFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Week3Label.attach(binding.root, "Git simulator coming. Terminal is demo only")
         binding.stepper.setStep(1)
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
 
