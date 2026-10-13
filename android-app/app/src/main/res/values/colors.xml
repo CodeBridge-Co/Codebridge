@@ -2,4 +2,32 @@
 <resources>
     <color name="purple_500">#6200EE</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="cb_dark_green">#124226</color>
+    <color name="cb_green">#6EC20F</color>
+    <color name="cb_green_light">#A6E34A</color>
+    <color name="cb_bg_top">#F4FBEA</color>
+    <color name="cb_text_secondary">#5F6B63</color>
+    <color name="cb_stroke">#DDE5DA</color>
+    <color name="cb_stroke_soft">#66A3B3A0</color>
+
+    <color name="cb_green_dark">#3D9A00</color>
+    <color name="cb_green_tint">#EAF7DC</color>
+    <color name="cb_green_line">#CBEAA8</color>
+    <color name="cb_bg">#FFFFFF</color>
+    <color name="cb_ink">#121212</color>
+    <color name="cb_ink2">#1E1E1E</color>
+    <color name="cb_card">#F2F4EE</color>
+    <color name="cb_line">#E4E7DF</color>
+    <color name="cb_red">#FF4B4B</color>
+    <color name="cb_white_10">#1AFFFFFF</color>
+    <color name="cb_white_20">#33FFFFFF</color>
+
+    <color name="cb_tile_lime">#B8EB6A</color>
+    <color name="cb_tile_sky">#9CCBEE</color>
+    <color name="cb_tile_peach">#FDBA7B</color>
+    <color name="cb_tile_mint">#A9E6CF</color>
+    <color name="cb_cat_lilac">#E7E0FB</color>
+    <color name="cb_cat_peach">#FFE3D0</color>
+    <color name="cb_cat_sky">#DDEBF7</color>
 </resources>

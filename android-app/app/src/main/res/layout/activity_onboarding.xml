@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cb_bg">
+
+    <!-- Subtle Wave Background Graphic -->
+    <ImageView
+        android:id="@+id/ivWaveBg"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/wave_bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:tint="#EAF7DC" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="32dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Logo with Two Greens -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_code_brackets"
+                app:tint="@color/cb_dark_green" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvBrandTwoGreen"
+                    style="@style/CbText.Hero"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CodeBridge"
+                    android:textSize="22sp" />
+
+                <TextView
+                    style="@style/CbText.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Learn  ·  Build  ·  Grow"
+                    android:textColor="@color/cb_green_dark"
+                    android:textSize="10sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Mascot Illustration -->
+        <ImageView
+            android:id="@+id/ivMascot"
+            android:layout_width="200dp"
+            android:layout_height="180dp"
+            android:layout_marginTop="28dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="CodeBridge mascot"
+            android:scaleType="fitCenter"
+            android:src="@drawable/code_launcher" />
+
+        <!-- Title -->
+        <TextView
+            style="@style/CbText.Hero"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:gravity="start"
+            android:text="Build your skills.\nOne challenge at a time."
+            android:textColor="@color/cb_ink"
+            android:textSize="24sp" />
+
+        <!-- Subtitle -->
+        <TextView
+            style="@style/CbText.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:lineSpacingMultiplier="1.2"
+            android:text="CodeBridge helps you practice, improve and grow through real-world coding challenges, guided learning and more."
+            android:textColor="@color/cb_text_secondary"
+            android:textSize="13sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Get Started Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGetStarted"
+            style="@style/CbButton.Green"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Get Started"
+            android:textColor="@color/cb_ink"
+            android:textSize="16sp"
+            app:cornerRadius="26dp" />
+
+        <TextView
+            style="@style/CbText.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Your journey begins with a hash ID →"
+            android:textColor="@color/cb_text_secondary"
+            android:textSize="11sp" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,26 +7,47 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
-	android:name=".MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/code_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/code_launcher_round"
         android:supportsRtl="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.CodeBridge">
 
+        <!-- Splash / launcher -->
         <activity
-            android:name=".MainActivity"
+            android:name=".feature.splash.SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.CodeBridge">
+            android:theme="@style/Theme.CodeBridge.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- Onboarding and hash ID screens -->
+        <activity
+            android:name=".feature.onboarding.OnboardingActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".feature.onboarding.HashIdGeneratedActivity"
+            android:exported="false" />
+
+        <!-- Auth -->
+        <activity
+            android:name=".feature.auth.AuthActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Main app -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 </manifest>

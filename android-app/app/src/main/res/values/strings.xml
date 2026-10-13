@@ -1,4 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">CodeBridge</string>
+    <string name="splash_tagline">Build your skills.\nBridge your future.</string>
+    <string name="cd_brand_icon">Brand icon</string>
+    <string name="cd_mascot">CodeBridge mascot</string>
+    <string name="brand_name_html"><![CDATA[<font color="#124226">Code</font><font color="#6EC20F">Bridge</font>]]></string>
+    <string name="help_question_mark">\?</string>
 </resources>

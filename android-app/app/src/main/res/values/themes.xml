@@ -1,6 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.CodeBridge" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
+    <style name="Theme.CodeBridge" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/cb_green</item>
+        <item name="colorOnPrimary">@color/cb_ink</item>
+        <item name="android:statusBarColor">@color/cb_bg</item>
+        <item name="android:navigationBarColor">@color/cb_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.CodeBridge.Splash" parent="Theme.CodeBridge">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>
 </resources>

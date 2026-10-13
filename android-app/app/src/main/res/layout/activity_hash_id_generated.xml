@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cb_bg">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingTop="32dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="24dp">
+
+            <!-- Mascot Illustration -->
+            <ImageView
+                android:id="@+id/ivMascot"
+                android:layout_width="160dp"
+                android:layout_height="140dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="CodeBridge mascot"
+                android:scaleType="fitCenter"
+                android:src="@drawable/code_launcher" />
+
+            <!-- Title -->
+            <TextView
+                style="@style/CbText.Hero"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="Your Hash ID Has Been\nGenerated!"
+                android:textSize="20sp" />
+
+            <!-- Subtitle -->
+            <TextView
+                style="@style/CbText.Body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="Keep this safe — it's how you'll track\nyour progress on CodeBridge."
+                android:textColor="@color/cb_text_secondary"
+                android:textSize="12sp" />
+
+            <!-- Highlighted Green Hash ID Display Box -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_chip_selected"
+                android:backgroundTint="#EAF7DC"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvGeneratedHashId"
+                    style="@style/CbText.Hero"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:letterSpacing="0.1"
+                    android:text="CB7F4A2D9E"
+                    android:textColor="@color/cb_green_dark"
+                    android:textSize="22sp" />
+            </LinearLayout>
+
+            <!-- Copy Hash ID Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCopyHashId"
+                style="@style/CbButton.Outline"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:layout_marginTop="12dp"
+                android:text="Copy Hash ID"
+                android:textSize="12sp"
+                app:cornerRadius="19dp"
+                app:icon="@drawable/ic_cb_copy"
+                app:iconSize="14dp"
+                app:iconTint="@color/cb_ink" />
+
+            <!-- What's Next Section -->
+            <TextView
+                style="@style/CbText.Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="What's next?"
+                android:textSize="14sp" />
+
+            <!-- Step 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_tile"
+                    android:backgroundTint="@color/cb_cat_sky"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_cb_code"
+                        app:tint="@color/cb_ink" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/CbText.Strong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Start solving challenges"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Step 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_tile"
+                    android:backgroundTint="@color/cb_cat_sky"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_cb_chart"
+                        app:tint="@color/cb_ink" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/CbText.Strong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Track your progress"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Step 3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_tile"
+                    android:backgroundTint="@color/cb_cat_peach"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_cb_spark"
+                        app:tint="@color/cb_ink" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/CbText.Strong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Earn badges &amp; streaks"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Step 4 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_tile"
+                    android:backgroundTint="@color/cb_tile_lime"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_cb_branch"
+                        app:tint="@color/cb_ink" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/CbText.Strong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Build your skills"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:minHeight="24dp" />
+
+            <!-- Go to Dashboard Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGoToDashboard"
+                style="@style/CbButton.Green"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="16dp"
+                android:text="Go to Dashboard"
+                android:textColor="@color/cb_ink"
+                android:textSize="16sp"
+                app:cornerRadius="26dp" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
