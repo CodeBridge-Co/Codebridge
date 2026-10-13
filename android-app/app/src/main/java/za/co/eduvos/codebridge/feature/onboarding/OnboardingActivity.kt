@@ -1,6 +1,7 @@
 package za.co.eduvos.codebridge.feature.onboarding
 
 import android.content.Intent
+import za.co.eduvos.codebridge.feature.auth.AuthActivity
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -29,8 +30,8 @@ class OnboardingActivity : AppCompatActivity() {
         }
 
         binding.btnGetStarted.setOnClickListener {
-            // Navigate to Hash ID confirmation screen
-            startActivity(Intent(this, HashIdGeneratedActivity::class.java))
+            // Sign in with student number + institution
+            startActivity(Intent(this, AuthActivity::class.java))
             finish()
         }
     }

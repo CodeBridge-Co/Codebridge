@@ -6,15 +6,24 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
-import androidx.core.content.res.ResourcesCompat
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
-import za.co.eduvos.codebridge.MainActivity
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import za.co.eduvos.codebridge.R
+import za.co.eduvos.codebridge.core.network.RetrofitClient
+import za.co.eduvos.codebridge.core.network.TokenManager
+import za.co.eduvos.codebridge.core.network.dto.LoginRequest
+import za.co.eduvos.codebridge.core.network.dto.LoginResponse
+import za.co.eduvos.codebridge.core.security.HashIdManager
+import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.databinding.FragmentLoginBinding
+import za.co.eduvos.codebridge.feature.onboarding.HashIdGeneratedActivity
 
 class LoginFragment : Fragment() {
 
@@ -32,8 +41,8 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val nunito = ResourcesCompat.getFont(requireContext(), R.font.nunito_regular)
-        binding.tilEmail.typeface = nunito
-        binding.tilPassword.typeface = nunito
+        binding.tilStudentNumber.typeface = nunito
+        binding.tilInstitution.typeface = nunito
 
         val dark = ContextCompat.getColor(requireContext(), R.color.cb_dark_green)
         val green = ContextCompat.getColor(requireContext(), R.color.cb_green)
@@ -47,39 +56,47 @@ class LoginFragment : Fragment() {
         }
 
         binding.btnLogin.setOnClickListener { attemptLogin() }
-
-        binding.btnGoogle.setOnClickListener {
-            // TODO: Google Sign-In
-            Toast.makeText(requireContext(), "Google sign-in coming soon", Toast.LENGTH_SHORT).show()
-        }
-
-        binding.tvRegister.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.auth_container, RegisterFragment())
-                .addToBackStack(null)
-                .commit()
-        }
-
-        binding.tvForgot.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.auth_container, ForgotPasswordFragment())
-                .addToBackStack(null)
-                .commit()
-        }
     }
 
     private fun attemptLogin() {
-        val email = binding.etEmail.text?.toString()?.trim().orEmpty()
-        val password = binding.etPassword.text?.toString().orEmpty()
+        val studentNumber = binding.etStudentNumber.text?.toString()?.trim().orEmpty()
+        val institutionId = binding.etInstitution.text?.toString()?.trim().orEmpty()
 
-        binding.tilEmail.error = if (email.isEmpty()) "Enter your email or username" else null
-        binding.tilPassword.error = if (password.length < 6) "Minimum 6 characters" else null
+        binding.tilStudentNumber.error = if (studentNumber.isEmpty()) "Enter your student number" else null
+        binding.tilInstitution.error = if (institutionId.isEmpty()) "Enter your institution ID" else null
+        if (studentNumber.isEmpty() || institutionId.isEmpty()) return
 
-        if (email.isNotEmpty() && password.length >= 6) {
-            // TODO: replace with real authentication
-            startActivity(Intent(requireContext(), MainActivity::class.java))
-            requireActivity().finish()
+        val appContext = requireContext().applicationContext
+        val hashId = try {
+            HashIdManager(appContext).generateHashId(studentNumber)
+        } catch (e: RuntimeException) {
+            Toast.makeText(requireContext(), "Couldn't create a secure ID on this device", Toast.LENGTH_LONG).show()
+            return
         }
+
+        binding.btnLogin.isEnabled = false
+        RetrofitClient.getInstance().apiService.login(LoginRequest(hashId, institutionId))
+            .enqueue(object : Callback<LoginResponse> {
+                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                    if (_binding == null) return
+                    binding.btnLogin.isEnabled = true
+                    val token = response.body()?.token
+                    if (response.isSuccessful && !token.isNullOrEmpty()) {
+                        TokenManager.saveToken(token)
+                        UserIdentity.save(appContext, hashId)
+                        startActivity(Intent(requireContext(), HashIdGeneratedActivity::class.java))
+                        requireActivity().finish()
+                    } else {
+                        Toast.makeText(requireContext(), "Login failed (${response.code()})", Toast.LENGTH_LONG).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    if (_binding == null) return
+                    binding.btnLogin.isEnabled = true
+                    Toast.makeText(requireContext(), "Can't reach the server: ${t.message}", Toast.LENGTH_LONG).show()
+                }
+            })
     }
 
     override fun onDestroyView() {

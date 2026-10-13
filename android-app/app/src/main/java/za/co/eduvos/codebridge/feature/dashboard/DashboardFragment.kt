@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.MainActivity
-import za.co.eduvos.codebridge.backend.HashIdManager
+import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.databinding.FragmentDashboardBinding
 import za.co.eduvos.codebridge.feature.events.EventsFragment
 import za.co.eduvos.codebridge.feature.problems.ChallengesListFragment
@@ -32,7 +32,7 @@ class DashboardFragment : Fragment() {
         }
 
         // Retrieve generated Hash ID for the user (e.g., CB7F4A2D9E)
-        val hashId = HashIdManager.getOrGenerateHashId(requireContext())
+        val hashId = UserIdentity.displayId(requireContext())
 
         // Greet user with their unique Hash ID
         binding.tvGreeting.text = "$greeting, $hashId."

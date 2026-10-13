@@ -106,17 +106,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:fontFamily="@font/nunito_regular"
-                android:text="Log in to continue your coding journey."
+                android:text="Enter your student number and institution to continue."
                 android:textColor="@color/cb_text_secondary"
                 android:textSize="13sp" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilEmail"
+                android:id="@+id/tilStudentNumber"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Email or username"
+                android:hint="Student number"
                 app:boxBackgroundColor="@android:color/white"
                 app:boxCornerRadiusBottomEnd="14dp"
                 app:boxCornerRadiusBottomStart="14dp"
@@ -125,25 +125,25 @@
                 app:boxStrokeColor="@drawable/box_stroke"
                 app:boxStrokeWidth="1dp"
                 app:boxStrokeWidthFocused="2dp"
-                app:startIconDrawable="@drawable/ic_email"
+                app:startIconDrawable="@drawable/ic_cb_user"
                 app:startIconTint="@color/cb_text_secondary">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etEmail"
+                    android:id="@+id/etStudentNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/nunito_regular"
-                    android:inputType="textEmailAddress"
+                    android:inputType="text"
                     android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilPassword"
+                android:id="@+id/tilInstitution"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:hint="Password"
+                android:hint="Institution ID"
                 app:boxBackgroundColor="@android:color/white"
                 app:boxCornerRadiusBottomEnd="14dp"
                 app:boxCornerRadiusBottomStart="14dp"
@@ -152,30 +152,17 @@
                 app:boxStrokeColor="@drawable/box_stroke"
                 app:boxStrokeWidth="1dp"
                 app:boxStrokeWidthFocused="2dp"
-                app:endIconMode="password_toggle"
-                app:startIconDrawable="@drawable/ic_lock"
+                app:startIconDrawable="@drawable/ic_cb_brief"
                 app:startIconTint="@color/cb_text_secondary">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etPassword"
+                    android:id="@+id/etInstitution"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/nunito_regular"
-                    android:inputType="textPassword"
+                    android:inputType="text"
                     android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                android:id="@+id/tvForgot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="4dp"
-                android:fontFamily="@font/nunito_bold"
-                android:padding="4dp"
-                android:text="Forgot password?"
-                android:textColor="@color/cb_green"
-                android:textSize="12sp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogin"
@@ -190,56 +177,6 @@
                 android:textSize="15sp"
                 app:cornerRadius="25dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="8dp"
-                android:fontFamily="@font/nunito_regular"
-                android:text="or"
-                android:textColor="@color/cb_text_secondary" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnGoogle"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:fontFamily="@font/nunito_bold"
-                android:text="Continue with Google"
-                android:textAllCaps="false"
-                android:textColor="@color/cb_dark_green"
-                android:textSize="14sp"
-                app:cornerRadius="25dp"
-                app:icon="@drawable/ic_google"
-                app:iconGravity="textStart"
-                app:iconPadding="10dp"
-                app:iconSize="20dp"
-                app:iconTint="@null"
-                app:strokeColor="@color/cb_stroke_soft"
-                app:strokeWidth="1dp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/nunito_regular"
-                    android:text="Don't have an account? "
-                    android:textColor="@color/cb_text_secondary"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/tvRegister"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/nunito_extrabold"
-                    android:text="Register"
-                    android:textColor="@color/cb_green"
-                    android:textSize="13sp" />
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

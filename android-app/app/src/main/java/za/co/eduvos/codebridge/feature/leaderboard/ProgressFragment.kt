@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.MainActivity
-import za.co.eduvos.codebridge.backend.HashIdManager
+import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.backend.ProgressRepository
 import za.co.eduvos.codebridge.databinding.FragmentProgressBinding
 import za.co.eduvos.codebridge.feature.problems.ProblemsFragment
@@ -26,7 +26,7 @@ class ProgressFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val hashId = HashIdManager.getOrGenerateHashId(requireContext())
+        val hashId = UserIdentity.displayId(requireContext())
         val completedCount = ProgressRepository.getCompletedCount(hashId)
         val overallPct = ProgressRepository.getOverallProgressPercent(hashId)
 

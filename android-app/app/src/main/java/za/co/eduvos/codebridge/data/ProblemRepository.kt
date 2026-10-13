@@ -1,9 +1,24 @@
 package za.co.eduvos.codebridge.data
 
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import za.co.eduvos.codebridge.core.data.mapper.ProblemMapper
+import za.co.eduvos.codebridge.core.database.AppDatabase
+import za.co.eduvos.codebridge.core.network.RetrofitClient
+import za.co.eduvos.codebridge.core.network.dto.ProblemDto
+import za.co.eduvos.codebridge.core.sandbox.TestSuiteParser
+import java.util.concurrent.Executors
+
 /**
- * @param entryPoint     name of the function the user must define (also used by the sandbox)
- * @param testCasesJson  suite in the sandbox format: {"entryPoint":"...","cases":[{"input":"...","expected":"..."}]}
- *                       where input is the argument list as written inside a call.
+ * @param entryPoint     name of the function the user must define
+ * @param testCasesJson  suite in the sandbox format, taken as-is from the backend
+ *
+ * The backend only supplies id, title, difficulty and test cases, so description, examples,
+ * category and starter code are derived from the suite (see [ProblemDetailFactory]).
  */
 data class ProblemDetail(
     val id: Int,
@@ -22,97 +37,115 @@ data class ProblemDetail(
     val successRate: String = "0%"
 )
 
+object ProblemDetailFactory {
+
+    private const val DEFAULT_ENTRY_POINT = "solve"
+
+    fun fromDto(dto: ProblemDto): ProblemDetail =
+        create(dto.problemId, dto.title, dto.difficultyLevel, dto.testCasesJson)
+
+    fun create(id: Int, title: String?, difficulty: String?, testCasesJson: String?): ProblemDetail {
+        val json = testCasesJson.orEmpty()
+        val suite = try {
+            TestSuiteParser.parse(json)
+        } catch (e: TestSuiteParser.ParseException) {
+            null
+        }
+        val entryPoint = suite?.entryPoint ?: DEFAULT_ENTRY_POINT
+        val first = suite?.cases?.firstOrNull()
+        val second = suite?.cases?.getOrNull(1) ?: first
+
+        val argNames = (1..maxOf(1, countArgs(first?.input.orEmpty()))).joinToString(", ") { "arg$it" }
+
+        return ProblemDetail(
+            id = id,
+            title = title.orEmpty().ifBlank { "Problem $id" },
+            category = "General",
+            difficulty = difficulty.orEmpty().ifBlank { "Easy" },
+            description = "Write a function named $entryPoint that returns the expected output for each test case.",
+            example1Input = first?.input ?: "-",
+            example1Output = first?.expected ?: "-",
+            example2Input = second?.input ?: "-",
+            example2Output = second?.expected ?: "-",
+            entryPoint = entryPoint,
+            initialCode = "function $entryPoint($argNames) {\n  // Write your solution here\n}",
+            testCasesJson = json
+        )
+    }
+
+    /** Number of top-level, comma-separated arguments in a call's argument list. */
+    internal fun countArgs(input: String): Int {
+        if (input.isBlank()) return 0
+        var depth = 0
+        var inString = false
+        var quote = ' '
+        var count = 1
+        var i = 0
+        while (i < input.length) {
+            val c = input[i]
+            if (inString) {
+                if (c == '\\') i++ else if (c == quote) inString = false
+            } else when (c) {
+                '"', '\'' -> { inString = true; quote = c }
+                '[', '{', '(' -> depth++
+                ']', '}', ')' -> depth--
+                ',' -> if (depth == 0) count++
+            }
+            i++
+        }
+        return count
+    }
+}
+
+/**
+ * Problems come from the API (ApiService.getProblems). Each successful fetch is cached in Room;
+ * if the network call fails, the cached rows are used so the app still works offline.
+ */
 object ProblemRepository {
 
-    val problems = listOf(
-        ProblemDetail(
-            id = 1,
-            title = "Two Sum",
-            category = "Arrays",
-            difficulty = "Easy",
-            description = "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-            example1Input = "nums = [2,7,11,15], target = 9",
-            example1Output = "[0,1]",
-            example2Input = "nums = [3,2,4], target = 6",
-            example2Output = "[1,2]",
-            entryPoint = "twoSum",
-            initialCode = "function twoSum(nums, target) {\n  // Write your solution here\n}",
-            testCasesJson = """{"entryPoint":"twoSum","cases":[
-                {"input":"[2,7,11,15], 9","expected":"[0,1]"},
-                {"input":"[3,2,4], 6","expected":"[1,2]"},
-                {"input":"[3,3], 6","expected":"[0,1]"}]}"""
-        ),
-        ProblemDetail(
-            id = 2,
-            title = "Reverse Linked List",
-            category = "Linked Lists",
-            difficulty = "Medium",
-            description = "Reverse a singly linked list and return the reversed list. The list is passed as an array of values and the result is returned as an array.",
-            example1Input = "head = [1,2,3,4,5]",
-            example1Output = "[5,4,3,2,1]",
-            example2Input = "head = [1,2]",
-            example2Output = "[2,1]",
-            entryPoint = "reverseList",
-            initialCode = "function reverseList(head) {\n  // head is an array of values\n  // Write your solution here\n}",
-            testCasesJson = """{"entryPoint":"reverseList","cases":[
-                {"input":"[1,2,3,4,5]","expected":"[5,4,3,2,1]"},
-                {"input":"[1,2]","expected":"[2,1]"},
-                {"input":"[]","expected":"[]"}]}"""
-        ),
-        ProblemDetail(
-            id = 3,
-            title = "Valid Parentheses",
-            category = "Stacks",
-            difficulty = "Easy",
-            description = "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
-            example1Input = "s = \"()[]{}\"",
-            example1Output = "true",
-            example2Input = "s = \"(]\"",
-            example2Output = "false",
-            entryPoint = "isValid",
-            initialCode = "function isValid(s) {\n  // Write your solution here\n}",
-            testCasesJson = """{"entryPoint":"isValid","cases":[
-                {"input":"\"()[]{}\"","expected":"true"},
-                {"input":"\"(]\"","expected":"false"},
-                {"input":"\"([)]\"","expected":"false"}]}"""
-        ),
-        ProblemDetail(
-            id = 4,
-            title = "Merge Two Sorted Lists",
-            category = "Linked Lists",
-            difficulty = "Medium",
-            description = "Merge two sorted lists into one sorted list. Both lists are passed as arrays and the merged list is returned as an array.",
-            example1Input = "list1 = [1,2,4], list2 = [1,3,4]",
-            example1Output = "[1,1,2,3,4,4]",
-            example2Input = "list1 = [], list2 = []",
-            example2Output = "[]",
-            entryPoint = "mergeTwoLists",
-            initialCode = "function mergeTwoLists(list1, list2) {\n  // Both lists are arrays of values\n  // Write your solution here\n}",
-            testCasesJson = """{"entryPoint":"mergeTwoLists","cases":[
-                {"input":"[1,2,4], [1,3,4]","expected":"[1,1,2,3,4,4]"},
-                {"input":"[], []","expected":"[]"},
-                {"input":"[], [0]","expected":"[0]"}]}"""
-        ),
-        ProblemDetail(
-            id = 5,
-            title = "Container With Most Water",
-            category = "Arrays",
-            difficulty = "Medium",
-            description = "Find two lines that together with the x-axis form a container such that the container contains the most water.",
-            example1Input = "height = [1,8,6,2,5,4,8,3,7]",
-            example1Output = "49",
-            example2Input = "height = [1,1]",
-            example2Output = "1",
-            entryPoint = "maxArea",
-            initialCode = "function maxArea(height) {\n  // Write your solution here\n}",
-            testCasesJson = """{"entryPoint":"maxArea","cases":[
-                {"input":"[1,8,6,2,5,4,8,3,7]","expected":"49"},
-                {"input":"[1,1]","expected":"1"},
-                {"input":"[4,3,2,1,4]","expected":"16"}]}"""
-        )
-    )
+    @Volatile
+    var problems: List<ProblemDetail> = emptyList()
+        private set
 
-    fun getById(id: Int): ProblemDetail {
-        return problems.find { it.id == id } ?: problems.first()
+    private val io = Executors.newSingleThreadExecutor()
+    private val main by lazy { Handler(Looper.getMainLooper()) }
+
+    fun getById(id: Int): ProblemDetail? = problems.find { it.id == id }
+
+    /**
+     * Loads problems and reports on the main thread.
+     * @param onResult (problems, fromCache, error) where error is non-null when the network call failed.
+     */
+    fun load(context: Context, onResult: (List<ProblemDetail>, Boolean, String?) -> Unit) {
+        val app = context.applicationContext
+        RetrofitClient.getInstance().apiService.getProblems().enqueue(object : Callback<List<ProblemDto>> {
+            override fun onResponse(call: Call<List<ProblemDto>>, response: Response<List<ProblemDto>>) {
+                val body = response.body()
+                if (response.isSuccessful && body != null) {
+                    val details = body.map { ProblemDetailFactory.fromDto(it) }
+                    problems = details
+                    io.execute {
+                        AppDatabase.getInstance(app).problemDao().insertAll(body.map { ProblemMapper.toEntity(it) })
+                    }
+                    onResult(details, false, null)
+                } else {
+                    loadFromCache(app, "Server error ${response.code()}", onResult)
+                }
+            }
+
+            override fun onFailure(call: Call<List<ProblemDto>>, t: Throwable) {
+                loadFromCache(app, t.message ?: "Network error", onResult)
+            }
+        })
+    }
+
+    private fun loadFromCache(app: Context, error: String, onResult: (List<ProblemDetail>, Boolean, String?) -> Unit) {
+        io.execute {
+            val cached = AppDatabase.getInstance(app).problemDao().all.map {
+                ProblemDetailFactory.create(it.problemId, it.title, it.difficultyLevel, it.testCasesJson)
+            }
+            if (cached.isNotEmpty()) problems = cached
+            main.post { onResult(cached, true, error) }
+        }
     }
 }
