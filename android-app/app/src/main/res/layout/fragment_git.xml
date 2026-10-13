@@ -1,0 +1,678 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cb_bg"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="24dp">
+
+        <!-- Header -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Back"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_cb_back" />
+
+            <TextView
+                style="@style/CbText.Strong"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Two Sum · Easy"
+                android:textSize="15sp" />
+        </FrameLayout>
+
+        <!-- Stepper -->
+        <za.co.eduvos.codebridge.ui.StepperView
+            android:id="@+id/stepper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" />
+
+        <!-- GIT WORKFLOW Section -->
+        <TextView
+            style="@style/CbText.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="8dp"
+            android:text="GIT WORKFLOW"
+            android:textColor="@color/cb_ink"
+            android:textSize="11sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:orientation="horizontal">
+
+            <!-- Tile 1: Working Directory -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="44dp">
+
+                    <LinearLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="bottom|start"
+                        android:background="@drawable/bg_tile"
+                        android:backgroundTint="#E5E7EB"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_cb_term"
+                            app:tint="@color/cb_ink" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvWorkingBadge"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="top|end"
+                        android:background="@drawable/bg_circle_black"
+                        android:fontFamily="@font/nunito_extrabold"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="@color/cb_bg"
+                        android:textSize="9sp" />
+                </FrameLayout>
+
+                <TextView
+                    style="@style/CbText.Strong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:text="Working Directory"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tvWorkingSubtitle"
+                    style="@style/CbText.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="0 Changed files"
+                    android:textSize="9sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="16dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_cb_up"
+                android:rotation="90"
+                app:tint="@color/cb_ink" />
+
+            <!-- Tile 2: Staged -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="44dp">
+
+                    <LinearLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="bottom|start"
+                        android:background="@drawable/bg_tile"
+                        android:backgroundTint="#E5E7EB"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_cb_plus"
+                            app:tint="@color/cb_ink" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvStagedBadge"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="top|end"
+                        android:background="@drawable/bg_circle_black"
+                        android:fontFamily="@font/nunito_extrabold"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="@color/cb_bg"
+                        android:textSize="9sp" />
+                </FrameLayout>
+
+                <TextView
+                    style="@style/CbText.Strong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:text="Staged"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tvStagedSubtitle"
+                    style="@style/CbText.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="0 files staged"
+                    android:textSize="9sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="16dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_cb_up"
+                android:rotation="90"
+                app:tint="@color/cb_ink" />
+
+            <!-- Tile 3: Committed -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_tile"
+                    android:backgroundTint="#E5E7EB"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_cb_branch"
+                        app:tint="@color/cb_ink" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/CbText.Strong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:text="Committed"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tvCommittedSubtitle"
+                    style="@style/CbText.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="0 Commits"
+                    android:textSize="9sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="16dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_cb_up"
+                android:rotation="90"
+                app:tint="@color/cb_ink" />
+
+            <!-- Tile 4: Pushed -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_tile"
+                    android:backgroundTint="#E5E7EB"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_cb_check"
+                        app:tint="@color/cb_ink" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/CbText.Strong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:text="Pushed"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tvPushedSubtitle"
+                    style="@style/CbText.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Not published"
+                    android:textSize="9sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- TERMINAL SIMULATOR Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_dark_card"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/CbText.Label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="TERMINAL SIMULATOR"
+                    android:textColor="@color/cb_bg"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/btnClear"
+                    style="@style/CbText.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:minWidth="48dp"
+                    android:minHeight="48dp"
+                    android:padding="8dp"
+                    android:text="Clear"
+                    android:textColor="#B5B5B5"
+                    android:textSize="10sp" />
+
+                <ImageView
+                    android:id="@+id/btnTrash"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:importantForAccessibility="no"
+                    android:padding="14dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_cb_trash"
+                    app:tint="#B5B5B5" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@color/cb_white_20" />
+
+            <TextView
+                android:id="@+id/tvTerminal"
+                style="@style/CbText.Mono"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.3"
+                android:minHeight="100dp"
+                android:textColor="@color/cb_green_light"
+                android:textSize="11sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/etCommand"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_code_input"
+                    android:fontFamily="monospace"
+                    android:hint="Type git commands"
+                    android:imeOptions="actionDone"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:singleLine="true"
+                    android:textColor="@color/cb_bg"
+                    android:textColorHint="#8A8A8A"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRunCmd"
+                    style="@style/CbButton.White"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:paddingHorizontal="16dp"
+                    android:text="Run ►"
+                    android:textColor="@color/cb_ink"
+                    android:textSize="12sp"
+                    app:cornerRadius="24dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- QUICK COMMANDS Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card_outline"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                style="@style/CbText.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="QUICK COMMANDS"
+                android:textColor="@color/cb_ink"
+                android:textSize="11sp" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/chip0"
+                        style="@style/CbText.Mono"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_mono_chip"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp"
+                        android:text="> git status"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/chip1"
+                        style="@style/CbText.Mono"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_mono_chip"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp"
+                        android:text="> git add ."
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/chip2"
+                        style="@style/CbText.Mono"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/bg_mono_chip"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp"
+                        android:text="> git commit -m &quot;solution&quot;"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/chip3"
+                        style="@style/CbText.Mono"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_mono_chip"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp"
+                        android:text="> git push"
+                        android:textSize="10sp" />
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
+
+        <!-- COMMIT HISTORY Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card_outline"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                style="@style/CbText.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="COMMIT HISTORY"
+                android:textColor="@color/cb_ink"
+                android:textSize="11sp" />
+
+            <!-- Empty Placeholder (When zero commits exist initially) -->
+            <TextView
+                android:id="@+id/tvEmptyCommitHistory"
+                style="@style/CbText.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="No commit history yet. Run 'git commit' to create a commit."
+                android:textColor="@color/cb_text_secondary"
+                android:textSize="11sp" />
+
+            <!-- Dynamic Commit Entry Item -->
+            <LinearLayout
+                android:id="@+id/cardCommitHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_tile"
+                    android:backgroundTint="#E5E7EB"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_cb_branch"
+                        app:tint="@color/cb_ink" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvCommitMsg"
+                            style="@style/CbText.Strong"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="solution"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            style="@style/CbText.Mono"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:background="@drawable/bg_chip"
+                            android:paddingHorizontal="6dp"
+                            android:paddingVertical="2dp"
+                            android:text="HEAD"
+                            android:textSize="9sp" />
+
+                        <TextView
+                            style="@style/CbText.Mono"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:background="@drawable/bg_tag_dark"
+                            android:paddingHorizontal="6dp"
+                            android:paddingVertical="2dp"
+                            android:text="solution"
+                            android:textColor="@color/cb_bg"
+                            android:textSize="9sp" />
+
+                        <TextView
+                            android:id="@+id/tvCommitTime"
+                            style="@style/CbText.Caption"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="Just now"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvCommitMeta"
+                        style="@style/CbText.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="c8d4e2 · Committed via Git Terminal"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Need Help? Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_ai_hint"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_circle_black"
+                android:fontFamily="@font/nunito_extrabold"
+                android:gravity="center"
+                android:text="@string/help_question_mark"
+                android:textColor="@color/cb_bg"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/CbText.Strong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Need Help?"
+                    android:textSize="12sp" />
+
+                <TextView
+                    style="@style/CbText.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:text="Review git concepts or watch a short lesson"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnViewGuide"
+                style="@style/CbButton.White.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:paddingHorizontal="14dp"
+                android:text="View Git Guide ↗"
+                android:textSize="11sp"
+                app:cornerRadius="24dp" />
+        </LinearLayout>
+
+        <!-- Main Action Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPush"
+            style="@style/CbButton.Black"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:text="Push Commit &amp; Advance to Interview Stage →"
+            android:textSize="13sp"
+            app:cornerRadius="24dp" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

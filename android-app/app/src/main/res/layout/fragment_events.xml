@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/cb_bg" android:orientation="vertical" android:paddingTop="12dp">
+    <FrameLayout android:layout_width="match_parent" android:layout_height="44dp" android:paddingStart="20dp" android:paddingEnd="20dp">
+        <ImageButton android:id="@+id/btnBack" android:layout_width="40dp" android:layout_height="40dp" android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="Back" android:src="@drawable/ic_cb_back"/>
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_gravity="center" android:gravity="center_horizontal">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Section" android:text="Events" android:textSize="18sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="From South African tech companies" android:textSize="10sp"/>
+        </LinearLayout>
+        <ImageButton android:id="@+id/btnSearch" android:layout_width="40dp" android:layout_height="40dp" android:layout_gravity="end" android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="Search" android:src="@drawable/ic_cb_search"/>
+    </FrameLayout>
+    <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:paddingStart="20dp" android:paddingEnd="12dp" android:clipToPadding="false" android:scrollbars="none">
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView android:id="@+id/chipEvt0" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Strong" android:text="All events" android:background="@drawable/bg_chip_selected" android:paddingStart="14dp" android:paddingEnd="14dp" android:paddingTop="8dp" android:paddingBottom="8dp" android:textSize="11sp" android:layout_marginEnd="8dp" android:textColor="@color/cb_bg"/>
+            <TextView android:id="@+id/chipEvt1" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Strong" android:text="Hackathons" android:background="@drawable/bg_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:paddingTop="8dp" android:paddingBottom="8dp" android:textSize="11sp" android:layout_marginEnd="8dp" android:textColor="@color/cb_ink"/>
+            <TextView android:id="@+id/chipEvt2" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Strong" android:text="Workshops" android:background="@drawable/bg_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:paddingTop="8dp" android:paddingBottom="8dp" android:textSize="11sp" android:layout_marginEnd="8dp" android:textColor="@color/cb_ink"/>
+            <TextView android:id="@+id/chipEvt3" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Strong" android:text="Tech talks" android:background="@drawable/bg_chip" android:paddingStart="14dp" android:paddingEnd="14dp" android:paddingTop="8dp" android:paddingBottom="8dp" android:textSize="11sp" android:layout_marginEnd="8dp" android:textColor="@color/cb_ink"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="20dp" android:paddingStart="20dp" android:paddingEnd="20dp">
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" style="@style/CbText.Section" android:text="Upcoming events" android:layout_weight="1"/>
+        <TextView android:id="@+id/linkSeeAll" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Link" android:text="See all →"/>
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvEvents" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" android:paddingStart="20dp" android:paddingTop="12dp" android:paddingEnd="20dp" android:paddingBottom="20dp" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+</LinearLayout>
