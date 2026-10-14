@@ -146,6 +146,19 @@ Move from **demo-verified** (mock data, happy path) to **properly-tested** (real
 
 ---
 
+## Report Contribution (for submission)
+
+Each person writes their section:
+
+- **Person A:** Sandbox execution engine, Room entities + DAOs, SQLCipher setup, Git simulator (Week 3)
+- **Person B:** UI/UX architecture, Kotlin-Java interop, screen flow, ViewModel patterns
+- **Person C:** FastAPI architecture, SQLAlchemy models, sync idempotency, AI-limit enforcement
+- **Person D:** Network layer (Retrofit + OkHttp), security (HashIdManager, SecurePreferences), offline sync engine, CI/CD, testing infrastructure, integration results
+
+Each section should cover: what you built, why (design decisions), what worked, what's mocked/post-MVP, evidence (screenshots, test logs).
+
+---
+
 ## Out of Scope (Documented, Post-MVP)
 
 - Whisper API real integration (stubbed)
