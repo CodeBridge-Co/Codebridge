@@ -58,7 +58,7 @@ CodeBridge follows a four-tier architecture.
 
 Tier 1: Client / Actor Layer
 - Student (Android)
-- Employer / Company (API / Swagger)
+- Employer / Company (API)
 
 Tier 2: Presentation Tier - Android Mobile Client
 - Native UI (Kotlin + XML)
