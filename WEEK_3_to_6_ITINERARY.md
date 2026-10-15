@@ -1,6 +1,6 @@
 # CodeBridge — Itinerary to Final Presentation
 
-**Team:** Person A (Android Core), Person B (UI), Person C (Backend), Person D (Network / Security / Infra / Testing)
+**Team:** Android Core & UI Lead, Backend Lead, DevSecOps Lead
 **Today:** Thursday, Week 3
 **Final Presentation:** Week 6
 
@@ -22,12 +22,12 @@ All finalisation happens on Thursday. No weekend work counts as a deadline.
 
 **Goal:** Complete all P0 tasks from `TESTING_PREP.md`. No new features.
 
-| Owner | Task | By |
-|---|---|---|
-| Person D | Real backend integration test, offline sync test | Thu Oct 16 |
-| Person A | CodeExecutionEngine tests, TelemetrySink, TLS wiring | Thu Oct 16 |
-| Person B | Register screen + push branch to origin | Thu Oct 16 |
-| Person C | Expand pytest suite, Company + Event models | Thu Oct 16 |
+| Owner | Task |
+|---|---|
+| DevSecOps Lead | Real backend integration test, offline sync test |
+| Android Core | CodeExecutionEngine tests, TelemetrySink, TLS wiring |
+| Android UI | Register screen + push branch to origin |
+| Backend Lead | Expand pytest suite, Company + Event models |
 
 **End of week:** All P0 tasks done. CI green.
 
