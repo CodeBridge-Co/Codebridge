@@ -285,12 +285,12 @@ Full rationale in docs/architecture.md.
 
 ## Team and Responsibilities
 
-| Person | Role | Owns |
-|---|---|---|
-| A | Android Core Engines | core/database, core/sandbox, core/git, core/speech, domain use cases |
-| B | Android UI/UX | feature/*, ui/, layouts, ViewModels, navigation |
-| C | Backend Lead | Entire backend/, FastAPI routes, SQLAlchemy models, migrations |
-| D | Network, Security, Data, Infra | core/network, core/security, core/data, infra/, .github/, docs/, testing infra |
+| Role | Owns |
+|---|---|
+| Android Core Engines | core/database, core/sandbox, core/git, core/speech, domain use cases |
+| Android UI/UX | feature/*, ui/, layouts, ViewModels, navigation |
+| Backend Lead | Entire backend/, FastAPI routes, SQLAlchemy models, migrations |
+| Network, Security, Data, Infra | core/network, core/security, core/data, infra/, .github/, docs/, testing infra |
 
 Detailed task ownership and integration notes: HANDOVER.md.
 
