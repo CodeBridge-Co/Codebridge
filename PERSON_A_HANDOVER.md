@@ -56,8 +56,8 @@ engine.executeAsync(userCode, problem.testCasesJson, result -> {
 |---|---|
 | `core/database` | Done (encrypted Room, 6 entities and DAOs, `SyncQueue`) |
 | `core/sandbox` | **Done**, 23 unit tests passing, not yet run on a device |
-| `core/git` (conflict simulator) | Next (Week 3): lightweight command parser, no JGit |
-| `core/speech` | Week 3. `KeywordAnalyzer` and `TechnicalVocabulary` are **not in the repo** and will be rebuilt or recovered, then wired to `SpeechRecorder` and `SpeechRecognizerManager` |
+| `core/git` (conflict simulator) | **Done** and wired to the Git screen. Lightweight parser, real 3-way merge with conflict markers, 40 unit tests. Not yet run on a device |
+| `core/speech` | **Done** and wired to the Speech screen: `SpeechRecognizerManager` (Android recognizer, prefers offline), `SpeechRecorder`, `KeywordAnalyzer`, `TechnicalVocabulary`; 23 unit tests. Not yet run on a device. Keyword density = technical words / total words (0 to 1) |
 
 **Known gaps:** a loop that allocates memory endlessly could still exhaust memory (only time and stack are limited), and the sandbox has no on-device test yet. `.gradle/` and `build/` are tracked in git and should be added to `.gitignore`.
 

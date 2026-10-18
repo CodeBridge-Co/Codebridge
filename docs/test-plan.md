@@ -8,8 +8,8 @@ This document outlines the testing strategy for the CodeBridge system, covering 
 | Area | Target Classes | Owner | Description |
 | :--- | :--- | :--- | :--- |
 | **Android Sandbox** | `CodeExecutionEngine`, `JavaSandbox`, `TestCaseRunner` | thatomoloto | Validate local code compilation and test case execution. |
-| **Android Git** | `GitSimulationManager`, `JGitWrapper`, `MergeConflictGenerator` | thatomoloto | Test Git command parsing and merge conflict simulation. |
-| **Android Speech** | `SpeechRecorder`, `KeywordAnalyzer` | thatomoloto | Test audio recording and keyword density calculation. |
+| **Android Git** | `GitSimulationManager`, `CommandParser`, `MergeConflictGenerator` | thatomoloto | Test Git command parsing and merge conflict simulation. |
+| **Android Speech** | `SpeechRecorder`, `KeywordAnalyzer`, `TechnicalVocabulary` | thatomoloto | Test audio recording and keyword density calculation. |
 | **Android UI** | ViewModels (`AuthViewModel`, `SandboxViewModel`) | thatomoloto | Test state management and UI logic. |
 | **Android Network** | `ApiService`, `ErrorParser`, `RetrofitClient` | Lebo624 | Validate Retrofit endpoints, interceptors, and DTO parsing. |
 | **Android Security** | `HashIdManager`, `SecurePreferences`, `AiRestrictionManager` | Lebo624 | Test hash generation, encrypted storage, and AI limits. |
