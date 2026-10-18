@@ -35,6 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:id="@+id/tvHeaderTitle"
                 android:text="Two Sum · Easy"
                 android:textSize="15sp" />
         </FrameLayout>
@@ -404,6 +405,65 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- MERGE CONFLICT editor (shown only while files are unmerged) -->
+        <LinearLayout
+            android:id="@+id/cardConflict"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card_outline"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/CbText.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MERGE CONFLICT"
+                android:textColor="@color/cb_red"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/tvConflictFile"
+                style="@style/CbText.Strong"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="monospace"
+                android:textSize="12sp" />
+
+            <TextView
+                style="@style/CbText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Edit the file, remove the &lt;&lt;&lt;&lt;&lt;&lt;&lt;, ======= and &gt;&gt;&gt;&gt;&gt;&gt;&gt; lines, keep the code you want, save, then run git add and git commit." />
+
+            <EditText
+                android:id="@+id/etConflictEditor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_code_input"
+                android:fontFamily="monospace"
+                android:gravity="top|start"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:minLines="8"
+                android:padding="10dp"
+                android:textColor="@color/cb_bg"
+                android:textSize="11sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveConflict"
+                style="@style/CbButton.Green.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Save file" />
+        </LinearLayout>
+
         <!-- QUICK COMMANDS Card -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -583,6 +643,7 @@
                             android:background="@drawable/bg_tag_dark"
                             android:paddingHorizontal="6dp"
                             android:paddingVertical="2dp"
+                            android:id="@+id/tvBranchTag"
                             android:text="solution"
                             android:textColor="@color/cb_bg"
                             android:textSize="9sp" />

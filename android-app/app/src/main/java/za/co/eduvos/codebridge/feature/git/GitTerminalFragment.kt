@@ -1,6 +1,8 @@
 package za.co.eduvos.codebridge.feature.git
 
 import android.os.Bundle
+import android.text.TextUtils
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,20 +11,50 @@ import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.MainActivity
-import za.co.eduvos.codebridge.ui.Week3Label
+import za.co.eduvos.codebridge.core.database.AppDatabase
+import za.co.eduvos.codebridge.core.git.CommandLogger
+import za.co.eduvos.codebridge.core.git.GitSimulationManager
+import za.co.eduvos.codebridge.core.git.GitTelemetryCollector
+import za.co.eduvos.codebridge.core.git.MergeConflictGenerator
+import za.co.eduvos.codebridge.core.git.RoomGitLogSink
+import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.databinding.FragmentGitBinding
 import za.co.eduvos.codebridge.feature.speech.SpeechFragment
+import java.util.function.LongSupplier
 
 class GitFragment : Fragment() {
 
     private var _binding: FragmentGitBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var git: GitSimulationManager
     private val lines = mutableListOf<String>()
-    private var modified = false
-    private var staged = false
-    private var committed = false
-    private var pushed = false
+    private var editingFile: String? = null
+    private var announcedComplete = false
+
+    companion object {
+        /** Placeholder until assessment sessions are created in the app; the logs are still stored. */
+        private const val SESSION_ID = 1
+        private const val MAX_LINES = 80
+        private const val GREY = "#9AA39C"
+        private const val RED = "#FF8A8A"
+        private const val AMBER = "#FFB74D"
+        private const val GREEN = "#58CC02"
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val ctx = requireContext().applicationContext
+        val clock = LongSupplier { System.currentTimeMillis() }
+        // Same student always gets the same exercise.
+        val seed = UserIdentity.displayId(ctx).hashCode().toLong()
+        val scenario = MergeConflictGenerator.generate(seed, clock)
+        val logger = CommandLogger(RoomGitLogSink(AppDatabase.getInstance(ctx).gitCommandDao()), SESSION_ID, clock)
+        git = GitSimulationManager(scenario, logger, GitTelemetryCollector(clock), clock)
+
+        add(GREY, "Your branch ${git.state.currentBranch} has diverged from ${scenario.targetBranch}.")
+        add(GREY, "Merge ${scenario.targetBranch} into it, resolve the conflict, then push.")
+    }
 
     override fun onCreateView(i: LayoutInflater, c: ViewGroup?, s: Bundle?): View {
         _binding = FragmentGitBinding.inflate(i, c, false)
@@ -30,94 +62,136 @@ class GitFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Week3Label.attach(binding.root, "Git simulator coming. Terminal is demo only")
+        val target = git.scenario.targetBranch
         binding.stepper.setStep(1)
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+        binding.tvHeaderTitle.text = "${git.scenario.title} · Git"
 
         binding.btnRunCmd.setOnClickListener { runCommand() }
         binding.etCommand.setOnEditorActionListener { _, id, _ ->
             if (id == EditorInfo.IME_ACTION_DONE) { runCommand(); true } else false
         }
         listOf(
-            binding.chip0 to "git status", binding.chip1 to "git add .",
-            binding.chip2 to "git commit -m \"solution\"", binding.chip3 to "git push"
-        ).forEach { (chip, cmd) -> chip.setOnClickListener { binding.etCommand.setText(cmd) } }
+            binding.chip0 to "git status",
+            binding.chip1 to "git merge $target",
+            binding.chip2 to "git add .",
+            binding.chip3 to "git commit -m \"Merge $target\""
+        ).forEach { (chip, cmd) ->
+            chip.text = "> $cmd"
+            chip.setOnClickListener { binding.etCommand.setText(cmd) }
+        }
 
         binding.btnClear.setOnClickListener { lines.clear(); render() }
         binding.btnTrash.setOnClickListener { lines.clear(); render() }
 
+        binding.btnSaveConflict.setOnClickListener {
+            val file = editingFile ?: return@setOnClickListener
+            git.writeFile(file, binding.etConflictEditor.text.toString())
+            add(GREY, "Saved $file. Now run: git add $file")
+            render()
+        }
+
         binding.btnViewGuide.setOnClickListener {
             Toast.makeText(requireContext(), "Opening Git Concepts Guide...", Toast.LENGTH_SHORT).show()
         }
+        binding.btnPush.setOnClickListener { advance() }
 
-        binding.btnPush.setOnClickListener {
-            (requireActivity() as MainActivity).open(SpeechFragment())
-        }
-
-        updateWorkflowUi()
+        refresh()
         render()
     }
 
     private fun runCommand() {
         val cmd = binding.etCommand.text.toString().trim()
         if (cmd.isEmpty()) return
-        add("<font color='#58CC02'>$</font> $cmd")
-        when {
-            cmd == "git status" -> {
-                modified = true
-                add(
-                    if (!staged) "<font color='#9AA39C'>modified: src/TwoSum.java</font>"
-                    else "<font color='#9AA39C'>Changes to be committed: src/TwoSum.java</font>"
-                )
-            }
-            cmd.startsWith("git add") -> {
-                modified = true
-                staged = true
-                add("<font color='#9AA39C'>1 file staged</font>")
-            }
-            cmd.startsWith("git commit") -> {
-                if (staged) {
-                    committed = true
-                    add("[main c8d4e2] solution")
-                } else {
-                    add("<font color='#FF8A8A'>nothing staged to commit</font>")
+        add(GREEN, "$", cmd)
+
+        val result = git.execute(cmd)
+        if (result.output.isNotEmpty()) {
+            for (line in result.output.split("\n")) {
+                val colour = when {
+                    result.isError -> RED
+                    line.startsWith("CONFLICT") || line.startsWith("warning:") -> AMBER
+                    else -> GREY
                 }
+                add(colour, line)
             }
-            cmd.startsWith("git push") -> {
-                if (committed) {
-                    pushed = true
-                    add("Pushed to origin/main")
-                } else {
-                    add("<font color='#FF8A8A'>nothing to push — commit first</font>")
-                }
-            }
-            else -> add("<font color='#FF8A8A'>command not recognised</font>")
         }
         binding.etCommand.text?.clear()
-        updateWorkflowUi()
+
+        if (git.isTaskComplete && !announcedComplete) {
+            announcedComplete = true
+            add(GREEN, "Merge resolved and pushed. You can advance to the interview stage.")
+        }
+        refresh()
         render()
     }
 
-    private fun updateWorkflowUi() {
-        binding.tvWorkingBadge.text = if (modified) "1" else "0"
-        binding.tvWorkingSubtitle.text = if (modified) "1 Changed file" else "0 Changed files"
-
-        binding.tvStagedBadge.text = if (staged) "1" else "0"
-        binding.tvStagedSubtitle.text = if (staged) "1 file staged" else "0 files staged"
-
-        binding.tvCommittedSubtitle.text = if (committed) "1 Commit" else "0 Commits"
-        binding.tvPushedSubtitle.text = if (pushed) "Published" else "Not published"
-
-        if (committed) {
-            binding.cardCommitHistory.visibility = View.VISIBLE
-            binding.tvEmptyCommitHistory.visibility = View.GONE
+    /** Pushes the Git stage forward only once the merge is committed cleanly and pushed. */
+    private fun advance() {
+        if (git.isTaskComplete) {
+            (requireActivity() as MainActivity).open(SpeechFragment())
         } else {
-            binding.cardCommitHistory.visibility = View.GONE
-            binding.tvEmptyCommitHistory.visibility = View.VISIBLE
+            Toast.makeText(requireContext(), nextHint(), Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun add(line: String) { lines.add(line); if (lines.size > 8) lines.removeAt(0) }
+    private fun nextHint(): String {
+        val st = git.state
+        val target = git.scenario.targetBranch
+        return when {
+            st.conflictedFiles.isNotEmpty() ->
+                "Resolve ${st.conflictedFiles.first()}: edit, save, then git add it"
+            st.isMerging -> "Conflicts fixed. Run git commit to finish the merge"
+            st.head.parents.size < 2 -> "Merge $target into your branch: git merge $target"
+            !st.isPushed -> "Push your work: git push"
+            else -> "The merge still contains conflict markers. Fix them and commit again"
+        }
+    }
+
+    private fun refresh() {
+        val st = git.state
+
+        val unstaged = st.unstagedCount()
+        binding.tvWorkingBadge.text = unstaged.toString()
+        binding.tvWorkingSubtitle.text = if (unstaged == 1) "1 Changed file" else "$unstaged Changed files"
+
+        val staged = st.stagedCount()
+        binding.tvStagedBadge.text = staged.toString()
+        binding.tvStagedSubtitle.text = if (staged == 1) "1 file staged" else "$staged files staged"
+
+        val toPush = st.unpushedCommitCount()
+        binding.tvCommittedSubtitle.text = if (toPush == 1) "1 Commit to push" else "$toPush Commits to push"
+        binding.tvPushedSubtitle.text = if (st.isPushed) "Published" else "Not published"
+
+        val head = st.head
+        binding.cardCommitHistory.visibility = View.VISIBLE
+        binding.tvEmptyCommitHistory.visibility = View.GONE
+        binding.tvCommitMsg.text = head.message
+        binding.tvBranchTag.text = st.currentBranch
+        binding.tvCommitTime.text = DateUtils.getRelativeTimeSpanString(
+            head.time, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS
+        )
+        binding.tvCommitMeta.text = "${head.shortId()} · ${head.parents.size} parent(s)"
+
+        val conflicted = st.conflictedFiles
+        if (conflicted.isEmpty()) {
+            binding.cardConflict.visibility = View.GONE
+            editingFile = null
+        } else {
+            binding.cardConflict.visibility = View.VISIBLE
+            val file = conflicted.first()
+            if (editingFile != file) {
+                editingFile = file
+                binding.tvConflictFile.text = file
+                binding.etConflictEditor.setText(git.readFile(file))
+            }
+        }
+    }
+
+    private fun add(colour: String, vararg parts: String) {
+        lines.add("<font color='$colour'>${parts.joinToString(" ") { TextUtils.htmlEncode(it) }}</font>")
+        while (lines.size > MAX_LINES) lines.removeAt(0)
+    }
 
     private fun render() {
         binding.tvTerminal.text = HtmlCompat.fromHtml(lines.joinToString("<br>"), HtmlCompat.FROM_HTML_MODE_LEGACY)
