@@ -3,14 +3,26 @@ from pydantic import BaseModel
 
 router = APIRouter()
 
-class AuthResponse(BaseModel):
-    token: str
-    student_id: str
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+    role: str  # "STUDENT", "COMPANY", or "ADMIN"
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
-def register_student():
-    return {"status": "success", "message": "Student registered successfully"}
-
-@router.post("/login", response_model=AuthResponse)
-def login_student():
-    return {"token": "mock-jwt-token-xyz", "student_id": "student-123"}
+@router.post("/login")
+def login(payload: LoginRequest):
+    role = payload.role.upper()
+    
+    if role == "STUDENT":
+        # TODO: Query STUDENT table
+        return {"status": "success", "role": "STUDENT", "token": "mock-student-jwt"}
+        
+    elif role == "COMPANY":
+        # TODO: Query COMPANY table
+        return {"status": "success", "role": "COMPANY", "token": "mock-company-jwt"}
+        
+    elif role == "ADMIN":
+        if payload.email == "admin@codebridge.com" and payload.password == "admin123":
+            return {"status": "success", "role": "ADMIN", "token": "mock-admin-jwt"}
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid admin credentials")
+        
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid role specified")
