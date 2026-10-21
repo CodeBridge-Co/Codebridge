@@ -50,10 +50,11 @@ class Company(Base):
     email = Column(String, unique=True, index=True)        # Added for login
     password_hash = Column(String)                         # Added for login
 
-class ProblemModel(Base):
+class Problem(Base):
     __tablename__ = "problems"
     problem_id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     difficulty_level = Column(String)
     test_cases_json = Column(Text)
-    company_id = Column(Integer, ForeignKey("companies.company_id"), nullable=True) # Added for company challenges
+    # Don't forget to add the company_id we discussed earlier!
+    company_id = Column(Integer, ForeignKey("companies.company_id"), nullable=True)
