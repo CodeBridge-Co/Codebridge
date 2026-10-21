@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, func
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, func, Float
 from sqlalchemy.orm import DeclarativeBase
 
 class Base(DeclarativeBase):
@@ -33,7 +33,8 @@ class TelemetryLog(Base):
     execution_speed_ms = Column(Integer)
     correctness_score = Column(Float)
     git_error_count = Column(Integer)
-    speech_keyword_density = Column(Float)
+    ai_access_attempts = Column(Integer, default=0)  # Added for security tracking
+    video_tracking_json = Column(Text, nullable=True) # Replaced speech_keyword_density
 
 class RewardProgress(Base):
     __tablename__ = "reward_progress"
@@ -46,6 +47,8 @@ class Company(Base):
     __tablename__ = "companies"
     company_id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
+    email = Column(String, unique=True, index=True)        # Added for login
+    password_hash = Column(String)                         # Added for login
 
 class ProblemModel(Base):
     __tablename__ = "problems"
@@ -53,3 +56,4 @@ class ProblemModel(Base):
     title = Column(String, index=True)
     difficulty_level = Column(String)
     test_cases_json = Column(Text)
+    company_id = Column(Integer, ForeignKey("companies.company_id"), nullable=True) # Added for company challenges
