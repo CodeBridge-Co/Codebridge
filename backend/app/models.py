@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Text, DateTime, Integer, Float, func
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, func
 from sqlalchemy.orm import DeclarativeBase
 
 class Base(DeclarativeBase):
@@ -17,14 +17,6 @@ class Student(Base):
     institution_id = Column(String)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-# Added Problem model for problem/ endpoints
-class Problem(Base):
-    __tablename__ = "problems"
-    problem_id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    difficulty_level = Column(String)
-    test_cases_json = Column(Text)
-
 class AssessmentSession(Base):
     __tablename__ = "assessment_sessions"
     session_id = Column(String, primary_key=True, index=True)
@@ -42,7 +34,6 @@ class TelemetryLog(Base):
     correctness_score = Column(Float)
     git_error_count = Column(Integer)
     speech_keyword_density = Column(Float)
-    ai_access_attempts = Column(Integer)
 
 class RewardProgress(Base):
     __tablename__ = "reward_progress"
@@ -50,3 +41,15 @@ class RewardProgress(Base):
     streak_count = Column(Integer, default=0)
     xp_points = Column(Integer, default=0)
     badges_json = Column(Text, default="[]")
+
+class Company(Base):
+    __tablename__ = "companies"
+    company_id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+
+class ProblemModel(Base):
+    __tablename__ = "problems"
+    problem_id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    difficulty_level = Column(String)
+    test_cases_json = Column(Text)
