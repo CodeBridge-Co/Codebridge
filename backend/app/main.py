@@ -167,7 +167,6 @@ async def sync_data(payload: SyncPayload, db: AsyncSession = Depends(get_db)):
                         execution_speed_ms=p.get("execution_speed_ms", 0),
                         correctness_score=p.get("correctness_score", 0.0),
                         git_error_count=p.get("git_error_count", 0),
-                        speech_keyword_density=p.get("speech_keyword_density", 0.0),
                         ai_access_attempts=p.get("ai_access_attempts", 0),
                     ))
             saved += 1
@@ -206,8 +205,6 @@ async def ai_assist(req: AiAssistRequest = Body(...)):
     ai_usage[req.session_id] = used + 1
     return AiAssistResponse(allowed=True, remaining_uses=AI_LIMIT - (used + 1))
 
-
-@app.post("/speech/transcribe", response_model=SpeechResult)
 async def transcribe():
     return SpeechResult(
         transcript="This is a mocked transcript of the assessment audio recording.",
