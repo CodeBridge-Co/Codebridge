@@ -1,4 +1,4 @@
-package za.co.eduvos.codebridge.feature.auth // Or whatever your UI package is
+package za.co.eduvos.codebridge.feature.auth
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.webkit.WebView
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import za.co.eduvos.codebridge.BuildConfig
 import za.co.eduvos.codebridge.R
-import za.co.eduvos.codebridge.core.common.NetworkConfig // Assuming you have your Base URL here
 
 class AdminCompanyPortalActivity : AppCompatActivity() {
 
@@ -19,16 +19,17 @@ class AdminCompanyPortalActivity : AppCompatActivity() {
         val webView = findViewById<WebView>(R.id.webView)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
 
-        // Enable JavaScript for Swagger UI to work properly
+        // Enables JavaScript for Swagger UI to work properly
         webView.settings.javaScriptEnabled = true
         
-        // Load the Swagger docs using your Retrofit Base URL
-        // E.g., "http://10.0.2.2:8000/docs"
-        webView.loadUrl("${NetworkConfig.BASE_URL}docs")
+        // BuildConfig.BASE_URL always ends with a "/" (required by Retrofit)
+        // So this will correctly load "http://10.0.2.2:8000/docs"
+        webView.loadUrl("${BuildConfig.BASE_URL}docs")
 
         btnLogout.setOnClickListener {
-            // Clear session and go back to login
-            val intent = Intent(this, AuthActivity::class.java) // Use your actual Auth/Login Activity class here
+            // Route back to the AuthActivity
+            val intent = Intent(this, AuthActivity::class.java)
+            // Clear the backstack so the user can't press back to get into the portal again
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
