@@ -70,7 +70,7 @@ public class MockPipelineTest {
 
     @Test
     public void loginReturnsTokenAndHash() throws IOException {
-        Response<LoginResponse> r = api.login(new LoginRequest("some-hash", "inst-1")).execute();
+        Response<LoginResponse> r = api.login(new LoginRequest("some-hash", "inst-1", "STUDENT")).execute();
         assertTrue(r.isSuccessful());
         assertNotNull(r.body());
         assertEquals("mock_jwt_token", r.body().getToken());
