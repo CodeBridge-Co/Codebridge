@@ -77,9 +77,13 @@ def read_root():
 def health():
     return {"data": "OK", "error": None, "status": "success"}
 
-
-@app.post("/auth/register", response_model=LoginResponse)
-async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
+@app.post("/auth/login", response_model=LoginResponse)
+async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
+    # 1. Handle Company/Admin (Mock login for MVP)
+    if req.role == "COMPANY" or req.role == "ADMIN":
+        # You can add real DB checks later, for now, just let them in
+        return LoginResponse(student_hash_id="company-admin-001", token="jwt-mock-token")
+        
     if await db.get(Student, req.student_hash_id) is None:
         db.add(Student(student_hash_id=req.student_hash_id, institution_id=req.institution_id))
         db.add(RewardProgress(student_hash_id=req.student_hash_id))
