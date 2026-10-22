@@ -58,15 +58,14 @@ class LoginFragment : Fragment() {
         binding.btnLogin.setOnClickListener { attemptLogin() }
     }
 
-    private fun attemptLogin() {
-        val studentNumber = binding.etStudentNumber.text?.toString()?.trim().orEmpty()
-        val institutionId = binding.etInstitution.text?.toString()?.trim().orEmpty()
+       private fun attemptLogin() {
+        val input1 = binding.etStudentNumber.text?.toString()?.trim().orEmpty()
+        val input2 = binding.etInstitution.text?.toString()?.trim().orEmpty()
 
-        binding.tilStudentNumber.error = if (studentNumber.isEmpty()) "Enter your ID/Email" else null
-        binding.tilInstitution.error = if (institutionId.isEmpty()) "Enter your institution ID" else null
-        if (studentNumber.isEmpty() || institutionId.isEmpty()) return
+        binding.tilStudentNumber.error = if (input1.isEmpty()) "Required" else null
+        binding.tilInstitution.error = if (input2.isEmpty()) "Required" else null
+        if (input1.isEmpty() || input2.isEmpty()) return
 
-        // Determine the selected role from the RadioGroup
         val selectedRole = when (binding.roleGroup.checkedRadioButtonId) {
             R.id.radioCompany -> "COMPANY"
             R.id.radioAdmin -> "ADMIN"
@@ -74,18 +73,23 @@ class LoginFragment : Fragment() {
         }
 
         val appContext = requireContext().applicationContext
-        val hashId = try {
-            // We run the HashIdManager for everyone to keep the backend happy
-            HashIdManager(appContext).generateHashId(studentNumber)
-        } catch (e: RuntimeException) {
-            Toast.makeText(requireContext(), "Couldn't create a secure ID on this device", Toast.LENGTH_LONG).show()
-            return
+        
+        // To only hash if it's a student. Companies use their raw email.
+        val finalId = if (selectedRole == "STUDENT") {
+            try {
+                HashIdManager(appContext).generateHashId(input1)
+            } catch (e: RuntimeException) {
+                Toast.makeText(requireContext(), "Couldn't create a secure ID", Toast.LENGTH_LONG).show()
+                return
+            }
+        } else {
+            input1 // To send the raw email for Companies
         }
 
         binding.btnLogin.isEnabled = false
         
-        // Pass the selectedRole to the LoginRequest
-        RetrofitClient.getInstance().apiService.login(LoginRequest(hashId, institutionId, selectedRole))
+        // To send real data to backend
+        RetrofitClient.getInstance().apiService.login(LoginRequest(finalId, input2, selectedRole))
             .enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     if (_binding == null) return
@@ -93,13 +97,11 @@ class LoginFragment : Fragment() {
                     val token = response.body()?.token
                     if (response.isSuccessful && !token.isNullOrEmpty()) {
                         TokenManager.saveToken(token)
-                        UserIdentity.save(appContext, hashId)
+                        UserIdentity.save(appContext, finalId)
                         
-                        // Route based on role
                         if (selectedRole == "STUDENT") {
                             startActivity(Intent(requireContext(), HashIdGeneratedActivity::class.java))
                         } else {
-                            // Company and Admin go to the Swagger WebView
                             startActivity(Intent(requireContext(), AdminCompanyPortalActivity::class.java))
                         }
                         requireActivity().finish()
@@ -111,7 +113,7 @@ class LoginFragment : Fragment() {
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                     if (_binding == null) return
                     binding.btnLogin.isEnabled = true
-                    Toast.makeText(requireContext(), "Can't reach the server: ${t.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_LONG).show()
                 }
             })
     }
