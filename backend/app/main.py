@@ -11,7 +11,7 @@ from passlib.context import CryptContext
 
 from app.models import (
     Base, SyncLog, Student, Problem, AssessmentSession,
-    TelemetryLog, RewardProgress, Company,  # Added Company
+    TelemetryLog, RewardProgress, Company, 
 )
 from app.schemas import (
     RegisterRequest, LoginRequest, LoginResponse,
@@ -66,26 +66,15 @@ async def seed_data(session: AsyncSession):
         session.add(RewardProgress(student_hash_id="demo-student-001",
                                    streak_count=5, xp_points=1200, badges_json="[]"))
 
-    # 3. Seed Admin Account
+    # 3. Seed Master Company/Admin Account
     admin_email = "admin@codebridge.com"
     result = await session.execute(select(Company).where(Company.email == admin_email))
     if result.scalars().first() is None:
         session.add(Company(
             name="CodeBridge Admin", 
             email=admin_email, 
-            password_hash=pwd_context.hash("admin123"), 
-            is_admin=True
-        ))
-        
-    # 4. Seed Company Account
-    company_email = "hr@techcorp.com"
-    result = await session.execute(select(Company).where(Company.email == company_email))
-    if result.scalars().first() is None:
-        session.add(Company(
-            name="TechCorp", 
-            email=company_email, 
-            password_hash=pwd_context.hash("password123"), 
-            is_admin=False
+            password_hash=pwd_context.hash("ournames"), 
+            is_admin=True # This allows it to log in as BOTH Company and Admin
         ))
 
     await session.commit()
@@ -226,7 +215,7 @@ async def sync_data(payload: SyncPayload, db: AsyncSession = Depends(get_db)):
                         execution_speed_ms=p.get("execution_speed_ms", 0),
                         correctness_score=p.get("correctness_score", 0.0),
                         git_error_count=p.get("git_error_count", 0),
-                        video_tracking_json=p.get("video_tracking_json", "{}"), # Replaced Speech
+                        video_tracking_json=p.get("video_tracking_json", "{}"), 
                         ai_access_attempts=p.get("ai_access_attempts", 0),
                     ))
             saved += 1
@@ -264,5 +253,3 @@ async def ai_assist(req: AiAssistRequest = Body(...)):
         return AiAssistResponse(allowed=False, remaining_uses=0)
     ai_usage[req.session_id] = used + 1
     return AiAssistResponse(allowed=True, remaining_uses=AI_LIMIT - (used + 1))
-
-# NOTE: The /speech/transcribe mock endpoint has been completely removed as per the lecturer's feedback (No Whisper).
