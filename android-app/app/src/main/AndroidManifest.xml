@@ -38,6 +38,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".feature.auth.AdminCompanyPortalActivity" />
+
         <!-- Onboarding and hash ID screens -->
         <activity
             android:name=".feature.onboarding.OnboardingActivity"
