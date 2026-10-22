@@ -8,6 +8,7 @@ class RegisterRequest(BaseModel):
 class LoginRequest(BaseModel):
     student_hash_id: str
     institution_id: str
+    role: str
 
 class LoginResponse(BaseModel):
     student_hash_id: str
