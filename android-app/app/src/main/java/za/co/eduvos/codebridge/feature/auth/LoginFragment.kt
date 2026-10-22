@@ -62,12 +62,20 @@ class LoginFragment : Fragment() {
         val studentNumber = binding.etStudentNumber.text?.toString()?.trim().orEmpty()
         val institutionId = binding.etInstitution.text?.toString()?.trim().orEmpty()
 
-        binding.tilStudentNumber.error = if (studentNumber.isEmpty()) "Enter your student number" else null
+        binding.tilStudentNumber.error = if (studentNumber.isEmpty()) "Enter your ID/Email" else null
         binding.tilInstitution.error = if (institutionId.isEmpty()) "Enter your institution ID" else null
         if (studentNumber.isEmpty() || institutionId.isEmpty()) return
 
+        // Determine the selected role from the RadioGroup
+        val selectedRole = when (binding.roleGroup.checkedRadioButtonId) {
+            R.id.radioCompany -> "COMPANY"
+            R.id.radioAdmin -> "ADMIN"
+            else -> "STUDENT"
+        }
+
         val appContext = requireContext().applicationContext
         val hashId = try {
+            // We run the HashIdManager for everyone to keep the backend happy
             HashIdManager(appContext).generateHashId(studentNumber)
         } catch (e: RuntimeException) {
             Toast.makeText(requireContext(), "Couldn't create a secure ID on this device", Toast.LENGTH_LONG).show()
@@ -75,7 +83,9 @@ class LoginFragment : Fragment() {
         }
 
         binding.btnLogin.isEnabled = false
-        RetrofitClient.getInstance().apiService.login(LoginRequest(hashId, institutionId))
+        
+        // Pass the selectedRole to the LoginRequest
+        RetrofitClient.getInstance().apiService.login(LoginRequest(hashId, institutionId, selectedRole))
             .enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     if (_binding == null) return
@@ -84,7 +94,14 @@ class LoginFragment : Fragment() {
                     if (response.isSuccessful && !token.isNullOrEmpty()) {
                         TokenManager.saveToken(token)
                         UserIdentity.save(appContext, hashId)
-                        startActivity(Intent(requireContext(), HashIdGeneratedActivity::class.java))
+                        
+                        // Route based on role
+                        if (selectedRole == "STUDENT") {
+                            startActivity(Intent(requireContext(), HashIdGeneratedActivity::class.java))
+                        } else {
+                            // Company and Admin go to the Swagger WebView
+                            startActivity(Intent(requireContext(), AdminCompanyPortalActivity::class.java))
+                        }
                         requireActivity().finish()
                     } else {
                         Toast.makeText(requireContext(), "Login failed (${response.code()})", Toast.LENGTH_LONG).show()
