@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, func, Float
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import Boolean
 
 class Base(DeclarativeBase):
     pass
@@ -47,8 +48,9 @@ class Company(Base):
     __tablename__ = "companies"
     company_id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
-    email = Column(String, unique=True, index=True)        # Added for login
-    password_hash = Column(String)                         # Added for login
+    email = Column(String, unique=True, index=True)
+    password_hash = Column(String)
+    is_admin = Column(Boolean, default=False)
 
 class Problem(Base):
     __tablename__ = "problems"
