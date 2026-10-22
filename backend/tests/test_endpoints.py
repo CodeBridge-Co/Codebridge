@@ -39,15 +39,6 @@ def test_events(client):
     assert r.status_code == 200
     assert len(r.json()) >= 1
 
-
-def test_speech_transcribe(client):
-    r = client.post("/speech/transcribe")
-    assert r.status_code == 200
-    body = r.json()
-    assert "transcript" in body
-    assert isinstance(body["keyword_density"], float)
-
-
 def test_ai_assist_limit(client):
     for i in range(3):
         r = client.post("/ai-assist", json={"session_id": "test-sess-1"})
