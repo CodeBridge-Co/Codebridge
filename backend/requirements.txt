@@ -8,3 +8,5 @@ python-dotenv
 pytest
 httpx
 aiosqlite
+python-jose[cryptography]
+passlib[bcrypt]
