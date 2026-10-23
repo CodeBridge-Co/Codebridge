@@ -36,6 +36,9 @@ class LoginFragment : Fragment() {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
+        binding.tvRegisterCompany.setOnClickListener {
+            showCompanyRegistrationDialog()
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -71,6 +74,51 @@ class LoginFragment : Fragment() {
             R.id.radioAdmin -> "ADMIN"
             else -> "STUDENT"
         }
+
+        private fun showCompanyRegistrationDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_register_company, null)
+        val etCompanyName = dialogView.findViewById<TextInputEditText>(R.id.etRegCompanyName)
+        val etEmail = dialogView.findViewById<TextInputEditText>(R.id.etRegEmail)
+        val etPassword = dialogView.findViewById<TextInputEditText>(R.id.etRegPassword)
+
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Register Company")
+            .setView(dialogView)
+            .setPositiveButton("Register") { _, _ ->
+                val name = etCompanyName.text.toString().trim()
+                val email = etEmail.text.toString().trim()
+                val pass = etPassword.text.toString().trim()
+
+                if (name.isNotEmpty() && email.isNotEmpty() && pass.isNotEmpty()) {
+                    executeCompanyRegistration(name, email, pass)
+                } else {
+                    Toast.makeText(requireContext(), "All fields required", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun executeCompanyRegistration(name: String, email: String, pass: String) {
+        val request = RegisterCompanyRequest(email, name, pass)
+        
+        RetrofitClient.getInstance().apiService.registerCompany(request)
+            .enqueue(object : Callback<LoginResponse> {
+                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                    if (response.isSuccessful && response.body() != null) {
+                        TokenManager.saveToken(response.body()!!.token)
+                        Toast.makeText(requireContext(), "Company Registered!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(requireContext(), AdminCompanyPortalActivity::class.java))
+                        requireActivity().finish()
+                    } else {
+                        Toast.makeText(requireContext(), "Registration failed: ${response.code()}", Toast.LENGTH_LONG).show()
+                    }
+                }
+                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_LONG).show()
+                }
+            })
+    }
 
         val appContext = requireContext().applicationContext
         
