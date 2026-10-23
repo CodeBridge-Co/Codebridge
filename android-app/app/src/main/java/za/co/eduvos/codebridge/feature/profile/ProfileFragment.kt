@@ -40,33 +40,24 @@ class ProfileFragment : Fragment() {
         binding.tvRank.text = if (completed > 0) "Top ${100 - overallPct}%" else "Unranked"
         binding.tvAvatar.text = hashId.take(2).uppercase()
 
-        // --- NEW: EDIT PROFILE LOGIC ---
-        // (Make sure you have a button in your XML with the ID 'btnEditProfile')
-        try {
-            binding.btnEditProfile.setOnClickListener {
-                Toast.makeText(requireContext(), "Profile editing coming in V2!", Toast.LENGTH_SHORT).show()
-            }
-        } catch (e: Exception) {
-            // Button might not exist in XML, ignore
+        // 1. Edit Profile (Placeholder)
+        binding.btnEditProfile.setOnClickListener {
+            Toast.makeText(requireContext(), "Profile editing coming in V2!", Toast.LENGTH_SHORT).show()
         }
 
-        // --- NEW LOGOUT LOGIC ---
-        // (Make sure you have a button in your XML with the ID 'btnLogout')
-        try {
-            binding.btnLogout.setOnClickListener {
-                // 1. Clear the JWT token
-                TokenManager.clear()
-                
-                // 2. Route back to AuthActivity
-                val intent = Intent(requireContext(), AuthActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                
-                // 3. Kill the current activity so they can't press "Back"
-                requireActivity().finish()
-            }
-        } catch (e: Exception) {
-             // Button might not exist in XML, ignore
+        // 2. Logout Logic
+        binding.btnLogout.setOnClickListener {
+            // Clear the JWT token so the app forgets the user
+            TokenManager.clear()
+            
+            // Route back to AuthActivity (Login screen)
+            val intent = Intent(requireContext(), AuthActivity::class.java)
+            // Clear the backstack so they can't press "Back" to get into the app again
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            
+            // Destroy the current activity
+            requireActivity().finish()
         }
     }
 
