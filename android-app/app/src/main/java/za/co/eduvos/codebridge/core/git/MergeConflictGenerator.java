@@ -149,6 +149,33 @@ public final class MergeConflictGenerator {
         return new Scenario(t.title, s, "main", m1.id, file);
     }
 
+    /** Which side of a conflict to keep when resolving automatically. */
+    public enum Resolution { OURS, THEIRS, BOTH }
+
+    /**
+     * Removes every conflict block from {@code text}, keeping our side, their side, or both (ours first).
+     * Text outside conflict blocks is untouched. Returns null for null input.
+     */
+    public static String resolve(String text, Resolution keep) {
+        if (text == null) return null;
+        List<String> out = new ArrayList<>();
+        int mode = 0; // 0 = normal text, 1 = inside our side, 2 = inside their side
+        for (String line : text.split("\n", -1)) {
+            if (mode == 0 && line.startsWith(MARK_OURS)) {
+                mode = 1;
+            } else if (mode == 1 && line.equals(MARK_SEP)) {
+                mode = 2;
+            } else if (mode == 2 && line.startsWith(MARK_THEIRS)) {
+                mode = 0;
+            } else if (mode == 0
+                    || (mode == 1 && keep != Resolution.THEIRS)
+                    || (mode == 2 && keep != Resolution.OURS)) {
+                out.add(line);
+            }
+        }
+        return String.join("\n", out);
+    }
+
     public static boolean hasConflictMarkers(String text) {
         if (text == null) return false;
         for (String line : text.split("\n", -1)) {

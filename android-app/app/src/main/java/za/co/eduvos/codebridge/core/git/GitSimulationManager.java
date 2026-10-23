@@ -68,11 +68,27 @@ public class GitSimulationManager {
     public synchronized boolean isTaskComplete() {
         if (s.isMerging() || !s.conflicted.isEmpty()) return false;
         Commit head = s.getHead();
-        if (head.parents.size() != 2 || !s.isAncestor(scenario.targetTip, head.id)) return false;
+        // The target branch must be merged in, but HEAD need not be the merge commit itself:
+        // a student who committed markers by mistake can finish with a follow-up fix commit.
+        if (!s.isAncestor(scenario.targetTip, head.id)) return false;
         for (String content : head.files.values()) {
             if (MergeConflictGenerator.hasConflictMarkers(content)) return false;
         }
         return s.isPushed();
+    }
+
+    /** True once the target branch's tip is part of the current branch's history. */
+    public synchronized boolean hasMergedTarget() {
+        return s.isAncestor(scenario.targetTip, s.getHead().id);
+    }
+
+    /** Files in the working tree that still contain conflict markers, even after they were staged. */
+    public synchronized List<String> filesWithMarkers() {
+        List<String> found = new ArrayList<>();
+        for (Map.Entry<String, String> e : s.workingTree.entrySet()) {
+            if (MergeConflictGenerator.hasConflictMarkers(e.getValue())) found.add(e.getKey());
+        }
+        return found;
     }
 
     // ---- command execution ----
@@ -252,7 +268,28 @@ public class GitSimulationManager {
         return new Result("", false);
     }
 
+    /** git checkout --ours|--theirs <file>: take one side's version of a file during a merge. */
+    private Result checkoutSide(Command c) {
+        boolean ours = c.has("ours");
+        if (c.args.isEmpty()) {
+            return new Result("error: --" + (ours ? "ours" : "theirs") + " needs a file path, e.g. src/solution.js", true);
+        }
+        if (!s.isMerging()) {
+            return new Result("error: --ours/--theirs only works while a merge is in progress. "
+                    + "Edit the file instead.", true);
+        }
+        String path = c.args.get(0);
+        Commit side = ours ? s.getHead() : s.commits.get(s.mergeHead);
+        String content = side.files.get(path);
+        if (content == null) {
+            return new Result("error: path '" + path + "' does not have " + (ours ? "our" : "their") + " version", true);
+        }
+        s.workingTree.put(path, content);
+        return new Result("Updated 1 path from the index", false);
+    }
+
     private Result checkout(Command c) {
+        if (c.has("ours") || c.has("theirs")) return checkoutSide(c);
         if (c.args.isEmpty()) return new Result("error: branch name required", true);
         String name = c.args.get(0);
         boolean create = c.has("b") || c.has("c");

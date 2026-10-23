@@ -438,7 +438,40 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Edit the file, remove the &lt;&lt;&lt;&lt;&lt;&lt;&lt;, ======= and &gt;&gt;&gt;&gt;&gt;&gt;&gt; lines, keep the code you want, save, then run git add and git commit." />
+                android:text="Tap a button to keep one side, or edit the text yourself and remove the &lt;&lt;&lt;&lt;&lt;&lt;&lt;, ======= and &gt;&gt;&gt;&gt;&gt;&gt;&gt; lines. Then run git add, git commit and git push." />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnKeepMine"
+                    style="@style/CbButton.Outline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:text="Keep mine" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnKeepTheirs"
+                    style="@style/CbButton.Outline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:text="Keep theirs" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnKeepBoth"
+                    style="@style/CbButton.Outline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Keep both" />
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/etConflictEditor"

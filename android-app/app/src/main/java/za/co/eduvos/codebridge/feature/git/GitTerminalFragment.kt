@@ -14,6 +14,7 @@ import za.co.eduvos.codebridge.MainActivity
 import za.co.eduvos.codebridge.core.database.AppDatabase
 import za.co.eduvos.codebridge.core.git.CommandLogger
 import za.co.eduvos.codebridge.core.git.GitSimulationManager
+import za.co.eduvos.codebridge.core.git.GitTelemetryReporter
 import za.co.eduvos.codebridge.core.git.GitTelemetryCollector
 import za.co.eduvos.codebridge.core.git.MergeConflictGenerator
 import za.co.eduvos.codebridge.core.git.RoomGitLogSink
@@ -30,6 +31,7 @@ class GitFragment : Fragment() {
     private lateinit var git: GitSimulationManager
     private val lines = mutableListOf<String>()
     private var editingFile: String? = null
+    private var loadedContent: String? = null
     private var announcedComplete = false
 
     companion object {
@@ -86,10 +88,17 @@ class GitFragment : Fragment() {
 
         binding.btnSaveConflict.setOnClickListener {
             val file = editingFile ?: return@setOnClickListener
-            git.writeFile(file, binding.etConflictEditor.text.toString())
-            add(GREY, "Saved $file. Now run: git add $file")
+            val text = binding.etConflictEditor.text.toString()
+            git.writeFile(file, text)
+            loadedContent = text
+            add(GREY, "Saved $file. Next: git add $file, git commit, git push")
+            refresh()
             render()
         }
+
+        binding.btnKeepMine.setOnClickListener { keepSide(MergeConflictGenerator.Resolution.OURS, "your version") }
+        binding.btnKeepTheirs.setOnClickListener { keepSide(MergeConflictGenerator.Resolution.THEIRS, "${git.scenario.targetBranch}'s version") }
+        binding.btnKeepBoth.setOnClickListener { keepSide(MergeConflictGenerator.Resolution.BOTH, "both versions") }
 
         binding.btnViewGuide.setOnClickListener {
             Toast.makeText(requireContext(), "Opening Git Concepts Guide...", Toast.LENGTH_SHORT).show()
@@ -121,7 +130,21 @@ class GitFragment : Fragment() {
         if (git.isTaskComplete && !announcedComplete) {
             announcedComplete = true
             add(GREEN, "Merge resolved and pushed. You can advance to the interview stage.")
+            // Queue the Git results for Lebo's sync worker (stored locally, sent when online).
+            GitTelemetryReporter.report(requireContext(), SESSION_ID, git.telemetry.snapshot())
         }
+        refresh()
+        render()
+    }
+
+    /** Resolves every conflict block in the open file in one tap, then saves it. Staging is still up to the student. */
+    private fun keepSide(side: MergeConflictGenerator.Resolution, label: String) {
+        val file = editingFile ?: return
+        val resolved = MergeConflictGenerator.resolve(binding.etConflictEditor.text.toString(), side)
+        binding.etConflictEditor.setText(resolved)
+        git.writeFile(file, resolved)
+        loadedContent = resolved
+        add(GREY, "Kept $label in $file and saved it. Next: git add $file, git commit, git push")
         refresh()
         render()
     }
@@ -138,13 +161,17 @@ class GitFragment : Fragment() {
     private fun nextHint(): String {
         val st = git.state
         val target = git.scenario.targetBranch
+        val marked = git.filesWithMarkers()
         return when {
             st.conflictedFiles.isNotEmpty() ->
-                "Resolve ${st.conflictedFiles.first()}: edit, save, then git add it"
+                "Resolve ${st.conflictedFiles.first()}: tap Keep mine, Keep theirs or Keep both (or edit it), then git add it"
             st.isMerging -> "Conflicts fixed. Run git commit to finish the merge"
-            st.head.parents.size < 2 -> "Merge $target into your branch: git merge $target"
-            !st.isPushed -> "Push your work: git push"
-            else -> "The merge still contains conflict markers. Fix them and commit again"
+            !git.hasMergedTarget() -> "Merge $target into your branch: git merge $target"
+            marked.isNotEmpty() ->
+                "${marked.first()} still has conflict markers. Fix it in the Merge conflict card, then git add, git commit and git push"
+            st.unstagedCount() > 0 -> "Stage your fix: git add ."
+            st.stagedCount() > 0 -> "Commit your fix: git commit -m \"Fix conflict\""
+            else -> "Push your work: git push"
         }
     }
 
@@ -173,17 +200,22 @@ class GitFragment : Fragment() {
         )
         binding.tvCommitMeta.text = "${head.shortId()} · ${head.parents.size} parent(s)"
 
-        val conflicted = st.conflictedFiles
-        if (conflicted.isEmpty()) {
+        // Keep the editor available while ANY file still has conflict markers, even after `git add`
+        // has cleared git's own "unmerged" flag, so a student can never be locked out of fixing them.
+        val target = st.conflictedFiles.firstOrNull() ?: git.filesWithMarkers().firstOrNull()
+        if (target == null) {
             binding.cardConflict.visibility = View.GONE
             editingFile = null
+            loadedContent = null
         } else {
             binding.cardConflict.visibility = View.VISIBLE
-            val file = conflicted.first()
-            if (editingFile != file) {
-                editingFile = file
-                binding.tvConflictFile.text = file
-                binding.etConflictEditor.setText(git.readFile(file))
+            val current = git.readFile(target)
+            // Reload when the file changed behind our back (e.g. git checkout --theirs); otherwise keep what the student typed.
+            if (editingFile != target || current != loadedContent) {
+                editingFile = target
+                loadedContent = current
+                binding.tvConflictFile.text = target
+                binding.etConflictEditor.setText(current)
             }
         }
     }
