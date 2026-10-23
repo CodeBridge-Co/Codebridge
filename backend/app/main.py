@@ -132,7 +132,27 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
         
     token = create_access_token({"sub": req.student_hash_id, "role": "STUDENT"})
     return LoginResponse(student_hash_id=req.student_hash_id, token=token)
-
+    
+@app.post("/auth/register-company", response_model=LoginResponse)
+async def register_company(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
+    # Check if email already exists
+    result = await db.execute(select(Company).where(Company.email == req.student_hash_id))
+    if result.scalars().first() is not None:
+        raise HTTPException(status_code=400, detail="Company already registered")
+    
+    # Create new company
+    new_company = Company(
+        name=req.institution_id, # Using institution field for Company Name
+        email=req.student_hash_id, # Using student_hash_id field for Email
+        password_hash=pwd_context.hash(req.password_hash), # Needs a password field!
+        is_admin=False
+    )
+    db.add(new_company)
+    await db.commit()
+    await db.refresh(new_company)
+    
+    token = create_access_token({"sub": new_company.email, "company_id": new_company.company_id, "role": "COMPANY"})
+    return LoginResponse(student_hash_id=new_company.email, token=token)
 
 @app.post("/auth/register", response_model=LoginResponse)
 async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
