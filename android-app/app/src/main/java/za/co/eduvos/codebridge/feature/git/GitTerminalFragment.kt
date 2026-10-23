@@ -35,7 +35,7 @@ class GitFragment : Fragment() {
     private var announcedComplete = false
 
     companion object {
-        /** Placeholder until assessment sessions are created in the app; the logs are still stored. */
+        // Placeholder until assessment sessions are created in the app
         private const val SESSION_ID = 1
         private const val MAX_LINES = 80
         private const val GREY = "#9AA39C"
@@ -200,8 +200,6 @@ class GitFragment : Fragment() {
         )
         binding.tvCommitMeta.text = "${head.shortId()} · ${head.parents.size} parent(s)"
 
-        // Keep the editor available while ANY file still has conflict markers, even after `git add`
-        // has cleared git's own "unmerged" flag, so a student can never be locked out of fixing them.
         val target = st.conflictedFiles.firstOrNull() ?: git.filesWithMarkers().firstOrNull()
         if (target == null) {
             binding.cardConflict.visibility = View.GONE
@@ -210,7 +208,6 @@ class GitFragment : Fragment() {
         } else {
             binding.cardConflict.visibility = View.VISIBLE
             val current = git.readFile(target)
-            // Reload when the file changed behind our back (e.g. git checkout --theirs); otherwise keep what the student typed.
             if (editingFile != target || current != loadedContent) {
                 editingFile = target
                 loadedContent = current

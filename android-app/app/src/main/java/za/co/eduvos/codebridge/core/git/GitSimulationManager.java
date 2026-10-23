@@ -14,9 +14,7 @@ import za.co.eduvos.codebridge.core.git.CommandParser.Command;
 import za.co.eduvos.codebridge.core.git.GitRepositoryState.Commit;
 
 /**
- * Runs terminal lines against a simulated repository. Supported: git status / add / commit / branch /
- * checkout (switch) / merge (incl. --abort) / log / push, plus ls and cat. Output mirrors real git
- * closely enough to teach from. All methods are synchronized; call from any thread.
+ * Runs terminal lines against a simulated repository.
  */
 public class GitSimulationManager {
 
@@ -51,25 +49,20 @@ public class GitSimulationManager {
 
     public GitTelemetryCollector getTelemetry() { return telemetry; }
 
-    // ---- file access for the conflict editor ----
 
     public synchronized String readFile(String path) {
         return s.workingTree.get(path);
     }
 
-    /** Saves edited content for an existing file. Conflicts stay open until the file is staged with git add. */
     public synchronized boolean writeFile(String path, String content) {
         if (!s.workingTree.containsKey(path)) return false;
         s.workingTree.put(path, content);
         return true;
     }
 
-    /** True once the merge is committed without leftover markers and pushed. */
     public synchronized boolean isTaskComplete() {
         if (s.isMerging() || !s.conflicted.isEmpty()) return false;
         Commit head = s.getHead();
-        // The target branch must be merged in, but HEAD need not be the merge commit itself:
-        // a student who committed markers by mistake can finish with a follow-up fix commit.
         if (!s.isAncestor(scenario.targetTip, head.id)) return false;
         for (String content : head.files.values()) {
             if (MergeConflictGenerator.hasConflictMarkers(content)) return false;
@@ -77,12 +70,10 @@ public class GitSimulationManager {
         return s.isPushed();
     }
 
-    /** True once the target branch's tip is part of the current branch's history. */
     public synchronized boolean hasMergedTarget() {
         return s.isAncestor(scenario.targetTip, s.getHead().id);
     }
 
-    /** Files in the working tree that still contain conflict markers, even after they were staged. */
     public synchronized List<String> filesWithMarkers() {
         List<String> found = new ArrayList<>();
         for (Map.Entry<String, String> e : s.workingTree.entrySet()) {
@@ -90,8 +81,6 @@ public class GitSimulationManager {
         }
         return found;
     }
-
-    // ---- command execution ----
 
     public synchronized Result execute(String line) {
         String trimmed = line == null ? "" : line.trim();
@@ -137,7 +126,6 @@ public class GitSimulationManager {
         }
     }
 
-    // ---- status ----
 
     private Result status() {
         StringBuilder sb = new StringBuilder("On branch ").append(s.currentBranch).append('\n');
@@ -186,7 +174,6 @@ public class GitSimulationManager {
         for (String i : items) sb.append('\t').append(i).append('\n');
     }
 
-    // ---- add ----
 
     private Result add(Command c) {
         if (c.args.isEmpty()) {
@@ -214,7 +201,6 @@ public class GitSimulationManager {
         return new Result(warn.toString().trim(), false);
     }
 
-    // ---- commit ----
 
     private Result commit(Command c) {
         if (!s.conflicted.isEmpty()) {
@@ -252,7 +238,6 @@ public class GitSimulationManager {
                 + (changed > 0 ? "\n " + changed + (changed == 1 ? " file changed" : " files changed") : ""), false);
     }
 
-    // ---- branch / checkout ----
 
     private Result branch(Command c) {
         if (c.args.isEmpty()) {
@@ -268,7 +253,6 @@ public class GitSimulationManager {
         return new Result("", false);
     }
 
-    /** git checkout --ours|--theirs <file>: take one side's version of a file during a merge. */
     private Result checkoutSide(Command c) {
         boolean ours = c.has("ours");
         if (c.args.isEmpty()) {
@@ -321,8 +305,6 @@ public class GitSimulationManager {
     private boolean isDirty() {
         return !s.workingTree.equals(s.index) || !s.index.equals(s.getHead().files);
     }
-
-    // ---- merge ----
 
     private Result merge(Command c) {
         if (c.has("abort")) {
@@ -411,7 +393,6 @@ public class GitSimulationManager {
         return new Result(out.toString().trim(), false);
     }
 
-    /** null content means the file doesn't exist on that side (deleted). */
     private static void put(Map<String, String> work, Map<String, String> index, String path, String w, String i) {
         if (w != null) work.put(path, w);
         if (i != null) index.put(path, i);
@@ -421,7 +402,6 @@ public class GitSimulationManager {
         return a == null ? b == null : a.equals(b);
     }
 
-    // ---- log / push / cat ----
 
     private Result log(Command c) {
         List<Commit> history = s.getHistory();
@@ -471,7 +451,6 @@ public class GitSimulationManager {
         return new Result(content, false);
     }
 
-    /** Convenience for the UI. */
     public synchronized List<String> conflictedFiles() {
         return new ArrayList<>(Collections.unmodifiableSet(s.conflicted));
     }

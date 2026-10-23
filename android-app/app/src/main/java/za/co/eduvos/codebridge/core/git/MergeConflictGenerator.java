@@ -9,8 +9,7 @@ import java.util.Map;
 import java.util.function.LongSupplier;
 
 /**
- * Builds the merge-conflict exercises and does the line-based 3-way merge (diff3 style) that
- * produces real conflict markers. No Android or JGit dependency.
+ * Builds the merge-conflict exercises and does the line-based 3-way merge.
  */
 public final class MergeConflictGenerator {
 
@@ -28,7 +27,6 @@ public final class MergeConflictGenerator {
         }
     }
 
-    /** One exercise: a repo where merging {@link #targetBranch} into HEAD conflicts in {@link #conflictFile}. */
     public static final class Scenario {
         public final String title;
         public final GitRepositoryState state;
@@ -104,7 +102,6 @@ public final class MergeConflictGenerator {
 
     private MergeConflictGenerator() {}
 
-    /** Deterministic: the same seed always gives the same exercise. */
     public static Scenario generate(long seed, LongSupplier clock) {
         Template t = TEMPLATES[(int) Math.floorMod(seed, (long) TEMPLATES.length)];
         long now = clock.getAsLong();
@@ -149,13 +146,8 @@ public final class MergeConflictGenerator {
         return new Scenario(t.title, s, "main", m1.id, file);
     }
 
-    /** Which side of a conflict to keep when resolving automatically. */
     public enum Resolution { OURS, THEIRS, BOTH }
 
-    /**
-     * Removes every conflict block from {@code text}, keeping our side, their side, or both (ours first).
-     * Text outside conflict blocks is untouched. Returns null for null input.
-     */
     public static String resolve(String text, Resolution keep) {
         if (text == null) return null;
         List<String> out = new ArrayList<>();
@@ -184,10 +176,6 @@ public final class MergeConflictGenerator {
         return false;
     }
 
-    /**
-     * Line-based 3-way merge. Lines kept by both sides anchor the merge; between anchors, a side
-     * that didn't change takes the other's version, identical changes merge, and different changes conflict.
-     */
     public static MergeResult merge3(String base, String ours, String theirs, String oursLabel, String theirsLabel) {
         List<String> b = lines(base);
         List<String> o = lines(ours);
@@ -235,7 +223,6 @@ public final class MergeConflictGenerator {
         return new ArrayList<>(Arrays.asList(text.split("\n", -1)));
     }
 
-    /** For each line of {@code a}, the index of its LCS partner in {@code b}, or -1. */
     private static int[] match(List<String> a, List<String> b) {
         int n = a.size(), m = b.size();
         int[][] dp = new int[n + 1][m + 1];
