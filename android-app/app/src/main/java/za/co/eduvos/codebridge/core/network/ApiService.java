@@ -11,6 +11,9 @@ public interface ApiService {
     @POST("/auth/register")
     Call<LoginResponse> register(@Body RegisterRequest request);
 
+    @POST("/auth/register-company")
+    Call<LoginResponse> registerCompany(@Body RegisterCompanyRequest request);
+
     @POST("/auth/login")
     Call<LoginResponse> login(@Body LoginRequest request);
 
