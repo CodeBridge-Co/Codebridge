@@ -283,6 +283,27 @@
             android:layout_height="48dp"
             android:layout_marginTop="20dp"
             android:text="Edit Profile / Backend Sync" />
+                <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEditProfile"
+            style="@style/CbButton.Outline"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
+            android:text="Edit Profile / Backend Sync" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="#FF5252"
+            android:text="Log Out"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false"
+            app:cornerRadius="24dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
