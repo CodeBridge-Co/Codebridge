@@ -25,7 +25,7 @@ DATABASE_URL = os.getenv(
     "postgresql+asyncpg://codebridge_user:password@postgres:5432/codebridge_db",
 )
 
-# --- Real JWT & Security Setup ---
+# --- JWT & Security Setup ---
 SECRET_KEY = os.getenv("SECRET_KEY", "super-secret-codebridge-key-2026")
 ALGORITHM = "HS256"
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -107,14 +107,14 @@ def health():
 
 @app.post("/auth/login", response_model=LoginResponse)
 async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
-    # 1. Handle Company/Admin (Real DB Check)
     if getattr(req, 'role', 'STUDENT') in ["COMPANY", "ADMIN"]:
-        email = req.student_hash_id # Android sends email in this field
-        password = req.institution_id # Android sends password in this field
+        email = req.student_hash_id
+        password = req.institution_id
         
         result = await db.execute(select(Company).where(Company.email == email))
         company = result.scalars().first()
         
+        # Strict check for if they don't exist to reject them
         if not company or not pwd_context.verify(password, company.password_hash):
             raise HTTPException(status_code=401, detail="Invalid email or password")
             
