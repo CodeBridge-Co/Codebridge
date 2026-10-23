@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict
 class RegisterRequest(BaseModel):
     student_hash_id: str
     institution_id: str
-    password_hash: str
+    password_hash: str = ""
 
 class LoginRequest(BaseModel):
     student_hash_id: str
