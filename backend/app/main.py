@@ -11,12 +11,12 @@ from passlib.context import CryptContext
 
 from app.models import (
     Base, SyncLog, Student, Problem, AssessmentSession,
-    TelemetryLog, RewardProgress, Company, 
+    TelemetryLog, RewardProgress, Company, Event  # Added Event
 )
 from app.schemas import (
     RegisterRequest, LoginRequest, LoginResponse,
     ProblemDto, SessionDto, SyncPayload,
-    LeaderboardDto, EventDto,
+    LeaderboardDto, EventDto, EventCreate,  # Added EventCreate
     AiAssistRequest, AiAssistResponse,
 )
 
@@ -255,15 +255,18 @@ async def get_leaderboard(db: AsyncSession = Depends(get_db)):
     return [LeaderboardDto(hash_id=r.student_hash_id, xp=r.xp_points, streak=r.streak_count)
             for r in result.scalars().all()]
 
-
 @app.get("/events", response_model=List[EventDto])
-async def get_events():
-    return [
-        EventDto(event_id=1, company_id=1, title="CodeBridge Hackathon 2026",
-                 event_date="2026-06-15T09:00:00Z"),
-        EventDto(event_id=2, company_id=1, title="Tech Career Fair",
-                 event_date="2026-07-20T10:00:00Z"),
-    ]
+async def get_events(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Event).order_by(Event.event_id.desc()))
+    return [EventDto(event_id=e.event_id, company_id=e.company_id, title=e.title, event_date=e.event_date) for e in result.scalars().all()]
+
+@app.post("/events", response_model=EventDto)
+async def create_event(event: EventCreate, db: AsyncSession = Depends(get_db)):
+    new_event = Event(company_id=event.company_id, title=event.title, event_date=event.event_date)
+    db.add(new_event)
+    await db.commit()
+    await db.refresh(new_event)
+    return EventDto(event_id=new_event.event_id, company_id=new_event.company_id, title=new_event.title, event_date=new_event.event_date)
 
 
 @app.post("/ai-assist", response_model=AiAssistResponse)
