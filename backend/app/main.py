@@ -5,19 +5,20 @@ from typing import List
 
 from fastapi import FastAPI, HTTPException, Depends, Body
 from sqlalchemy import select
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from jose import jwt
 from passlib.context import CryptContext
 
 from app.models import (
     Base, SyncLog, Student, Problem, AssessmentSession,
-    TelemetryLog, RewardProgress, Company, Event  # Added Event
+    TelemetryLog, RewardProgress, Company, Event
 )
 from app.schemas import (
     RegisterRequest, LoginRequest, LoginResponse,
     ProblemDto, SessionDto, SyncPayload,
-    LeaderboardDto, EventDto, EventCreate,  # Added EventCreate
-    AiAssistRequest, AiAssistResponse,
+    LeaderboardDto, EventDto, EventCreate, 
+    AiAssistRequest, AiAssistResponse, ProblemCreate,
 )
 
 DATABASE_URL = os.getenv(
@@ -182,6 +183,30 @@ async def get_problem(problem_id: int, db: AsyncSession = Depends(get_db)):
                       difficulty_level=p.difficulty_level,
                       test_cases_json=p.test_cases_json)
 
+@app.post("/problems", response_model=ProblemDto)
+async def create_problem(problem: ProblemCreate, db: AsyncSession = Depends(get_db)):
+    # Generate a new ID
+    result = await db.execute(select(func.max(Problem.problem_id)))
+    max_id = result.scalar() or 0
+    new_id = max_id + 1
+
+    new_problem = Problem(
+        problem_id=new_id,
+        title=problem.title,
+        difficulty_level=problem.difficulty_level,
+        test_cases_json=problem.test_cases_json,
+        company_id=problem.company_id
+    )
+    db.add(new_problem)
+    await db.commit()
+    await db.refresh(new_problem)
+    
+    return ProblemDto(
+        problem_id=new_problem.problem_id,
+        title=new_problem.title,
+        difficulty_level=new_problem.difficulty_level,
+        test_cases_json=new_problem.test_cases_json
+    )
 
 @app.post("/sessions")
 async def create_session(session: SessionDto, db: AsyncSession = Depends(get_db)):
