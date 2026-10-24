@@ -101,8 +101,10 @@ class GitFragment : Fragment() {
         binding.btnKeepBoth.setOnClickListener { keepSide(MergeConflictGenerator.Resolution.BOTH, "both versions") }
 
         binding.btnViewGuide.setOnClickListener {
-            Toast.makeText(requireContext(), "Opening Git Concepts Guide...", Toast.LENGTH_SHORT).show()
+            val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://git-scm.com/book/en/v2"))
+            startActivity(intent)
         }
+        
         binding.btnPush.setOnClickListener { advance() }
 
         refresh()
