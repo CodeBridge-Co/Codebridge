@@ -53,32 +53,35 @@ class EventsFragment : Fragment() {
     }
 
     private fun fetchEvents() {
-        RetrofitClient.getInstance().apiService.getEvents().enqueue(object : Callback<List<EventDto>> {
-            override fun onResponse(call: Call<List<EventDto>>, response: Response<List<EventDto>>) {
-                if (_binding == null) return
-                if (response.isSuccessful && response.body() != null) {
-                    // Map the backend DTO to your local Event model
-                    all = response.body()!!.map { dto ->
-                        Event(
-                            company = "Company ID: ${dto.company_id}", 
-                            title = dto.title,
-                            description = "Join us for ${dto.title}!",
-                            date = dto.event_date.take(10), // Extract YYYY-MM-DD
-                            venue = "Online / Campus",
-                            type = "Tech Talk", // Default type since backend doesn't specify
-                            tileColor = R.color.cb_tile_lime
-                        )
-                    }
-                    adapter.submit(all)
+    RetrofitClient.getInstance().apiService.getEvents().enqueue(object : Callback<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>> {
+        override fun onResponse(call: Call<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>, response: Response<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>) {
+            if (_binding == null) return
+            
+            // Get the list from inside the ApiResponse wrapper
+            val eventList = response.body()?.data
+            
+            if (response.isSuccessful && eventList != null) {
+                all = eventList.map { dto ->
+                    Event(
+                        company = "Company ID: ${dto.companyId}", // Assuming camelCase in DTO
+                        title = dto.title,
+                        description = "Join us for ${dto.title}!",
+                        date = dto.eventDate?.take(10) ?: "TBD", // Assuming camelCase in DTO
+                        venue = "Online / Campus",
+                        type = "Tech Talk",
+                        tileColor = R.color.cb_tile_lime
+                    )
                 }
+                adapter.submit(all)
             }
+        }
 
-            override fun onFailure(call: Call<List<EventDto>>, t: Throwable) {
-                if (_binding == null) return
-                Toast.makeText(requireContext(), "Failed to load events", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
+        override fun onFailure(call: Call<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>, t: Throwable) {
+            if (_binding == null) return
+            Toast.makeText(requireContext(), "Failed to load events", Toast.LENGTH_SHORT).show()
+        }
+    })
+}
 
     private fun styleChip(c: TextView, selected: Boolean) {
         c.setBackgroundResource(if (selected) R.drawable.bg_chip_selected else R.drawable.bg_chip)
