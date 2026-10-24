@@ -5,9 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import za.co.eduvos.codebridge.R
+import za.co.eduvos.codebridge.core.network.RetrofitClient
+import za.co.eduvos.codebridge.core.network.dto.EventDto
 import za.co.eduvos.codebridge.ui.Week3Label
 import za.co.eduvos.codebridge.databinding.FragmentEventsBinding
 
@@ -17,13 +23,8 @@ class EventsFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: EventAdapter
 
-    // TODO: replace with a call to your backend (Retrofit / Firebase)
-    private val all = listOf(
-        Event("Northstar Labs", "Developer Hackathon 2026", "Learn, build and connect with engineers working on real products.", "OCT 28", "Campus Hub", "Hackathon", R.color.cb_tile_lime),
-        Event("Kinetic Systems", "Tech Talk: AI in African Enterprise", "How local teams are shipping AI features to real customers.", "NOV 06", "Online", "Tech Talk", R.color.cb_tile_sky),
-        Event("Openframe", "Engineering Better Together", "A hands-on session on code review, testing and team habits.", "NOV 12", "Lab 4", "Workshop", R.color.cb_tile_peach),
-        Event("Circuit House", "IoT Innovation Challenge", "Prototype a connected device with help from mentors.", "NOV 19", "Innovation Lab", "Challenge", R.color.cb_tile_mint)
-    )
+    // We will populate this from the backend
+    private var all: List<Event> = emptyList()
 
     override fun onCreateView(i: LayoutInflater, c: ViewGroup?, s: Bundle?): View {
         _binding = FragmentEventsBinding.inflate(i, c, false)
@@ -31,8 +32,9 @@ class EventsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Week3Label.attach(binding.root, "live events coming. Sample data shown")
+        Week3Label.attach(binding.root, "Live events from company partners")
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+        
         adapter = EventAdapter(all) { /* TODO: open event details */ }
         binding.rvEvents.adapter = adapter
 
@@ -46,6 +48,36 @@ class EventsFragment : Fragment() {
                 adapter.submit(if (type == null) all else all.filter { it.type == type })
             }
         }
+
+        fetchEvents()
+    }
+
+    private fun fetchEvents() {
+        RetrofitClient.getInstance().apiService.getEvents().enqueue(object : Callback<List<EventDto>> {
+            override fun onResponse(call: Call<List<EventDto>>, response: Response<List<EventDto>>) {
+                if (_binding == null) return
+                if (response.isSuccessful && response.body() != null) {
+                    // Map the backend DTO to your local Event model
+                    all = response.body()!!.map { dto ->
+                        Event(
+                            company = "Company ID: ${dto.company_id}", 
+                            title = dto.title,
+                            description = "Join us for ${dto.title}!",
+                            date = dto.event_date.take(10), // Extract YYYY-MM-DD
+                            venue = "Online / Campus",
+                            type = "Tech Talk", // Default type since backend doesn't specify
+                            tileColor = R.color.cb_tile_lime
+                        )
+                    }
+                    adapter.submit(all)
+                }
+            }
+
+            override fun onFailure(call: Call<List<EventDto>>, t: Throwable) {
+                if (_binding == null) return
+                Toast.makeText(requireContext(), "Failed to load events", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun styleChip(c: TextView, selected: Boolean) {
