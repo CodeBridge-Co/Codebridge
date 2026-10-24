@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.MainActivity
+import za.co.eduvos.codebridge.backend.ProgressRepository
 import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.databinding.FragmentDashboardBinding
 import za.co.eduvos.codebridge.feature.events.EventsFragment
@@ -31,13 +33,31 @@ class DashboardFragment : Fragment() {
             else -> "Good evening"
         }
 
-        // Retrieve generated Hash ID for the user (e.g., CB7F4A2D9E)
         val hashId = UserIdentity.displayId(requireContext())
-
-        // Greet user with their unique Hash ID
         binding.tvGreeting.text = "$greeting, $hashId."
         binding.tvAvatar.text = hashId.take(2).uppercase()
 
+        // 1. REAL DATA FOR DAILY PROGRESS
+        val realProgress = ProgressRepository.getOverallProgressPercent(hashId)
+        binding.progressDaily.progress = realProgress
+        binding.tvDailyProgress.text = "$realProgress%"
+
+        // 2. FIX THE SEARCH BAR
+        binding.etSearch.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                val query = binding.etSearch.text.toString().trim()
+                if (query.isNotEmpty()) {
+                    // Open Challenges list and pass the query
+                    val fragment = ChallengesListFragment()
+                    val bundle = Bundle().apply { putString("SEARCH_QUERY", query) }
+                    fragment.arguments = bundle
+                    main().open(fragment)
+                }
+                true
+            } else false
+        }
+
+        // Navigation
         binding.btnContinue.setOnClickListener { main().open(ProblemsFragment()) }
         binding.linkExploreAll.setOnClickListener { main().open(ExploreAllFragment()) }
         binding.link0.setOnClickListener { main().open(ChallengesListFragment()) }
