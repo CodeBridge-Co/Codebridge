@@ -54,10 +54,8 @@ class AiAssistResponse(BaseModel):
     allowed: bool
     remaining_uses: int
 
-# Added new AI assistance and Speech classes
 class AiAssistRequest(BaseModel):
     session_id: str
-
 
 class SpeechResult(BaseModel):
     transcript: str
@@ -67,3 +65,9 @@ class EventCreate(BaseModel):
     company_id: int
     title: str
     event_date: str
+
+class ProblemCreate(BaseModel):
+    title: str
+    difficulty_level: str
+    test_cases_json: str
+    company_id: int
