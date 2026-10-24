@@ -13,11 +13,6 @@ public class RetrofitClient {
     private RetrofitClient() {
         OkHttpClient client = OkHttpClientProvider.provide();
 
-if (BuildConfig.USE_MOCK_API) {
-    client = client.newBuilder()
-            .addInterceptor(new MockApiInterceptor())
-            .build();
-}
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BuildConfig.BASE_URL)
                 .client(client)
