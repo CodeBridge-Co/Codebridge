@@ -60,3 +60,10 @@ class Problem(Base):
     test_cases_json = Column(Text)
     # Don't forget to add the company_id we discussed earlier!
     company_id = Column(Integer, ForeignKey("companies.company_id"), nullable=True)
+
+class Event(Base):
+    __tablename__ = "events"
+    event_id = Column(Integer, primary_key=True, index=True)
+    company_id = Column(Integer, ForeignKey("companies.company_id"))
+    title = Column(String, index=True)
+    event_date = Column(String)
