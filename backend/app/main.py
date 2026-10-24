@@ -164,7 +164,6 @@ async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
     token = create_access_token({"sub": req.student_hash_id, "role": "STUDENT"})
     return LoginResponse(student_hash_id=req.student_hash_id, token=token)
 
-
 @app.get("/problems", response_model=List[ProblemDto])
 async def get_problems(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Problem).order_by(Problem.problem_id))
