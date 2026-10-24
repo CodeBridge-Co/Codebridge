@@ -16,9 +16,9 @@ from app.models import (
 )
 from app.schemas import (
     RegisterRequest, LoginRequest, LoginResponse,
-    ProblemDto, SessionDto, SyncPayload,
-    LeaderboardDto, EventDto, EventCreate, 
-    AiAssistRequest, AiAssistResponse, ProblemCreate,
+    ProblemDto, ProblemCreate, SessionDto, SyncPayload, 
+    LeaderboardDto, EventDto, EventCreate,               
+    AiAssistRequest, AiAssistResponse,
 )
 
 DATABASE_URL = os.getenv(
