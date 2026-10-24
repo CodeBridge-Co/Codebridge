@@ -17,7 +17,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "BASE_URL", "\"https://d2489506e7bbaf.lhr.life/\""
-        buildConfigField "boolean", "USE_MOCK_API", "false"
     }
 
     buildTypes {
