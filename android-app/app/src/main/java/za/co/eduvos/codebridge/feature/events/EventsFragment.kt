@@ -16,6 +16,7 @@ import za.co.eduvos.codebridge.core.network.RetrofitClient
 import za.co.eduvos.codebridge.core.network.dto.EventDto
 import za.co.eduvos.codebridge.ui.Week3Label
 import za.co.eduvos.codebridge.databinding.FragmentEventsBinding
+import za.co.eduvos.codebridge.core.network.dto.ApiResponse 
 
 class EventsFragment : Fragment() {
 
