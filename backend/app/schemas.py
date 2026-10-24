@@ -62,3 +62,8 @@ class AiAssistRequest(BaseModel):
 class SpeechResult(BaseModel):
     transcript: str
     keyword_density: float
+
+class EventCreate(BaseModel):
+    company_id: int
+    title: str
+    event_date: str
