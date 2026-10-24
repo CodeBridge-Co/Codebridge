@@ -53,22 +53,26 @@ class EventsFragment : Fragment() {
     }
 
     private fun fetchEvents() {
+    // 1. Match the exact return type of ApiService (Call<ApiResponse<List<EventDto>>>)
     RetrofitClient.getInstance().apiService.getEvents().enqueue(object : Callback<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>> {
-        override fun onResponse(call: Call<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>, response: Response<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>) {
+        override fun onResponse(
+            call: Call<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>,
+            response: Response<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>
+        ) {
             if (_binding == null) return
             
-            // Get the list from inside the ApiResponse wrapper
+            // 2. Unwrap the data from the ApiResponse
             val eventList = response.body()?.data
             
             if (response.isSuccessful && eventList != null) {
                 all = eventList.map { dto ->
                     Event(
-                        company = "Company ID: ${dto.companyId}", // Assuming camelCase in DTO
+                        company = "Company ID: ${dto.companyId}", // Fixed: camelCase
                         title = dto.title,
                         description = "Join us for ${dto.title}!",
-                        date = dto.eventDate?.take(10) ?: "TBD", // Assuming camelCase in DTO
+                        date = dto.eventDate?.take(10) ?: "TBD", // Fixed: camelCase & null safety
                         venue = "Online / Campus",
-                        type = "Tech Talk",
+                        type = "Tech Talk", // Default type
                         tileColor = R.color.cb_tile_lime
                     )
                 }
@@ -76,7 +80,10 @@ class EventsFragment : Fragment() {
             }
         }
 
-        override fun onFailure(call: Call<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>, t: Throwable) {
+        override fun onFailure(
+            call: Call<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>,
+            t: Throwable
+        ) {
             if (_binding == null) return
             Toast.makeText(requireContext(), "Failed to load events", Toast.LENGTH_SHORT).show()
         }
