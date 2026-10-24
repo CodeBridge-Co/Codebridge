@@ -22,6 +22,7 @@ import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.databinding.FragmentGitBinding
 import za.co.eduvos.codebridge.feature.speech.SpeechFragment
 import java.util.function.LongSupplier
+import android.content.Intent
 
 class GitFragment : Fragment() {
 
