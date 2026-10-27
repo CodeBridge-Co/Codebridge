@@ -110,7 +110,7 @@
                 android:textColor="@color/cb_text_secondary"
                 android:textSize="13sp" />
 
-            <!-- ROLE SELECTOR -->
+            <!-- Role Selector -->
             <RadioGroup
                 android:id="@+id/roleGroup"
                 android:layout_width="match_parent"
@@ -177,7 +177,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:hint="Institution ID"
+                android:hint="Institution ID / Password"
                 app:boxBackgroundColor="@android:color/white"
                 app:boxCornerRadiusBottomEnd="14dp"
                 app:boxCornerRadiusBottomStart="14dp"
@@ -202,7 +202,7 @@
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="16dp"
                 android:backgroundTint="@color/cb_green"
                 android:fontFamily="@font/nunito_extrabold"
                 android:text="Log In"
@@ -210,16 +210,40 @@
                 android:textColor="@android:color/white"
                 android:textSize="15sp"
                 app:cornerRadius="25dp" />
-            
-            <TextView
-                android:id="@+id/tvRegisterCompany"
-                android:layout_width="wrap_content"
+
+            <!-- Registration Links -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="New Company? Register here"
-                android:textColor="@color/cb_dark_green"
-                android:textStyle="bold"
-                android:padding="8dp" />
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvRegisterStudent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Register Student"
+                    android:textColor="@color/cb_dark_green"
+                    android:fontFamily="@font/nunito_extrabold"
+                    android:padding="8dp" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="|"
+                    android:textColor="@color/cb_text_secondary"
+                    android:layout_marginHorizontal="4dp" />
+
+                <TextView
+                    android:id="@+id/tvRegisterCompany"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Register Company"
+                    android:textColor="@color/cb_dark_green"
+                    android:fontFamily="@font/nunito_extrabold"
+                    android:padding="8dp" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
