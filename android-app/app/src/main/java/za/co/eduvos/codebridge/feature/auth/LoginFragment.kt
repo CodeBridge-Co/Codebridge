@@ -22,7 +22,8 @@ import za.co.eduvos.codebridge.core.network.RetrofitClient
 import za.co.eduvos.codebridge.core.network.TokenManager
 import za.co.eduvos.codebridge.core.network.dto.LoginRequest
 import za.co.eduvos.codebridge.core.network.dto.LoginResponse
-import za.co.eduvos.codebridge.core.network.dto.RegisterCompanyRequest // Ensure this DTO exists!
+import za.co.eduvos.codebridge.core.network.dto.RegisterCompanyRequest
+import za.co.eduvos.codebridge.core.network.dto.RegisterStudentRequest
 import za.co.eduvos.codebridge.core.security.HashIdManager
 import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.databinding.FragmentLoginBinding
@@ -59,11 +60,9 @@ class LoginFragment : Fragment() {
         }
 
         binding.btnLogin.setOnClickListener { attemptLogin() }
-
-        // NEW: Click listener for the Register Company text
-        binding.tvRegisterCompany.setOnClickListener {
-            showCompanyRegistrationDialog()
-        }
+        
+        binding.tvRegisterStudent.setOnClickListener { showStudentRegistrationDialog() }
+        binding.tvRegisterCompany.setOnClickListener { showCompanyRegistrationDialog() }
     }
 
     private fun attemptLogin() {
@@ -82,7 +81,6 @@ class LoginFragment : Fragment() {
 
         val appContext = requireContext().applicationContext
         
-        // Only hash if it's a STUDENT. Companies use raw email.
         val finalId = if (selectedRole == "STUDENT") {
             try {
                 HashIdManager(appContext).generateHashId(input1)
@@ -91,7 +89,7 @@ class LoginFragment : Fragment() {
                 return
             }
         } else {
-            input1 
+            input1
         }
 
         binding.btnLogin.isEnabled = false
@@ -126,7 +124,7 @@ class LoginFragment : Fragment() {
             })
     }
 
-    // NEW: Registration Dialog Function (Properly separated now)
+    // --- COMPANY REGISTRATION ---
     private fun showCompanyRegistrationDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_register_company, null)
         val etCompanyName = dialogView.findViewById<TextInputEditText>(R.id.etRegCompanyName)
@@ -151,7 +149,6 @@ class LoginFragment : Fragment() {
             .show()
     }
 
-    // NEW: Registration API Call Function
     private fun executeCompanyRegistration(name: String, email: String, pass: String) {
         val request = RegisterCompanyRequest(email, name, pass)
         
@@ -162,6 +159,60 @@ class LoginFragment : Fragment() {
                         TokenManager.saveToken(response.body()!!.token)
                         Toast.makeText(requireContext(), "Company Registered!", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(requireContext(), AdminCompanyPortalActivity::class.java))
+                        requireActivity().finish()
+                    } else {
+                        Toast.makeText(requireContext(), "Registration failed: ${response.code()}", Toast.LENGTH_LONG).show()
+                    }
+                }
+                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_LONG).show()
+                }
+            })
+    }
+
+    // --- STUDENT REGISTRATION ---
+    private fun showStudentRegistrationDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_register_student, null)
+        val etStudentNumber = dialogView.findViewById<TextInputEditText>(R.id.etRegStudentNumber)
+        val etInstitution = dialogView.findViewById<TextInputEditText>(R.id.etRegInstitution)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Register Student")
+            .setView(dialogView)
+            .setPositiveButton("Register") { _, _ ->
+                val studentNum = etStudentNumber.text.toString().trim()
+                val institution = etInstitution.text.toString().trim()
+
+                if (studentNum.isNotEmpty() && institution.isNotEmpty()) {
+                    executeStudentRegistration(studentNum, institution)
+                } else {
+                    Toast.makeText(requireContext(), "All fields required", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun executeStudentRegistration(studentNum: String, institution: String) {
+        val appContext = requireContext().applicationContext
+        
+        val hashId = try {
+            HashIdManager(appContext).generateHashId(studentNum)
+        } catch (e: RuntimeException) {
+            Toast.makeText(requireContext(), "Couldn't create a secure ID", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val request = RegisterStudentRequest(hashId, institution)
+
+        RetrofitClient.getInstance().apiService.registerStudent(request)
+            .enqueue(object : Callback<LoginResponse> {
+                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                    if (response.isSuccessful && response.body() != null) {
+                        TokenManager.saveToken(response.body()!!.token)
+                        UserIdentity.save(appContext, hashId)
+                        Toast.makeText(requireContext(), "Student Registered Successfully!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(requireContext(), HashIdGeneratedActivity::class.java))
                         requireActivity().finish()
                     } else {
                         Toast.makeText(requireContext(), "Registration failed: ${response.code()}", Toast.LENGTH_LONG).show()
