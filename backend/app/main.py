@@ -184,21 +184,23 @@ async def get_problem(problem_id: int, db: AsyncSession = Depends(get_db)):
 
 @app.post("/problems", response_model=ProblemDto)
 async def create_problem(problem: ProblemCreate, db: AsyncSession = Depends(get_db)):
-    # Generate a new ID
     result = await db.execute(select(func.max(Problem.problem_id)))
     max_id = result.scalar() or 0
-    new_id = max_id + 1
-
     new_problem = Problem(
-        problem_id=new_id,
+        problem_id=max_id + 1,
         title=problem.title,
         difficulty_level=problem.difficulty_level,
         test_cases_json=problem.test_cases_json,
-        company_id=problem.company_id
+        company_id=problem.company_id,
+        description=problem.description,
+        example_input=problem.example_input,
+        example_output=problem.example_output,
+        initial_code=problem.initial_code
     )
     db.add(new_problem)
     await db.commit()
     await db.refresh(new_problem)
+    return new_problem
     
     return ProblemDto(
         problem_id=new_problem.problem_id,
