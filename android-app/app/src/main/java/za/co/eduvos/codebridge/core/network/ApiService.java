@@ -23,6 +23,9 @@ public interface ApiService {
     @GET("/problems")
     Call<List<ProblemDto>> getProblems();
 
+    @GET("/companies")
+    Call<List<CompanyDto>> getCompanies();
+
     @GET("/problems/{problem_id}")
     Call<ProblemDto> getProblem(@Path("problem_id") int problemId);
 
