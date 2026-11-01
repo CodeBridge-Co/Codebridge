@@ -137,6 +137,13 @@ async def get_problems(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Problem).order_by(Problem.problem_id))
     return result.scalars().all()
 
+@app.get("/problems/{problem_id}", response_model=ProblemDto)
+async def get_problem(problem_id: int, db: AsyncSession = Depends(get_db)):
+    p = await db.get(Problem, problem_id)
+    if p is None:
+        raise HTTPException(status_code=404, detail="Problem not found")
+    return p
+
 @app.post("/problems", response_model=ProblemDto)
 async def create_problem(problem: ProblemCreate, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(func.max(Problem.problem_id)))
