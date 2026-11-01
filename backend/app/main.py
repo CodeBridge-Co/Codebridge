@@ -2,6 +2,7 @@ import os
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 from typing import List
+from pydantic import BaseModel
 
 from fastapi import FastAPI, HTTPException, Depends, Body
 from sqlalchemy import select, func
