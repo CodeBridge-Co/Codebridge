@@ -41,8 +41,15 @@ object ProblemDetailFactory {
 
     private const val DEFAULT_ENTRY_POINT = "solve"
 
-    fun fromDto(dto: ProblemDto): ProblemDetail =
-        create(dto.problemId, dto.title, dto.difficultyLevel, dto.testCasesJson)
+    fun fromDto(dto: ProblemDto): ProblemDetail {
+    val base = create(dto.problemId, dto.title, dto.difficultyLevel, dto.testCasesJson)
+    return base.copy(
+        description = dto.description ?: base.description,
+        example1Input = dto.exampleInput ?: base.example1Input,
+        example1Output = dto.exampleOutput ?: base.example1Output,
+        initialCode = dto.initialCode ?: base.initialCode
+    )
+}
 
     fun create(id: Int, title: String?, difficulty: String?, testCasesJson: String?): ProblemDetail {
         val json = testCasesJson.orEmpty()
