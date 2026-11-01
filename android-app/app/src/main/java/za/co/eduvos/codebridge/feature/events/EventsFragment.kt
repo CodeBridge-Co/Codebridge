@@ -16,15 +16,12 @@ import za.co.eduvos.codebridge.core.network.RetrofitClient
 import za.co.eduvos.codebridge.core.network.dto.EventDto
 import za.co.eduvos.codebridge.ui.Week3Label
 import za.co.eduvos.codebridge.databinding.FragmentEventsBinding
-import za.co.eduvos.codebridge.core.network.dto.ApiResponse 
 
 class EventsFragment : Fragment() {
 
     private var _binding: FragmentEventsBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: EventAdapter
-
-    // We will populate this from the backend
     private var all: List<Event> = emptyList()
 
     override fun onCreateView(i: LayoutInflater, c: ViewGroup?, s: Bundle?): View {
@@ -36,7 +33,7 @@ class EventsFragment : Fragment() {
         Week3Label.attach(binding.root, "Live events from company partners")
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
         
-        adapter = EventAdapter(all) { /* TODO: open event details */ }
+        adapter = EventAdapter(all) { }
         binding.rvEvents.adapter = adapter
 
         val chips = listOf(
@@ -54,42 +51,37 @@ class EventsFragment : Fragment() {
     }
 
     private fun fetchEvents() {
-    // 1. Match the exact return type of ApiService (Call<ApiResponse<List<EventDto>>>)
-    RetrofitClient.getInstance().apiService.getEvents().enqueue(object : Callback<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>> {
-        override fun onResponse(
-            call: Call<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>,
-            response: Response<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>
-        ) {
-            if (_binding == null) return
-            
-            // 2. Unwrap the data from the ApiResponse
-            val eventList = response.body()?.data
-            
-            if (response.isSuccessful && eventList != null) {
-                all = eventList.map { dto ->
-                    Event(
-                        company = "Company ID: ${dto.companyId}", // Fixed: camelCase
-                        title = dto.title,
-                        description = "Join us for ${dto.title}!",
-                        date = dto.eventDate?.take(10) ?: "TBD", // Fixed: camelCase & null safety
-                        venue = "Online / Campus",
-                        type = "Tech Talk", // Default type
-                        tileColor = R.color.cb_tile_lime
-                    )
+        RetrofitClient.getInstance().apiService.getEvents().enqueue(object : Callback<List<EventDto>> {
+            override fun onResponse(call: Call<List<EventDto>>, response: Response<List<EventDto>>) {
+                if (_binding == null) return
+                
+                if (response.isSuccessful && response.body() != null) {
+                    val eventList = response.body()!!
+                    all = eventList.map { dto ->
+                        Event(
+                            company = "Company ID: ${dto.companyId}", 
+                            title = dto.title,
+                            description = "Join us for ${dto.title}!",
+                            date = dto.eventDate?.take(10) ?: "TBD",
+                            venue = "Online / Campus",
+                            type = "Tech Talk",
+                            tileColor = R.color.cb_tile_lime
+                        )
+                    }
+                    adapter.submit(all)
+                    
+                    if (all.isEmpty()) {
+                        Toast.makeText(requireContext(), "No events posted yet.", Toast.LENGTH_SHORT).show()
+                    }
                 }
-                adapter.submit(all)
             }
-        }
 
-        override fun onFailure(
-            call: Call<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>,
-            t: Throwable
-        ) {
-            if (_binding == null) return
-            Toast.makeText(requireContext(), "Failed to load events", Toast.LENGTH_SHORT).show()
-        }
-    })
-}
+            override fun onFailure(call: Call<List<EventDto>>, t: Throwable) {
+                if (_binding == null) return
+                Toast.makeText(requireContext(), "Failed to load events: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 
     private fun styleChip(c: TextView, selected: Boolean) {
         c.setBackgroundResource(if (selected) R.drawable.bg_chip_selected else R.drawable.bg_chip)
