@@ -57,22 +57,6 @@ class ProblemsFragment : Fragment() {
         problemId = arguments?.getInt("problem_id") ?: 1
     }
 
-    private val problem = Triple(
-        "Given an array of integers and a target, return the indices of the two numbers that add up to the target.",
-        "Example 1:",
-        "nums = [2,7,11,15], target = 9\noutput = [0,1]"
-    )
-    private val examples = Triple(
-        "Each input has exactly one solution, and you may not use the same element twice.",
-        "Examples:",
-        "nums = [2,7,11,15], target = 9 → [0,1]\nnums = [3,2,4], target = 6 → [1,2]\nnums = [3,3], target = 6 → [0,1]"
-    )
-    private val constraints = Triple(
-        "Keep these limits in mind when choosing your approach.",
-        "Constraints:",
-        "2 ≤ nums.length ≤ 10⁴\n-10⁹ ≤ nums[i] ≤ 10⁹\n-10⁹ ≤ target ≤ 10⁹\nOnly one valid answer exists."
-    )
-
     override fun onCreateView(i: LayoutInflater, c: ViewGroup?, s: Bundle?): View {
         _binding = FragmentProblemsBinding.inflate(i, c, false)
         return binding.root
@@ -94,8 +78,8 @@ class ProblemsFragment : Fragment() {
 
         // Bind dynamic problem description and example
         binding.tvDesc.text = detail.description
-        binding.tvExampleLabel.text = "Example 1:\nInput: ${detail.example1Input}\nOutput: ${detail.example1Output}"
-
+        binding.tvExampleLabel.text = "Input: ${detail.example1Input}\nOutput: ${detail.example1Output}"
+        
         // Bind dynamic testcase text
         binding.tvCase1.text = detail.example1Input
         binding.tvCase2.text = detail.example2Input
@@ -159,8 +143,9 @@ class ProblemsFragment : Fragment() {
         binding.cardAiBanner.setOnClickListener(openCodeMate)
         binding.btnAiSlide.setOnClickListener(openCodeMate)
 
+        binding.btnSubmit.isEnabled = false
+        binding.btnSubmit.alpha = 0.5f
         binding.btnSubmit.setOnClickListener { (requireActivity() as MainActivity).open(GitFragment()) }
-    }
 
     private fun showLanguageMenu(v: View) {
         Toast.makeText(requireContext(), "Only JavaScript can be run offline on this device", Toast.LENGTH_SHORT).show()
@@ -221,7 +206,14 @@ class ProblemsFragment : Fragment() {
         if (firstBad == null) {
             ProgressRepository.recordVerifiedCompletion(UserIdentity.displayId(requireContext()), detail.id)
             Toast.makeText(requireContext(), "All ${result.totalCount()} cases passed!", Toast.LENGTH_SHORT).show()
+            
+            binding.btnSubmit.isEnabled = true
+            binding.btnSubmit.alpha = 1.0f
+        
         } else {
+            binding.btnSubmit.isEnabled = false
+            binding.btnSubmit.alpha = 0.5f
+            
             val why = when (firstBad.status) {
                 TestResult.Status.FAILED -> "expected ${firstBad.expected}, got ${firstBad.actual}"
                 TestResult.Status.TIMEOUT -> "time limit exceeded"
@@ -229,7 +221,6 @@ class ProblemsFragment : Fragment() {
             }
             Toast.makeText(requireContext(), "Case ${firstBad.index + 1}: $why", Toast.LENGTH_LONG).show()
         }
-    }
 
     private fun showTab(index: Int) {
         val tabs = listOf(binding.tabProblem, binding.tabExamples, binding.tabConstraints)
