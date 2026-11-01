@@ -35,30 +35,28 @@ class CompanyChallengesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    super.onViewCreated(view, savedInstanceState)
 
-        binding.btnBack.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+    binding.btnBack.setOnClickListener {
+        requireActivity().onBackPressedDispatcher.onBackPressed()
+    }
+
+    adapter = CompanyAdapter(companyList) { company ->
+        (requireActivity() as MainActivity).open(
+            CompanyDetailFragment.newInstance(company.id, company.name, company.description)
+        )
+    }
+    binding.rvCompany.adapter = adapter
+
+    binding.etSearch.addTextChangedListener(object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            applyFilter(s?.toString().orEmpty())
         }
+        override fun afterTextChanged(s: Editable?) {}
+    })
 
-        adapter = CompanyAdapter(companyList) { company ->
-            // Pass the company name and ID so the next screen can filter challenges
-            (requireActivity() as MainActivity).open(
-                CompanyDetailFragment.newInstance(company.name, company.description) 
-                // Note: If you update CompanyDetailFragment, pass company.id as well!
-            )
-        }
-        binding.rvCompany.adapter = adapter
-
-        binding.etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                applyFilter(s?.toString().orEmpty())
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        fetchLiveCompanies()
+    fetchLiveCompanies()
     }
 
     private fun fetchLiveCompanies() {
