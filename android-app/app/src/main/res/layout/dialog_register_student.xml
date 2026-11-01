@@ -20,12 +20,12 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Institution ID">
+        android:hint="Password">
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etRegInstitution"
+            android:id="@+id/etRegPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text" />
+            android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>
