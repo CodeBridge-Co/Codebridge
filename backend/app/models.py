@@ -58,8 +58,12 @@ class Problem(Base):
     title = Column(String, index=True)
     difficulty_level = Column(String)
     test_cases_json = Column(Text)
-    # Don't forget to add the company_id we discussed earlier!
     company_id = Column(Integer, ForeignKey("companies.company_id"), nullable=True)
+    
+    description = Column(Text, nullable=True)
+    example_input = Column(String, nullable=True)
+    example_output = Column(String, nullable=True)
+    initial_code = Column(Text, nullable=True)
 
 class Event(Base):
     __tablename__ = "events"
