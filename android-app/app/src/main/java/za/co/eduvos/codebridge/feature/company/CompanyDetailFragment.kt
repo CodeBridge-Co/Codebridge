@@ -4,8 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import za.co.eduvos.codebridge.MainActivity
+import za.co.eduvos.codebridge.core.network.RetrofitClient
+import za.co.eduvos.codebridge.core.network.dto.ProblemDto
 import za.co.eduvos.codebridge.data.Challenge
 import za.co.eduvos.codebridge.data.ChallengeAdapter
 import za.co.eduvos.codebridge.databinding.FragmentCompanyDetailBinding
@@ -16,44 +22,19 @@ class CompanyDetailFragment : Fragment() {
     private var _binding: FragmentCompanyDetailBinding? = null
     private val binding get() = _binding!!
 
-    private var companyName: String = "Amazon"
-    private var companyAbout: String = "Solve real-world problems used by Amazon engineers. Build your skills and get noticed!"
+    private var companyId: Int = 1
+    private var companyName: String = "Company"
+    private var companyAbout: String = ""
 
-    private val companyChallengesMap = mapOf(
-        "Amazon" to listOf(
-            Challenge(101, "Find Prime Substring", "Easy", "Strings · Math", "58%"),
-            Challenge(102, "Product Search Autocomplete", "Medium", "Arrays · Hash Table", "45%"),
-            Challenge(103, "AWS Lambda Simulation", "Hard", "System Design · Concurrency", "32%")
-        ),
-        "Microsoft" to listOf(
-            Challenge(201, "Azure Blob Stream Processor", "Medium", "Cloud · Streams", "50%"),
-            Challenge(202, "AI Prompt Router", "Easy", "AI/ML · String", "65%")
-        ),
-        "Deloitte" to listOf(
-            Challenge(301, "Audit Trail Anomaly Filter", "Hard", "SQL · Algorithms", "28%"),
-            Challenge(302, "Tax Ledger Balancing", "Easy", "Math · Arrays", "72%")
-        ),
-        "Discovery" to listOf(
-            Challenge(401, "Vitality Rewards Calculator", "Medium", "Logic · Arrays", "55%"),
-            Challenge(402, "Health Claim Rule Engine", "Easy", "Validation · String", "68%")
-        ),
-        "FNB" to listOf(
-            Challenge(501, "eWallet Transaction Stream", "Medium", "APIs · Banking", "48%"),
-            Challenge(502, "Mobile App Auth Token Validator", "Easy", "Security · Hash", "70%")
-        ),
-        "Capitec" to listOf(
-            Challenge(601, "Real-Time Payment Engine", "Medium", "Java / Spring Boot", "52%"),
-            Challenge(602, "Account Ledger Reconciliation", "Hard", "Java / Data", "35%")
-        )
-    )
-
-    private var currentDifficultyFilter = "All"
+    private var allChallenges: List<Challenge> = emptyList()
     private lateinit var adapter: ChallengeAdapter
 
     companion object {
-        fun newInstance(companyName: String, aboutText: String): CompanyDetailFragment {
+        // UPDATED: Now requires companyId so we can fetch the right data
+        fun newInstance(companyId: Int, companyName: String, aboutText: String): CompanyDetailFragment {
             val fragment = CompanyDetailFragment()
             val args = Bundle()
+            args.putInt("company_id", companyId)
             args.putString("company_name", companyName)
             args.putString("about_text", aboutText)
             fragment.arguments = args
@@ -63,8 +44,9 @@ class CompanyDetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        companyName = arguments?.getString("company_name") ?: "Amazon"
-        companyAbout = arguments?.getString("about_text") ?: "Solve real-world problems used by engineers."
+        companyId = arguments?.getInt("company_id") ?: 1
+        companyName = arguments?.getString("company_name") ?: "Company"
+        companyAbout = arguments?.getString("about_text") ?: "Explore challenges from $companyName."
     }
 
     override fun onCreateView(
@@ -85,21 +67,59 @@ class CompanyDetailFragment : Fragment() {
         binding.tvCompanyTitle.text = "$companyName Challenges"
         binding.tvCompanyAbout.text = companyAbout
 
-        val challenges = companyChallengesMap[companyName] ?: companyChallengesMap["Amazon"]!!
-        adapter = ChallengeAdapter(challenges) { challenge ->
-            (requireActivity() as MainActivity).open(ProblemsFragment())
-        }
+        // Set up empty adapter first
+        adapter = ChallengeAdapter(emptyList()) { }
         binding.rvCompanyChallenges.adapter = adapter
 
-        binding.chipAll.setOnClickListener { filter("All", challenges) }
-        binding.chipEasy.setOnClickListener { filter("Easy", challenges) }
-        binding.chipMedium.setOnClickListener { filter("Medium", challenges) }
-        binding.chipHard.setOnClickListener { filter("Hard", challenges) }
+        binding.chipAll.setOnClickListener { filter("All") }
+        binding.chipEasy.setOnClickListener { filter("Easy") }
+        binding.chipMedium.setOnClickListener { filter("Medium") }
+        binding.chipHard.setOnClickListener { filter("Hard") }
+
+        fetchLiveChallenges()
     }
 
-    private fun filter(difficulty: String, fullList: List<Challenge>) {
-        currentDifficultyFilter = difficulty
-        val filtered = if (difficulty == "All") fullList else fullList.filter {
+    private fun fetchLiveChallenges() {
+        RetrofitClient.getInstance().apiService.getProblems().enqueue(object : Callback<List<ProblemDto>> {
+            override fun onResponse(call: Call<List<ProblemDto>>, response: Response<List<ProblemDto>>) {
+                if (_binding == null) return
+                
+                if (response.isSuccessful && response.body() != null) {
+                    // FILTER: Only show problems where the companyId matches this company!
+                    val companyProblems = response.body()!!.filter { it.companyId == companyId }
+                    
+                    allChallenges = companyProblems.map {
+                        Challenge(it.problemId, it.title, it.difficultyLevel, "General", "0%")
+                    }
+
+                    adapter = ChallengeAdapter(allChallenges) { challenge ->
+                        // THE FIX: Pass the real challenge details to ProblemsFragment!
+                        (requireActivity() as MainActivity).open(
+                            ProblemsFragment.newInstance(
+                                challenge.id, 
+                                challenge.title, 
+                                challenge.difficulty, 
+                                challenge.category
+                            )
+                        )
+                    }
+                    binding.rvCompanyChallenges.adapter = adapter
+                    
+                    if (allChallenges.isEmpty()) {
+                        Toast.makeText(requireContext(), "No challenges posted by $companyName yet.", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<List<ProblemDto>>, t: Throwable) {
+                if (_binding == null) return
+                Toast.makeText(requireContext(), "Failed to load challenges: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun filter(difficulty: String) {
+        val filtered = if (difficulty == "All") allChallenges else allChallenges.filter {
             it.difficulty.equals(difficulty, ignoreCase = true)
         }
         adapter.submit(filtered)
