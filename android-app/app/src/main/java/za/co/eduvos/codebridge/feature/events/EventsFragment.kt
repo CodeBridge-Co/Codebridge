@@ -51,36 +51,40 @@ class EventsFragment : Fragment() {
     }
 
     private fun fetchEvents() {
-        RetrofitClient.getInstance().apiService.getEvents().enqueue(object : Callback<List<EventDto>> {
-            override fun onResponse(call: Call<List<EventDto>>, response: Response<List<EventDto>>) {
-                if (_binding == null) return
+    RetrofitClient.getInstance().apiService.getEvents().enqueue(object : Callback<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>> {
+        override fun onResponse(
+            call: Call<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>,
+            response: Response<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>
+        ) {
+            if (_binding == null) return
+            
+            val eventList = response.body()?.data
+            
+            if (response.isSuccessful && eventList != null) {
+                all = eventList.map { dto ->
+                    Event(
+                        company = "Company ID: ${dto.companyId}", 
+                        title = dto.title,
+                        description = "Join us for ${dto.title}!",
+                        date = dto.eventDate?.take(10) ?: "TBD",
+                        venue = "Online / Campus",
+                        type = "Tech Talk",
+                        tileColor = R.color.cb_tile_lime
+                    )
+                }
+                adapter.submit(all)
                 
-                if (response.isSuccessful && response.body() != null) {
-                    val eventList = response.body()!!
-                    all = eventList.map { dto ->
-                        Event(
-                            company = "Company ID: ${dto.companyId}", 
-                            title = dto.title,
-                            description = "Join us for ${dto.title}!",
-                            date = dto.eventDate?.take(10) ?: "TBD",
-                            venue = "Online / Campus",
-                            type = "Tech Talk",
-                            tileColor = R.color.cb_tile_lime
-                        )
-                    }
-                    adapter.submit(all)
-                    
-                    if (all.isEmpty()) {
-                        Toast.makeText(requireContext(), "No events posted yet.", Toast.LENGTH_SHORT).show()
-                    }
+                if (all.isEmpty()) {
+                    Toast.makeText(requireContext(), "No events posted yet.", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
 
-            override fun onFailure(call: Call<List<EventDto>>, t: Throwable) {
-                if (_binding == null) return
-                Toast.makeText(requireContext(), "Failed to load events: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        override fun onFailure(call: Call<za.co.eduvos.codebridge.core.network.dto.ApiResponse<List<EventDto>>>, t: Throwable) {
+            if (_binding == null) return
+            Toast.makeText(requireContext(), "Failed to load events: ${t.message}", Toast.LENGTH_SHORT).show()
+        }
+    })
     }
 
     private fun styleChip(c: TextView, selected: Boolean) {
