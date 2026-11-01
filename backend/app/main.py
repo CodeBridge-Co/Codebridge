@@ -150,6 +150,15 @@ async def create_problem(problem: ProblemCreate, db: AsyncSession = Depends(get_
     await db.commit()
     await db.refresh(new_problem)
     return new_problem
+    
+    class CompanyDto(BaseModel):
+    company_id: int
+    name: str
+
+@app.get("/companies", response_model=List[CompanyDto])
+async def get_companies(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Company).order_by(Company.company_id))
+    return [CompanyDto(company_id=c.company_id, name=c.name) for c in result.scalars().all()]
 
 @app.get("/events", response_model=List[EventDto])
 async def get_events(db: AsyncSession = Depends(get_db)):
