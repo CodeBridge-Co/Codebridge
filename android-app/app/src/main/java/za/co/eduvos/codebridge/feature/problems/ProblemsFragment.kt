@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -33,7 +32,6 @@ class ProblemsFragment : Fragment() {
     private var problemId: Int = 1
     private lateinit var detail: ProblemDetail
 
-    // The offline sandbox runs JavaScript (Rhino); other languages can't be executed on-device.
     private val activeLanguage: String = "JavaScript"
     private lateinit var engine: CodeExecutionEngine
     private var isExpanded: Boolean = false
@@ -69,22 +67,20 @@ class ProblemsFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
             return
         }
+        
         binding.stepper.setStep(0)
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
 
-        // Bind dynamic top header and problem title
         binding.tvHeaderTitle.text = "${detail.title} · ${detail.difficulty}"
         binding.tvTitle.text = detail.title
 
-        // Bind dynamic problem description and example
         binding.tvDesc.text = detail.description
+        // Removed the "Example 1:" placeholder
         binding.tvExampleLabel.text = "Input: ${detail.example1Input}\nOutput: ${detail.example1Output}"
-        
-        // Bind dynamic testcase text
+
         binding.tvCase1.text = detail.example1Input
         binding.tvCase2.text = detail.example2Input
 
-        // Bind starter code for active language
         binding.etCode.setText(getTemplateFor(activeLanguage, detail))
 
         binding.tabProblem.setOnClickListener { showTab(0) }
@@ -92,16 +88,13 @@ class ProblemsFragment : Fragment() {
         binding.tabConstraints.setOnClickListener { showTab(2) }
         showTab(0)
 
-        // Language Dropdown Menu
         binding.tvLanguageSelector.setOnClickListener { showLanguageMenu(it) }
 
-        // Reset Template Button
         binding.btnReset.setOnClickListener {
             binding.etCode.setText(getTemplateFor(activeLanguage, detail))
             Toast.makeText(requireContext(), "Code reset to $activeLanguage template", Toast.LENGTH_SHORT).show()
         }
 
-        // Format Code Button
         binding.btnFormat.setOnClickListener {
             val unformatted = binding.etCode.text?.toString().orEmpty()
             val formatted = unformatted.lines().joinToString("\n") { it.trimEnd() }
@@ -109,7 +102,6 @@ class ProblemsFragment : Fragment() {
             Toast.makeText(requireContext(), "Code formatted", Toast.LENGTH_SHORT).show()
         }
 
-        // Copy Code Button
         binding.btnCopy.setOnClickListener {
             val codeToCopy = binding.etCode.text?.toString().orEmpty()
             val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -118,7 +110,6 @@ class ProblemsFragment : Fragment() {
             Toast.makeText(requireContext(), "Code copied to clipboard", Toast.LENGTH_SHORT).show()
         }
 
-        // Expand Editor Button
         binding.btnExpand.setOnClickListener {
             isExpanded = !isExpanded
             binding.etCode.minLines = if (isExpanded) 14 else 6
@@ -128,7 +119,6 @@ class ProblemsFragment : Fragment() {
 
         binding.btnRun.setOnClickListener { runTests() }
 
-        // AI Assistance Banner -> Opens CodeMate Chat BottomSheet
         val openCodeMate = View.OnClickListener {
             if (aiAttemptsLeft > 0) {
                 CodeMateBottomSheet.newInstance(aiAttemptsLeft) { updatedAttempts ->
@@ -143,9 +133,11 @@ class ProblemsFragment : Fragment() {
         binding.cardAiBanner.setOnClickListener(openCodeMate)
         binding.btnAiSlide.setOnClickListener(openCodeMate)
 
+        // 🟢 LOCK THE SUBMIT BUTTON INITIALLY 🟢
         binding.btnSubmit.isEnabled = false
         binding.btnSubmit.alpha = 0.5f
         binding.btnSubmit.setOnClickListener { (requireActivity() as MainActivity).open(GitFragment()) }
+    }
 
     private fun showLanguageMenu(v: View) {
         Toast.makeText(requireContext(), "Only JavaScript can be run offline on this device", Toast.LENGTH_SHORT).show()
@@ -162,7 +154,6 @@ class ProblemsFragment : Fragment() {
         binding.btnRun.isEnabled = false
         binding.tvPassed.text = "Running..."
         engine.executeAsync(code, detail.testCasesJson) { result ->
-            // Arrives on the sandbox worker thread, so hop to the UI thread.
             activity?.runOnUiThread { if (_binding != null) showResult(result) }
         }
     }
@@ -209,8 +200,9 @@ class ProblemsFragment : Fragment() {
             
             binding.btnSubmit.isEnabled = true
             binding.btnSubmit.alpha = 1.0f
-        
+            
         } else {
+            // Keep it locked if they fail
             binding.btnSubmit.isEnabled = false
             binding.btnSubmit.alpha = 0.5f
             
@@ -221,6 +213,7 @@ class ProblemsFragment : Fragment() {
             }
             Toast.makeText(requireContext(), "Case ${firstBad.index + 1}: $why", Toast.LENGTH_LONG).show()
         }
+    }
 
     private fun showTab(index: Int) {
         val tabs = listOf(binding.tabProblem, binding.tabExamples, binding.tabConstraints)
@@ -240,5 +233,9 @@ class ProblemsFragment : Fragment() {
         t.setTextColor(ContextCompat.getColor(requireContext(), if (selected) R.color.cb_bg else R.color.cb_ink))
     }
 
-    override fun onDestroyView() { super.onDestroyView(); engine.shutdown(); _binding = null }
+    override fun onDestroyView() { 
+        super.onDestroyView()
+        engine.shutdown()
+        _binding = null 
+    }
 }
