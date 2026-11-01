@@ -15,32 +15,35 @@ class AdminCompanyPortalActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_company_portal)
-
+        
         val webView = findViewById<WebView>(R.id.webView)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
 
-        // Enables JavaScript for Swagger UI to work properly
         webView.settings.javaScriptEnabled = true
+        webView.settings.domStorageEnabled = true
+    
+    // Inject CSS to hide the top bar and center the content
+        val customCss = """
+        javascript:(function() {
+            var style = document.createElement('style');
+            style.innerHTML = '.topbar { display: none !important; } body { padding: 10px; }';
+            document.head.appendChild(style);
+        })()
+    """.trimIndent()
 
-        webView.loadUrl("${BuildConfig.BASE_URL}docs")
-        webView.webViewClient = object : WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-                view?.evaluateJavascript("document.querySelector('.topbar').style.display='none';", null)
-    }
-}
-        
-        // BuildConfig.BASE_URL always ends with a "/" (required by Retrofit)
-        // So this will correctly load "http://10.0.2.2:8000/docs"
-        webView.loadUrl("${BuildConfig.BASE_URL}docs")
-
-        btnLogout.setOnClickListener {
-            // Route back to the AuthActivity
-            val intent = Intent(this, AuthActivity::class.java)
-            // Clear the backstack so the user can't press back to get into the portal again
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
+    webView.webViewClient = object : WebViewClient() {
+        override fun onPageFinished(view: WebView?, url: String?) {
+            super.onPageFinished(view, url)
+            view?.loadUrl(customCss) // Run the CSS injection
         }
+    }
+    
+    webView.loadUrl("${BuildConfig.BASE_URL}docs")
+
+    btnLogout.setOnClickListener {
+        val intent = Intent(this, AuthActivity::class.java) 
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }
