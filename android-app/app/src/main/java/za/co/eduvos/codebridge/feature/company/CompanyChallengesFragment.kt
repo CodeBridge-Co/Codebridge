@@ -60,24 +60,22 @@ class CompanyChallengesFragment : Fragment() {
     }
 
     private fun fetchLiveCompanies() {
-        RetrofitClient.getInstance().apiService.getCompanies().enqueue(object : Callback<List<CompanyDto>> {
-            override fun onResponse(call: Call<List<CompanyDto>>, response: Response<List<CompanyDto>>) {
-                if (_binding == null) return
-                
-                if (response.isSuccessful && response.body() != null) {
-                    // Map the backend DTO to your local UI model
-                    companyList = response.body()!!.map { dto ->
-                        Company(
-                            id = dto.companyId,
-                            name = dto.name,
-                            tags = "Tech Challenges", // Default tag since DB doesn't have it
-                            count = 5, // Placeholder count
-                            description = "Explore challenges posted by ${dto.name}.",
-                            challenges = emptyList()
-                        )
-                    }
-                    adapter.submit(companyList)
-                    
+    RetrofitClient.getInstance().apiService.getCompanies().enqueue(object : Callback<List<CompanyDto>> {
+        override fun onResponse(call: Call<List<CompanyDto>>, response: Response<List<CompanyDto>>) {
+            if (_binding == null) return
+            
+            if (response.isSuccessful && response.body() != null) {
+                companyList = response.body()!!.map { dto ->
+                    Company(
+                        id = dto.companyId,
+                        name = dto.name,
+                        tags = "Tech Challenges",
+                        challengeCount = 5,
+                        description = "Explore challenges posted by ${dto.name}.",
+                        challenges = emptyList()
+                    )
+                }
+                adapter.submit(companyList)
                     if (companyList.isEmpty()) {
                         Toast.makeText(requireContext(), "No companies registered yet.", Toast.LENGTH_SHORT).show()
                     }
