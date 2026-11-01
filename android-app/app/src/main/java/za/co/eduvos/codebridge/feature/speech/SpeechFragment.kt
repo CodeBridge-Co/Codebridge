@@ -93,6 +93,9 @@ class SpeechFragment : Fragment() {
                     if (_binding == null) return
                     if (fatal) pauseRecording()
                     Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+                    if (message.contains("no speech model", ignoreCase = true) || message.contains("not available", ignoreCase = true)) {
+                        promptTypedAnswer()
+                    }
                 }
             })
         }
