@@ -13,6 +13,7 @@ public class ProblemDto {
     @SerializedName("initial_code") private String initialCode;
     @SerializedName("company_id") private int companyId;
 
+    // GETTERS
     public int getProblemId() { return problemId; }
     public String getTitle() { return title; }
     public String getDifficultyLevel() { return difficultyLevel; }
@@ -22,4 +23,15 @@ public class ProblemDto {
     public String getExampleOutput() { return exampleOutput; }
     public String getInitialCode() { return initialCode; }
     public int getCompanyId() { return companyId; }
+
+    // SETTERS
+    public void setProblemId(int problemId) { this.problemId = problemId; }
+    public void setTitle(String title) { this.title = title; }
+    public void setDifficultyLevel(String difficultyLevel) { this.difficultyLevel = difficultyLevel; }
+    public void setTestCasesJson(String testCasesJson) { this.testCasesJson = testCasesJson; }
+    public void setDescription(String description) { this.description = description; }
+    public void setExampleInput(String exampleInput) { this.exampleInput = exampleInput; }
+    public void setExampleOutput(String exampleOutput) { this.exampleOutput = exampleOutput; }
+    public void setInitialCode(String initialCode) { this.initialCode = initialCode; }
+    public void setCompanyId(int companyId) { this.companyId = companyId; }
 }
