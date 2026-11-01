@@ -6,9 +6,15 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import za.co.eduvos.codebridge.MainActivity
-import za.co.eduvos.codebridge.data.Challenge
+import za.co.eduvos.codebridge.R
+import za.co.eduvos.codebridge.core.network.RetrofitClient
+import za.co.eduvos.codebridge.core.network.dto.CompanyDto
 import za.co.eduvos.codebridge.data.Company
 import za.co.eduvos.codebridge.databinding.FragmentCompanyChallengesBinding
 
@@ -17,15 +23,8 @@ class CompanyChallengesFragment : Fragment() {
     private var _binding: FragmentCompanyChallengesBinding? = null
     private val binding get() = _binding!!
 
-    private val companyList = listOf(
-        Company(1, "Amazon", "Frontend · Backend · System Design", 12, "Solve real-world problems used by Amazon engineers. Build your skills and get noticed!", emptyList()),
-        Company(2, "Microsoft", "Full Stack · Cloud · AI", 10, "Solve cloud, AI prompt routing, and scalable backend challenges built by Microsoft teams.", emptyList()),
-        Company(3, "Deloitte", "Data Analysis · Algorithms · SQL", 8, "Analyze real enterprise ledgers and audit trail data pipeline challenges.", emptyList()),
-        Company(4, "Discovery", "Tech · Data · AI/ML", 6, "Build healthcare claim validation and Vitality reward algorithms.", emptyList()),
-        Company(5, "FNB", "Software Engineering · APIs · Mobile", 5, "Develop secure eWallet and banking transaction stream APIs.", emptyList()),
-        Company(6, "Capitec", "Backend · Java · Problem Solving", 4, "Build resilient real-time payment processing microservices in Java.", emptyList())
-    )
-
+    // This will now hold REAL companies from the database
+    private var companyList = listOf<Company>()
     private lateinit var adapter: CompanyAdapter
 
     override fun onCreateView(
@@ -43,9 +42,10 @@ class CompanyChallengesFragment : Fragment() {
         }
 
         adapter = CompanyAdapter(companyList) { company ->
-            // Open company detail screen for that specific company
+            // Pass the company name and ID so the next screen can filter challenges
             (requireActivity() as MainActivity).open(
-                CompanyDetailFragment.newInstance(company.name, company.description)
+                CompanyDetailFragment.newInstance(company.name, company.description) 
+                // Note: If you update CompanyDetailFragment, pass company.id as well!
             )
         }
         binding.rvCompany.adapter = adapter
@@ -56,6 +56,42 @@ class CompanyChallengesFragment : Fragment() {
                 applyFilter(s?.toString().orEmpty())
             }
             override fun afterTextChanged(s: Editable?) {}
+        })
+
+        fetchLiveCompanies()
+    }
+
+    private fun fetchLiveCompanies() {
+        RetrofitClient.getInstance().apiService.getCompanies().enqueue(object : Callback<List<CompanyDto>> {
+            override fun onResponse(call: Call<List<CompanyDto>>, response: Response<List<CompanyDto>>) {
+                if (_binding == null) return
+                
+                if (response.isSuccessful && response.body() != null) {
+                    // Map the backend DTO to your local UI model
+                    companyList = response.body()!!.map { dto ->
+                        Company(
+                            id = dto.companyId,
+                            name = dto.name,
+                            tags = "Tech Challenges", // Default tag since DB doesn't have it
+                            count = 5, // Placeholder count
+                            description = "Explore challenges posted by ${dto.name}.",
+                            challenges = emptyList()
+                        )
+                    }
+                    adapter.submit(companyList)
+                    
+                    if (companyList.isEmpty()) {
+                        Toast.makeText(requireContext(), "No companies registered yet.", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Failed to load companies", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<CompanyDto>>, t: Throwable) {
+                if (_binding == null) return
+                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
         })
     }
 
