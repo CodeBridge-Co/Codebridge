@@ -21,6 +21,14 @@ class AdminCompanyPortalActivity : AppCompatActivity() {
 
         // Enables JavaScript for Swagger UI to work properly
         webView.settings.javaScriptEnabled = true
+
+        webView.loadUrl("${BuildConfig.BASE_URL}docs")
+        webView.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                view?.evaluateJavascript("document.querySelector('.topbar').style.display='none';", null)
+    }
+}
         
         // BuildConfig.BASE_URL always ends with a "/" (required by Retrofit)
         // So this will correctly load "http://10.0.2.2:8000/docs"
