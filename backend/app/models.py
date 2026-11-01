@@ -16,6 +16,7 @@ class Student(Base):
     __tablename__ = "students"
     student_hash_id = Column(String, primary_key=True, index=True)
     institution_id = Column(String)
+    password_hash = Column(String, nullable=True) # <--- ADD THIS
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class AssessmentSession(Base):
