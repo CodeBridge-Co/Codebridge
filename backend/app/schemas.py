@@ -1,5 +1,6 @@
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict # Import ConfigDict
 
 class RegisterRequest(BaseModel):
     student_hash_id: str
@@ -20,13 +21,13 @@ class ProblemDto(BaseModel):
     title: str
     difficulty_level: str
     test_cases_json: str
-    description: str = "" 
+    description: str = ""
     example_input: str = ""
     example_output: str = ""
     initial_code: str = ""
+    company_id: int = 0
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ProblemCreate(BaseModel):
     title: str
@@ -69,7 +70,9 @@ class EventDto(BaseModel):
     company_id: int
     title: str
     event_date: str
-
+    
+    model_config = ConfigDict(from_attributes=True)
+    
 class AiAssistResponse(BaseModel):
     allowed: bool
     remaining_uses: int
