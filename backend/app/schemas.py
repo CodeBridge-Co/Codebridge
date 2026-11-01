@@ -15,11 +15,28 @@ class LoginResponse(BaseModel):
     student_hash_id: str
     token: str
 
+class ProblemCreate(BaseModel):
+    title: str
+    difficulty_level: str
+    test_cases_json: str
+    company_id: int
+    description: str = "Write a function to solve the problem."
+    example_input: str = ""
+    example_output: str = ""
+    initial_code: str = "function solve() {\n  // your code here\n}"
+
 class ProblemDto(BaseModel):
     problem_id: int
     title: str
     difficulty_level: str
     test_cases_json: str
+    description: str
+    example_input: str
+    example_output: str
+    initial_code: str
+    
+    class Config:
+        from_attributes = True
 
 class SessionDto(BaseModel):
     session_id: Optional[str] = None
@@ -65,9 +82,3 @@ class EventCreate(BaseModel):
     company_id: int
     title: str
     event_date: str
-
-class ProblemCreate(BaseModel):
-    title: str
-    difficulty_level: str
-    test_cases_json: str
-    company_id: int
