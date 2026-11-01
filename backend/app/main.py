@@ -2,13 +2,13 @@ import os
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 from typing import List
-from pydantic import BaseModel
 
 from fastapi import FastAPI, HTTPException, Depends, Body
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from jose import jwt
 from passlib.context import CryptContext
+from pydantic import BaseModel
 
 from app.models import (
     Base, SyncLog, Student, Problem, AssessmentSession,
@@ -84,6 +84,10 @@ app = FastAPI(title="Code Bridge Backend", lifespan=lifespan)
 AI_LIMIT = 3
 ai_usage: dict = {}
 
+class CompanyDto(BaseModel):
+    company_id: int
+    name: str
+
 @app.get("/")
 def read_root(): return {"status": "backend is running"}
 
@@ -95,27 +99,20 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
     if getattr(req, 'role', 'STUDENT') in ["COMPANY", "ADMIN"]:
         email = req.student_hash_id
         password = req.institution_id
-        
         result = await db.execute(select(Company).where(Company.email == email))
         company = result.scalars().first()
-        
         if not company or not pwd_context.verify(password, company.password_hash):
             raise HTTPException(status_code=401, detail="Invalid email or password")
-            
         if req.role == "ADMIN" and not company.is_admin:
             raise HTTPException(status_code=403, detail="Not authorized as Admin")
-            
         token = create_access_token({"sub": company.email, "company_id": company.company_id, "role": req.role})
         return LoginResponse(student_hash_id=company.email, token=token)
 
-    # STRICT Student Login
     student = await db.get(Student, req.student_hash_id)
     if not student:
         raise HTTPException(status_code=401, detail="Student not found. Please register.")
-        
     if not student.password_hash or not pwd_context.verify(req.institution_id, student.password_hash):
         raise HTTPException(status_code=401, detail="Invalid password")
-
     token = create_access_token({"sub": student.student_hash_id, "role": "STUDENT"})
     return LoginResponse(student_hash_id=student.student_hash_id, token=token)
 
@@ -123,14 +120,17 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
 async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
     if await db.get(Student, req.student_hash_id) is not None:
         raise HTTPException(status_code=400, detail="Student already registered")
-    
     hashed_pw = pwd_context.hash(req.institution_id)
     db.add(Student(student_hash_id=req.student_hash_id, institution_id="Eduvos", password_hash=hashed_pw))
     db.add(RewardProgress(student_hash_id=req.student_hash_id))
     await db.commit()
-    
     token = create_access_token({"sub": req.student_hash_id, "role": "STUDENT"})
     return LoginResponse(student_hash_id=req.student_hash_id, token=token)
+
+@app.get("/companies", response_model=List[CompanyDto])
+async def get_companies(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Company).order_by(Company.company_id))
+    return [CompanyDto(company_id=c.company_id, name=c.name) for c in result.scalars().all()]
 
 @app.get("/problems", response_model=List[ProblemDto])
 async def get_problems(db: AsyncSession = Depends(get_db)):
@@ -151,15 +151,6 @@ async def create_problem(problem: ProblemCreate, db: AsyncSession = Depends(get_
     await db.commit()
     await db.refresh(new_problem)
     return new_problem
-    
-    class CompanyDto(BaseModel):
-    company_id: int
-    name: str
-
-@app.get("/companies", response_model=List[CompanyDto])
-async def get_companies(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Company).order_by(Company.company_id))
-    return [CompanyDto(company_id=c.company_id, name=c.name) for c in result.scalars().all()]
 
 @app.get("/events", response_model=List[EventDto])
 async def get_events(db: AsyncSession = Depends(get_db)):
@@ -193,7 +184,6 @@ async def sync_data(payload: SyncPayload, db: AsyncSession = Depends(get_db)):
     for item in payload.items:
         if await db.get(SyncLog, item.client_id) is None:
             db.add(SyncLog(client_id=item.client_id, entity_type=item.entity_type, data=str(item.payload)))
-            
         if item.entity_type == "session" and await db.get(AssessmentSession, item.client_id) is None:
             p = item.payload
             db.add(AssessmentSession(session_id=item.client_id, student_hash_id=p.get("student_hash_id", ""), problem_id=p.get("problem_id", 0), start_time=p.get("start_time", ""), end_time=p.get("end_time"), is_offline=1 if p.get("is_offline", False) else 0))
