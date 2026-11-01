@@ -10,6 +10,14 @@ public class ProblemDto {
     private String difficultyLevel;
     @SerializedName("test_cases_json")
     private String testCasesJson;
+    @SerializedName("description") 
+    private String description;
+    @SerializedName("example_input") 
+    private String exampleInput;
+    @SerializedName("example_output") 
+    private String exampleOutput;
+    @SerializedName("initial_code")
+    private String initialCode;
 
     public ProblemDto() {}
 
