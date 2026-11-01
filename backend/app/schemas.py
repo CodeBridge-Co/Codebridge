@@ -1,16 +1,15 @@
-from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, ConfigDict
-from pydantic import BaseModel, ConfigDict # Import ConfigDict
-
-class RegisterRequest(BaseModel):
-    student_hash_id: str
-    institution_id: str
-    password_hash: str = ""
+from typing import List, Dict, Any, Optional
 
 class LoginRequest(BaseModel):
     student_hash_id: str
     institution_id: str
     role: str = "STUDENT"
+
+class RegisterRequest(BaseModel):
+    student_hash_id: str
+    institution_id: str
+    password_hash: str = ""
 
 class LoginResponse(BaseModel):
     student_hash_id: str
@@ -25,8 +24,10 @@ class ProblemDto(BaseModel):
     example_input: str = ""
     example_output: str = ""
     initial_code: str = ""
-    company_id: int = 0
     
+    # FIX: Allow None for seeded problems without a company
+    company_id: Optional[int] = None 
+
     model_config = ConfigDict(from_attributes=True)
 
 class ProblemCreate(BaseModel):
@@ -38,9 +39,19 @@ class ProblemCreate(BaseModel):
     example_input: str = ""
     example_output: str = ""
     initial_code: str = ""
-    
-    class Config:
-        from_attributes = True
+
+class EventDto(BaseModel):
+    event_id: int
+    company_id: int
+    title: str
+    event_date: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+class EventCreate(BaseModel):
+    company_id: int
+    title: str
+    event_date: str
 
 class SessionDto(BaseModel):
     session_id: Optional[str] = None
@@ -55,8 +66,6 @@ class SyncItem(BaseModel):
     entity_type: str
     payload: Dict[str, Any]
 
-    model_config = ConfigDict(extra="allow")
-
 class SyncPayload(BaseModel):
     items: List[SyncItem]
 
@@ -65,26 +74,9 @@ class LeaderboardDto(BaseModel):
     xp: int
     streak: int
 
-class EventDto(BaseModel):
-    event_id: int
-    company_id: int
-    title: str
-    event_date: str
-    
-    model_config = ConfigDict(from_attributes=True)
-    
-class AiAssistResponse(BaseModel):
-    allowed: bool
-    remaining_uses: int
-
 class AiAssistRequest(BaseModel):
     session_id: str
 
-class SpeechResult(BaseModel):
-    transcript: str
-    keyword_density: float
-
-class EventCreate(BaseModel):
-    company_id: int
-    title: str
-    event_date: str
+class AiAssistResponse(BaseModel):
+    allowed: bool
+    remaining_uses: int
