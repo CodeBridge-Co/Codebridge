@@ -1,4 +1,5 @@
 import os
+import ssl
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 from typing import List
@@ -37,6 +38,11 @@ connect_args = {}
 if "sslmode=require" in DATABASE_URL:
     DATABASE_URL = DATABASE_URL.replace("?sslmode=require", "")
     connect_args = {"ssl": True}
+
+ca_path = os.path.join(os.path.dirname(__file__), "ca.pem")
+if os.path.exists(ca_path):
+    ssl_context = ssl.create_default_context(cafile=ca_path)
+    connect_args = {"ssl": ssl_context}
 
 engine = create_async_engine(DATABASE_URL, echo=False, connect_args=connect_args)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
@@ -126,6 +132,25 @@ async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
     await db.commit()
     token = create_access_token({"sub": req.student_hash_id, "role": "STUDENT"})
     return LoginResponse(student_hash_id=req.student_hash_id, token=token)
+
+@app.post("/auth/register-company", response_model=LoginResponse)
+async def register_company(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
+    email = req.student_hash_id
+    company_name = req.institution_id
+    password = req.password_hash
+    
+    result = await db.execute(select(Company).where(Company.email == email))
+    if result.scalars().first() is not None:
+        raise HTTPException(status_code=400, detail="Company already registered")
+        
+    hashed_pw = pwd_context.hash(password)
+    new_company = Company(name=company_name, email=email, password_hash=hashed_pw, is_admin=False)
+    db.add(new_company)
+    await db.commit()
+    await db.refresh(new_company)
+    
+    token = create_access_token({"sub": new_company.email, "company_id": new_company.company_id, "role": "COMPANY"})
+    return LoginResponse(student_hash_id=new_company.email, token=token)
 
 @app.get("/companies", response_model=List[CompanyDto])
 async def get_companies(db: AsyncSession = Depends(get_db)):
