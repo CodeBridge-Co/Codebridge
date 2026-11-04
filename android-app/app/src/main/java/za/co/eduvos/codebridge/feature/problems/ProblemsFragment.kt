@@ -121,19 +121,26 @@ class ProblemsFragment : Fragment() {
 
         val openCodeMate = View.OnClickListener {
             if (aiAttemptsLeft > 0) {
-                CodeMateBottomSheet.newInstance(aiAttemptsLeft) { updatedAttempts ->
-                    aiAttemptsLeft = updatedAttempts
-                    binding.tvAiBannerTitle.text = "Slide right for AI assistance ($aiAttemptsLeft attempts left)"
-                }.show(childFragmentManager, "CodeMateBottomSheet")
+        // Pass the current code and title to the BottomSheet
+        val currentCode = binding.etCode.text?.toString().orEmpty()
+        CodeMateBottomSheet.newInstance(
+            sessionId = "1", // Temporary session ID
+            problemTitle = detail.title,
+            currentCode = currentCode,
+            initialAttempts = aiAttemptsLeft
+        ) { updatedAttempts ->
+            aiAttemptsLeft = updatedAttempts
+            binding.tvAiBannerTitle.text = "Slide right for AI assistance ($aiAttemptsLeft attempts left)"
+        }.show(childFragmentManager, "CodeMateBottomSheet")
             } else {
-                Toast.makeText(requireContext(), "No CodeMate AI attempts remaining for this challenge", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "No CodeMate AI attempts remaining for this challenge", Toast.LENGTH_SHORT).show()
             }
         }
 
         binding.cardAiBanner.setOnClickListener(openCodeMate)
         binding.btnAiSlide.setOnClickListener(openCodeMate)
 
-        // 🟢 LOCK THE SUBMIT BUTTON INITIALLY 🟢
+        // LOCK THE SUBMIT BUTTON INITIALLY
         binding.btnSubmit.isEnabled = false
         binding.btnSubmit.alpha = 0.5f
         binding.btnSubmit.setOnClickListener { (requireActivity() as MainActivity).open(GitFragment()) }
