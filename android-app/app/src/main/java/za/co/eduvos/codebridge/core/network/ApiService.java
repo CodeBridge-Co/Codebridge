@@ -17,6 +17,9 @@ public interface ApiService {
     @POST("/auth/register-company")
     Call<LoginResponse> registerCompany(@Body RegisterCompanyRequest request);
 
+    @GET("/sessions/{student_hash_id}")
+    Call<List<za.co.eduvos.codebridge.core.network.dto.SessionHistoryDto>> getStudentSessions(@Path("student_hash_id") String hashId);
+
     @POST("/auth/login")
     Call<LoginResponse> login(@Body LoginRequest request);
 
