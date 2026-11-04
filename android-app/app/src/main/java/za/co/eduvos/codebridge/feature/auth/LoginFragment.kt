@@ -34,6 +34,9 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
+    // Track whether we are in Student or Company mode
+    private var isCompanyMode = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
@@ -45,6 +48,7 @@ class LoginFragment : Fragment() {
         val nunito = ResourcesCompat.getFont(requireContext(), R.font.nunito_regular)
         binding.tilStudentNumber.typeface = nunito
         binding.tilInstitution.typeface = nunito
+        binding.tilPassword.typeface = nunito
 
         val dark = ContextCompat.getColor(requireContext(), R.color.cb_dark_green)
         val green = ContextCompat.getColor(requireContext(), R.color.cb_green)
@@ -55,40 +59,68 @@ class LoginFragment : Fragment() {
 
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
         binding.btnLogin.setOnClickListener { attemptLogin() }
-        binding.tvRegisterStudent.setOnClickListener { showStudentRegistrationDialog() }
-        binding.tvRegisterCompany.setOnClickListener { showCompanyRegistrationDialog() }
+        
+        binding.tvRegisterLink.setOnClickListener { 
+            if (isCompanyMode) showCompanyRegistrationDialog() else showStudentRegistrationDialog() 
+        }
+        
+        binding.tvToggleMode.setOnClickListener { toggleMode() }
+    }
+
+    private fun toggleMode() {
+        isCompanyMode = !isCompanyMode
+        if (isCompanyMode) {
+            binding.tvWelcomeTitle.text = "Company Login"
+            binding.tvWelcomeSubtitle.text = "Enter your company credentials."
+            binding.tilStudentNumber.hint = "Company Email"
+            binding.tilInstitution.visibility = View.GONE
+            binding.tvRegisterLink.text = "New Company? Register here"
+            binding.tvToggleMode.text = "Are you a student? Click here"
+        } else {
+            binding.tvWelcomeTitle.text = "Student Login"
+            binding.tvWelcomeSubtitle.text = "Enter your student credentials."
+            binding.tilStudentNumber.hint = "Student Number"
+            binding.tilInstitution.visibility = View.VISIBLE
+            binding.tvRegisterLink.text = "New Student? Register here"
+            binding.tvToggleMode.text = "Registering as a Company? Click here"
+        }
     }
 
     private fun attemptLogin() {
-        val input1 = binding.etStudentNumber.text?.toString()?.trim().orEmpty()
-        val input2 = binding.etInstitution.text?.toString()?.trim().orEmpty()
+        val idOrEmail = binding.etStudentNumber.text?.toString()?.trim().orEmpty()
+        val institution = binding.etInstitution.text?.toString()?.trim().orEmpty()
+        val password = binding.etPassword.text?.toString()?.trim().orEmpty()
 
-        binding.tilStudentNumber.error = if (input1.isEmpty()) "Required" else null
-        binding.tilInstitution.error = if (input2.isEmpty()) "Required" else null
-        if (input1.isEmpty() || input2.isEmpty()) return
+        binding.tilStudentNumber.error = if (idOrEmail.isEmpty()) "Required" else null
+        binding.tilInstitution.error = if (!isCompanyMode && institution.isEmpty()) "Required" else null
+        binding.tilPassword.error = if (password.isEmpty()) "Required" else null
 
-        val selectedRole = when (binding.roleGroup.checkedRadioButtonId) {
-            R.id.radioCompany -> "COMPANY"
-            R.id.radioAdmin -> "ADMIN"
-            else -> "STUDENT"
-        }
+        if (idOrEmail.isEmpty() || password.isEmpty() || (!isCompanyMode && institution.isEmpty())) return
 
+        val role = if (isCompanyMode) "COMPANY" else "STUDENT"
         val appContext = requireContext().applicationContext
-        val finalId = if (selectedRole == "STUDENT") {
-            try { HashIdManager(appContext).generateHashId(input1) } catch (e: Exception) { return }
-        } else { input1 }
+        
+        // Only hash if it's a student
+        val finalId = if (!isCompanyMode) {
+            try { HashIdManager(appContext).generateHashId(idOrEmail) } catch (e: Exception) { return }
+        } else { idOrEmail }
 
         binding.btnLogin.isEnabled = false
-        RetrofitClient.getInstance().apiService.login(LoginRequest(finalId, input2, selectedRole))
+        
+        // 🟢 FIX: Pass 4 arguments matching the new LoginRequest DTO
+        val request = LoginRequest(finalId, institution, password, role)
+        
+        RetrofitClient.getInstance().apiService.login(request)
             .enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     if (_binding == null) return
                     binding.btnLogin.isEnabled = true
                     val token = response.body()?.token
+                    
                     if (response.isSuccessful && !token.isNullOrEmpty()) {
                         TokenManager.saveToken(token)
                         UserIdentity.save(appContext, finalId)
-                        if (selectedRole == "STUDENT") startActivity(Intent(requireContext(), HashIdGeneratedActivity::class.java))
+                        if (!isCompanyMode) startActivity(Intent(requireContext(), HashIdGeneratedActivity::class.java))
                         else startActivity(Intent(requireContext(), AdminCompanyPortalActivity::class.java))
                         requireActivity().finish()
                     } else {
@@ -106,17 +138,28 @@ class LoginFragment : Fragment() {
     private fun showStudentRegistrationDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_register_student, null)
         val etStudentNumber = dialogView.findViewById<TextInputEditText>(R.id.etRegStudentNumber)
+        val etInstitution = dialogView.findViewById<TextInputEditText>(R.id.etRegInstitution)
         val etPassword = dialogView.findViewById<TextInputEditText>(R.id.etRegPassword)
+        val etConfirmPassword = dialogView.findViewById<TextInputEditText>(R.id.etRegConfirmPassword)
 
         AlertDialog.Builder(requireContext())
             .setTitle("Register Student")
             .setView(dialogView)
             .setPositiveButton("Register") { _, _ ->
                 val num = etStudentNumber.text.toString().trim()
+                val inst = etInstitution.text.toString().trim()
                 val pass = etPassword.text.toString().trim()
-                if (num.isNotEmpty() && pass.isNotEmpty()) {
+                val confirmPass = etConfirmPassword.text.toString().trim()
+                
+                if (num.isNotEmpty() && inst.isNotEmpty() && pass.isNotEmpty()) {
+                    if (pass != confirmPass) {
+                        Toast.makeText(requireContext(), "Passwords do not match", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
                     val hashId = HashIdManager(requireContext().applicationContext).generateHashId(num)
-                    val request = RegisterStudentRequest(hashId, pass)
+                    
+                    // 🟢 FIX: Pass 3 arguments matching the new RegisterStudentRequest DTO
+                    val request = RegisterStudentRequest(hashId, inst, pass)
                     
                     RetrofitClient.getInstance().apiService.registerStudent(request).enqueue(object : Callback<LoginResponse> {
                         override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
@@ -140,6 +183,7 @@ class LoginFragment : Fragment() {
         val etCompanyName = dialogView.findViewById<TextInputEditText>(R.id.etRegCompanyName)
         val etEmail = dialogView.findViewById<TextInputEditText>(R.id.etRegEmail)
         val etPassword = dialogView.findViewById<TextInputEditText>(R.id.etRegPassword)
+        val etConfirmPassword = dialogView.findViewById<TextInputEditText>(R.id.etRegConfirmPassword)
 
         AlertDialog.Builder(requireContext())
             .setTitle("Register Company")
@@ -148,20 +192,27 @@ class LoginFragment : Fragment() {
                 val name = etCompanyName.text.toString().trim()
                 val email = etEmail.text.toString().trim()
                 val pass = etPassword.text.toString().trim()
+                val confirmPass = etConfirmPassword.text.toString().trim()
                 
-                val request = RegisterCompanyRequest(email, name, pass)
-                RetrofitClient.getInstance().apiService.registerCompany(request).enqueue(object : Callback<LoginResponse> {
-                    override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                        if (response.isSuccessful && response.body() != null) {
-                            TokenManager.saveToken(response.body()!!.token)
-                            startActivity(Intent(requireContext(), AdminCompanyPortalActivity::class.java))
-                            requireActivity().finish()
-                        } else Toast.makeText(requireContext(), "Registration failed", Toast.LENGTH_SHORT).show()
+                if (name.isNotEmpty() && email.isNotEmpty() && pass.isNotEmpty()) {
+                    if (pass != confirmPass) {
+                        Toast.makeText(requireContext(), "Passwords do not match", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
                     }
-                    override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                        Toast.makeText(requireContext(), "Network Error", Toast.LENGTH_SHORT).show()
-                    }
-                })
+                    val request = RegisterCompanyRequest(email, name, pass)
+                    RetrofitClient.getInstance().apiService.registerCompany(request).enqueue(object : Callback<LoginResponse> {
+                        override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                            if (response.isSuccessful && response.body() != null) {
+                                TokenManager.saveToken(response.body()!!.token)
+                                startActivity(Intent(requireContext(), AdminCompanyPortalActivity::class.java))
+                                requireActivity().finish()
+                            } else Toast.makeText(requireContext(), "Registration failed", Toast.LENGTH_SHORT).show()
+                        }
+                        override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                            Toast.makeText(requireContext(), "Network Error", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                }
             }.setNegativeButton("Cancel", null).show()
     }
 
