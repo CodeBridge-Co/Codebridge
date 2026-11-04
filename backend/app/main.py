@@ -101,7 +101,9 @@ def health(): return {"data": "OK", "error": None, "status": "success"}
 async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
     if getattr(req, 'role', 'STUDENT') in ["COMPANY", "ADMIN"]:
         email = req.student_hash_id
-        password = req.institution_id
+        # FIX: Use req.password instead of req.institution_id
+        password = req.password 
+        
         result = await db.execute(select(Company).where(Company.email == email))
         company = result.scalars().first()
         if not company or not pwd_context.verify(password, company.password_hash):
@@ -114,7 +116,8 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
     student = await db.get(Student, req.student_hash_id)
     if not student:
         raise HTTPException(status_code=401, detail="Student not found. Please register.")
-    if not student.password_hash or not pwd_context.verify(req.institution_id, student.password_hash):
+    # FIX: Use req.password instead of req.institution_id
+    if not student.password_hash or not pwd_context.verify(req.password, student.password_hash):
         raise HTTPException(status_code=401, detail="Invalid password")
     token = create_access_token({"sub": student.student_hash_id, "role": "STUDENT"})
     return LoginResponse(student_hash_id=student.student_hash_id, token=token)
@@ -123,8 +126,9 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
 async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
     if await db.get(Student, req.student_hash_id) is not None:
         raise HTTPException(status_code=400, detail="Student already registered")
-    hashed_pw = pwd_context.hash(req.institution_id)
-    db.add(Student(student_hash_id=req.student_hash_id, institution_id="Eduvos", password_hash=hashed_pw))
+    # FIX: Hash req.password and use req.institution_id for the actual institution
+    hashed_pw = pwd_context.hash(req.password) 
+    db.add(Student(student_hash_id=req.student_hash_id, institution_id=req.institution_id, password_hash=hashed_pw))
     db.add(RewardProgress(student_hash_id=req.student_hash_id))
     await db.commit()
     token = create_access_token({"sub": req.student_hash_id, "role": "STUDENT"})
@@ -136,7 +140,8 @@ async def register_company(req: RegisterRequest, db: AsyncSession = Depends(get_
     result = await db.execute(select(Company).where(Company.email == email))
     if result.scalars().first() is not None:
         raise HTTPException(status_code=400, detail="Company already registered")
-    hashed_pw = pwd_context.hash(req.password_hash)
+    # FIX: Hash req.password instead of req.password_hash
+    hashed_pw = pwd_context.hash(req.password) 
     new_company = Company(name=req.institution_id, email=email, password_hash=hashed_pw, is_admin=False)
     db.add(new_company)
     await db.commit()
@@ -187,6 +192,19 @@ async def create_event(event: EventCreate, db: AsyncSession = Depends(get_db)):
 async def get_leaderboard(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(RewardProgress).order_by(RewardProgress.xp_points.desc()).limit(50))
     return [LeaderboardDto(hash_id=r.student_hash_id, xp=r.xp_points, streak=r.streak_count) for r in result.scalars().all()]
+
+@app.get("/sessions/{student_hash_id}")
+async def get_student_sessions(student_hash_id: str, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(AssessmentSession).where(AssessmentSession.student_hash_id == student_hash_id))
+    sessions = result.scalars().all()
+    return [
+        {
+            "session_id": s.session_id, 
+            "problem_id": s.problem_id, 
+            "start_time": s.start_time, 
+            "is_completed": True if s.end_time else False
+        } for s in sessions
+    ]
 
 @app.post("/sessions")
 async def create_session(session: SessionDto, db: AsyncSession = Depends(get_db)):
@@ -246,4 +264,4 @@ async def ai_assist(req: AiAssistRequest = Body(...)):
         allowed=True, 
         remaining_uses=AI_LIMIT - (used + 1), 
         hint_text=hint_text
-    )
+         )
