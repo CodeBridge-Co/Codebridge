@@ -17,7 +17,6 @@ import retrofit2.Response
 import za.co.eduvos.codebridge.MainActivity
 import za.co.eduvos.codebridge.R
 import za.co.eduvos.codebridge.core.network.RetrofitClient
-import za.co.eduvos.codebridge.core.network.dto.ApiResponse
 import za.co.eduvos.codebridge.core.network.dto.LeaderboardDto
 import za.co.eduvos.codebridge.core.network.dto.ProblemDto
 import za.co.eduvos.codebridge.data.Challenge
@@ -113,13 +112,13 @@ class CompanyDetailFragment : Fragment() {
     }
 
     private fun fetchLiveChallenges() {
-        RetrofitClient.getInstance().apiService.getProblems().enqueue(object : Callback<ApiResponse<List<ProblemDto>>> {
-            override fun onResponse(call: Call<ApiResponse<List<ProblemDto>>>, response: Response<ApiResponse<List<ProblemDto>>>) {
+        // 🟢 FIX: Direct List return, no ApiResponse wrapper
+        RetrofitClient.getInstance().apiService.getProblems().enqueue(object : Callback<List<ProblemDto>> {
+            override fun onResponse(call: Call<List<ProblemDto>>, response: Response<List<ProblemDto>>) {
                 if (_binding == null) return
                 
-                val problems = response.body()?.data
-                if (response.isSuccessful && problems != null) {
-                    val companyProblems = problems.filter { it.companyId == companyId }
+                if (response.isSuccessful && response.body() != null) {
+                    val companyProblems = response.body()!!.filter { it.companyId == companyId }
                     
                     allChallenges = companyProblems.map {
                         Challenge(it.problemId, it.title, it.difficultyLevel, "General", "0%")
@@ -143,7 +142,7 @@ class CompanyDetailFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<ApiResponse<List<ProblemDto>>>, t: Throwable) {
+            override fun onFailure(call: Call<List<ProblemDto>>, t: Throwable) {
                 if (_binding == null) return
                 Toast.makeText(requireContext(), "Failed to load challenges: ${t.message}", Toast.LENGTH_SHORT).show()
             }
@@ -160,13 +159,15 @@ class CompanyDetailFragment : Fragment() {
         }
         binding.llLeaderboardItems.addView(loadingTv)
 
-        RetrofitClient.getInstance().apiService.getLeaderboard().enqueue(object : Callback<ApiResponse<List<LeaderboardDto>>> {
-            override fun onResponse(call: Call<ApiResponse<List<LeaderboardDto>>>, response: Response<ApiResponse<List<LeaderboardDto>>>) {
+        // 🟢 FIX: Direct List return, no ApiResponse wrapper
+        RetrofitClient.getInstance().apiService.getLeaderboard().enqueue(object : Callback<List<LeaderboardDto>> {
+            override fun onResponse(call: Call<List<LeaderboardDto>>, response: Response<List<LeaderboardDto>>) {
                 if (_binding == null) return
                 binding.llLeaderboardItems.removeAllViews()
                 
-                val list = response.body()?.data
-                if (response.isSuccessful && list != null) {
+                if (response.isSuccessful && response.body() != null) {
+                    val list = response.body()!!
+                    
                     if (list.isEmpty()) {
                         val emptyTv = TextView(requireContext()).apply {
                             text = "No leaderboard data available yet."
@@ -234,7 +235,7 @@ class CompanyDetailFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<ApiResponse<List<LeaderboardDto>>>, t: Throwable) {
+            override fun onFailure(call: Call<List<LeaderboardDto>>, t: Throwable) {
                 if (_binding == null) return
                 binding.llLeaderboardItems.removeAllViews()
                 val errorTv = TextView(requireContext()).apply {
