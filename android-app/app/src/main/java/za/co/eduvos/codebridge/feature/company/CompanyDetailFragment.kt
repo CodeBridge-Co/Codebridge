@@ -160,7 +160,6 @@ class CompanyDetailFragment : Fragment() {
         }
         binding.llLeaderboardItems.addView(loadingTv)
 
-        // 🟢 FIX: Expect ApiResponse wrapper here
         RetrofitClient.getInstance().apiService.getLeaderboard().enqueue(object : Callback<ApiResponse<List<LeaderboardDto>>> {
             override fun onResponse(call: Call<ApiResponse<List<LeaderboardDto>>>, response: Response<ApiResponse<List<LeaderboardDto>>>) {
                 if (_binding == null) return
