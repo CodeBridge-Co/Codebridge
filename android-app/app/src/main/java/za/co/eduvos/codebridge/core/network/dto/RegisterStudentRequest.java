@@ -9,14 +9,39 @@ public class RegisterStudentRequest {
     @SerializedName("institution_id")
     private String institutionId;
 
-    public RegisterStudentRequest(String studentHashId, String institutionId) {
+    @SerializedName("password")
+    private String password;
+
+    public RegisterStudentRequest() {
+    }
+
+    public RegisterStudentRequest(String studentHashId, String institutionId, String password) {
         this.studentHashId = studentHashId;
+        this.institutionId = institutionId;
+        this.password = password;
+    }
+
+    public String getStudentHashId() {
+        return studentHashId;
+    }
+
+    public void setStudentHashId(String studentHashId) {
+        this.studentHashId = studentHashId;
+    }
+
+    public String getInstitutionId() {
+        return institutionId;
+    }
+
+    public void setInstitutionId(String institutionId) {
         this.institutionId = institutionId;
     }
 
-    public String getStudentHashId() { return studentHashId; }
-    public void setStudentHashId(String studentHashId) { this.studentHashId = studentHashId; }
+    public String getPassword() {
+        return password;
+    }
 
-    public String getInstitutionId() { return institutionId; }
-    public void setInstitutionId(String institutionId) { this.institutionId = institutionId; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
