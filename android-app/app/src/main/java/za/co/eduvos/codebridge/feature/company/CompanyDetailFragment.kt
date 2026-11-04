@@ -1,16 +1,23 @@
 package za.co.eduvos.codebridge.feature.company
 
+import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import za.co.eduvos.codebridge.MainActivity
+import za.co.eduvos.codebridge.R
 import za.co.eduvos.codebridge.core.network.RetrofitClient
+import za.co.eduvos.codebridge.core.network.dto.LeaderboardDto
 import za.co.eduvos.codebridge.core.network.dto.ProblemDto
 import za.co.eduvos.codebridge.data.Challenge
 import za.co.eduvos.codebridge.data.ChallengeAdapter
@@ -30,7 +37,6 @@ class CompanyDetailFragment : Fragment() {
     private lateinit var adapter: ChallengeAdapter
 
     companion object {
-        // UPDATED: Now requires companyId so we can fetch the right data
         fun newInstance(companyId: Int, companyName: String, aboutText: String): CompanyDetailFragment {
             val fragment = CompanyDetailFragment()
             val args = Bundle()
@@ -76,7 +82,35 @@ class CompanyDetailFragment : Fragment() {
         binding.chipMedium.setOnClickListener { filter("Medium") }
         binding.chipHard.setOnClickListener { filter("Hard") }
 
+        // SETUP TAB SWITCHING
+        binding.tabChallenges.setOnClickListener { switchTab("CHALLENGES") }
+        binding.tabLeaderboard.setOnClickListener { switchTab("LEADERBOARD") }
+
         fetchLiveChallenges()
+    }
+
+    private fun switchTab(tab: String) {
+        if (tab == "CHALLENGES") {
+            binding.tabChallenges.setBackgroundResource(R.drawable.bg_chip_selected)
+            binding.tabChallenges.setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_bg))
+            binding.tabLeaderboard.setBackgroundResource(0)
+            binding.tabLeaderboard.setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_ink))
+
+            binding.llFilters.visibility = View.VISIBLE
+            binding.rvCompanyChallenges.visibility = View.VISIBLE
+            binding.llLeaderboardContainer.visibility = View.GONE
+        } else {
+            binding.tabLeaderboard.setBackgroundResource(R.drawable.bg_chip_selected)
+            binding.tabLeaderboard.setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_bg))
+            binding.tabChallenges.setBackgroundResource(0)
+            binding.tabChallenges.setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_ink))
+
+            binding.llFilters.visibility = View.GONE
+            binding.rvCompanyChallenges.visibility = View.GONE
+            binding.llLeaderboardContainer.visibility = View.VISIBLE
+            
+            fetchLeaderboard()
+        }
     }
 
     private fun fetchLiveChallenges() {
@@ -93,7 +127,6 @@ class CompanyDetailFragment : Fragment() {
                     }
 
                     adapter = ChallengeAdapter(allChallenges) { challenge ->
-                        // THE FIX: Pass the real challenge details to ProblemsFragment!
                         (requireActivity() as MainActivity).open(
                             ProblemsFragment.newInstance(
                                 challenge.id, 
@@ -114,6 +147,105 @@ class CompanyDetailFragment : Fragment() {
             override fun onFailure(call: Call<List<ProblemDto>>, t: Throwable) {
                 if (_binding == null) return
                 Toast.makeText(requireContext(), "Failed to load challenges: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun fetchLeaderboard() {
+        binding.llLeaderboardItems.removeAllViews()
+        
+        // Show loading state
+        val loadingTv = TextView(requireContext()).apply {
+            text = "Loading leaderboard..."
+            setPadding(16, 16, 16, 16)
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_text_secondary))
+        }
+        binding.llLeaderboardItems.addView(loadingTv)
+
+        RetrofitClient.getInstance().apiService.getLeaderboard().enqueue(object : Callback<List<LeaderboardDto>> {
+            override fun onResponse(call: Call<List<LeaderboardDto>>, response: Response<List<LeaderboardDto>>) {
+                if (_binding == null) return
+                binding.llLeaderboardItems.removeAllViews()
+                
+                if (response.isSuccessful && response.body() != null) {
+                    val list = response.body()!!
+                    if (list.isEmpty()) {
+                        val emptyTv = TextView(requireContext()).apply {
+                            text = "No leaderboard data available yet."
+                            setPadding(16, 16, 16, 16)
+                            setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_text_secondary))
+                        }
+                        binding.llLeaderboardItems.addView(emptyTv)
+                    } else {
+                        // Dynamically build the leaderboard rows
+                        list.forEachIndexed { index, entry ->
+                            val row = LinearLayout(requireContext()).apply {
+                                orientation = LinearLayout.HORIZONTAL
+                                setPadding(16, 24, 16, 24)
+                                gravity = Gravity.CENTER_VERTICAL
+                            }
+                            
+                            val rankTv = TextView(requireContext()).apply {
+                                text = "${index + 1}."
+                                textSize = 16f
+                                setTypeface(null, android.graphics.Typeface.BOLD)
+                                setPadding(0, 0, 24, 0)
+                                setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_green_dark))
+                            }
+                            
+                            val infoLayout = LinearLayout(requireContext()).apply {
+                                orientation = LinearLayout.VERTICAL
+                                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                            }
+                            
+                            val nameTv = TextView(requireContext()).apply {
+                                text = entry.hashId
+                                textSize = 14f
+                                setTypeface(null, android.graphics.Typeface.BOLD)
+                                setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_ink))
+                            }
+                            
+                            val streakTv = TextView(requireContext()).apply {
+                                text = "${entry.streak} day streak 🔥"
+                                textSize = 12f
+                                setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_text_secondary))
+                            }
+                            
+                            val xpTv = TextView(requireContext()).apply {
+                                text = "${entry.xp} XP"
+                                textSize = 14f
+                                setTypeface(null, android.graphics.Typeface.BOLD)
+                                setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_green_dark))
+                            }
+                            
+                            infoLayout.addView(nameTv)
+                            infoLayout.addView(streakTv)
+                            
+                            row.addView(rankTv)
+                            row.addView(infoLayout)
+                            row.addView(xpTv)
+                            
+                            binding.llLeaderboardItems.addView(row)
+                            
+                            // Divider
+                            val divider = View(requireContext()).apply {
+                                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 2)
+                                setBackgroundColor(Color.parseColor("#E0E0E0"))
+                            }
+                            binding.llLeaderboardItems.addView(divider)
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<List<LeaderboardDto>>, t: Throwable) {
+                if (_binding == null) return
+                binding.llLeaderboardItems.removeAllViews()
+                val errorTv = TextView(requireContext()).apply {
+                    text = "Failed to load leaderboard."
+                    setPadding(16, 16, 16, 16)
+                }
+                binding.llLeaderboardItems.addView(errorTv)
             }
         })
     }
