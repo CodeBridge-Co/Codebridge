@@ -24,10 +24,7 @@ class ProblemDto(BaseModel):
     example_input: str = ""
     example_output: str = ""
     initial_code: str = ""
-    
-    # FIX: Allow None for seeded problems without a company
     company_id: Optional[int] = None 
-
     model_config = ConfigDict(from_attributes=True)
 
 class ProblemCreate(BaseModel):
@@ -45,7 +42,6 @@ class EventDto(BaseModel):
     company_id: int
     title: str
     event_date: str
-
     model_config = ConfigDict(from_attributes=True)
 
 class EventCreate(BaseModel):
@@ -74,9 +70,13 @@ class LeaderboardDto(BaseModel):
     xp: int
     streak: int
 
+# UPDATED AI SCHEMAS
 class AiAssistRequest(BaseModel):
     session_id: str
+    problem_title: str = "Unknown Problem"
+    current_code: str = ""
 
 class AiAssistResponse(BaseModel):
     allowed: bool
     remaining_uses: int
+    hint_text: str = ""
