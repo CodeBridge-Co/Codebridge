@@ -17,6 +17,7 @@ import retrofit2.Response
 import za.co.eduvos.codebridge.MainActivity
 import za.co.eduvos.codebridge.R
 import za.co.eduvos.codebridge.core.network.RetrofitClient
+import za.co.eduvos.codebridge.core.network.dto.ApiResponse
 import za.co.eduvos.codebridge.core.network.dto.LeaderboardDto
 import za.co.eduvos.codebridge.core.network.dto.ProblemDto
 import za.co.eduvos.codebridge.data.Challenge
@@ -73,7 +74,6 @@ class CompanyDetailFragment : Fragment() {
         binding.tvCompanyTitle.text = "$companyName Challenges"
         binding.tvCompanyAbout.text = companyAbout
 
-        // Set up empty adapter first
         adapter = ChallengeAdapter(emptyList()) { }
         binding.rvCompanyChallenges.adapter = adapter
 
@@ -82,7 +82,6 @@ class CompanyDetailFragment : Fragment() {
         binding.chipMedium.setOnClickListener { filter("Medium") }
         binding.chipHard.setOnClickListener { filter("Hard") }
 
-        // SETUP TAB SWITCHING
         binding.tabChallenges.setOnClickListener { switchTab("CHALLENGES") }
         binding.tabLeaderboard.setOnClickListener { switchTab("LEADERBOARD") }
 
@@ -114,13 +113,13 @@ class CompanyDetailFragment : Fragment() {
     }
 
     private fun fetchLiveChallenges() {
-        RetrofitClient.getInstance().apiService.getProblems().enqueue(object : Callback<List<ProblemDto>> {
-            override fun onResponse(call: Call<List<ProblemDto>>, response: Response<List<ProblemDto>>) {
+        RetrofitClient.getInstance().apiService.getProblems().enqueue(object : Callback<ApiResponse<List<ProblemDto>>> {
+            override fun onResponse(call: Call<ApiResponse<List<ProblemDto>>>, response: Response<ApiResponse<List<ProblemDto>>>) {
                 if (_binding == null) return
                 
-                if (response.isSuccessful && response.body() != null) {
-                    // FILTER: Only show problems where the companyId matches this company!
-                    val companyProblems = response.body()!!.filter { it.companyId == companyId }
+                val problems = response.body()?.data
+                if (response.isSuccessful && problems != null) {
+                    val companyProblems = problems.filter { it.companyId == companyId }
                     
                     allChallenges = companyProblems.map {
                         Challenge(it.problemId, it.title, it.difficultyLevel, "General", "0%")
@@ -144,7 +143,7 @@ class CompanyDetailFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<List<ProblemDto>>, t: Throwable) {
+            override fun onFailure(call: Call<ApiResponse<List<ProblemDto>>>, t: Throwable) {
                 if (_binding == null) return
                 Toast.makeText(requireContext(), "Failed to load challenges: ${t.message}", Toast.LENGTH_SHORT).show()
             }
@@ -154,7 +153,6 @@ class CompanyDetailFragment : Fragment() {
     private fun fetchLeaderboard() {
         binding.llLeaderboardItems.removeAllViews()
         
-        // Show loading state
         val loadingTv = TextView(requireContext()).apply {
             text = "Loading leaderboard..."
             setPadding(16, 16, 16, 16)
@@ -162,13 +160,14 @@ class CompanyDetailFragment : Fragment() {
         }
         binding.llLeaderboardItems.addView(loadingTv)
 
-        RetrofitClient.getInstance().apiService.getLeaderboard().enqueue(object : Callback<List<LeaderboardDto>> {
-            override fun onResponse(call: Call<List<LeaderboardDto>>, response: Response<List<LeaderboardDto>>) {
+        // 🟢 FIX: Expect ApiResponse wrapper here
+        RetrofitClient.getInstance().apiService.getLeaderboard().enqueue(object : Callback<ApiResponse<List<LeaderboardDto>>> {
+            override fun onResponse(call: Call<ApiResponse<List<LeaderboardDto>>>, response: Response<ApiResponse<List<LeaderboardDto>>>) {
                 if (_binding == null) return
                 binding.llLeaderboardItems.removeAllViews()
                 
-                if (response.isSuccessful && response.body() != null) {
-                    val list = response.body()!!
+                val list = response.body()?.data
+                if (response.isSuccessful && list != null) {
                     if (list.isEmpty()) {
                         val emptyTv = TextView(requireContext()).apply {
                             text = "No leaderboard data available yet."
@@ -177,7 +176,6 @@ class CompanyDetailFragment : Fragment() {
                         }
                         binding.llLeaderboardItems.addView(emptyTv)
                     } else {
-                        // Dynamically build the leaderboard rows
                         list.forEachIndexed { index, entry ->
                             val row = LinearLayout(requireContext()).apply {
                                 orientation = LinearLayout.HORIZONTAL
@@ -227,7 +225,6 @@ class CompanyDetailFragment : Fragment() {
                             
                             binding.llLeaderboardItems.addView(row)
                             
-                            // Divider
                             val divider = View(requireContext()).apply {
                                 layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 2)
                                 setBackgroundColor(Color.parseColor("#E0E0E0"))
@@ -238,7 +235,7 @@ class CompanyDetailFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<List<LeaderboardDto>>, t: Throwable) {
+            override fun onFailure(call: Call<ApiResponse<List<LeaderboardDto>>>, t: Throwable) {
                 if (_binding == null) return
                 binding.llLeaderboardItems.removeAllViews()
                 val errorTv = TextView(requireContext()).apply {
