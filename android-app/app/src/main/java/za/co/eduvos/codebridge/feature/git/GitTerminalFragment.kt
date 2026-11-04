@@ -155,6 +155,12 @@ class GitFragment : Fragment() {
     /** Pushes the Git stage forward only once the merge is committed cleanly and pushed. */
     private fun advance() {
         if (git.isTaskComplete) {
+            // 🟢 SAVE 100% PROGRESS TO LOCAL STORAGE 🟢
+            val prefs = requireContext().getSharedPreferences("codebridge_prefs", android.content.Context.MODE_PRIVATE)
+            val hashId = UserIdentity.displayId(requireContext())
+            prefs.edit().putInt("progress_$hashId", 100).apply()
+            
+            // Move to the next stage
             (requireActivity() as MainActivity).open(SpeechFragment())
         } else {
             Toast.makeText(requireContext(), nextHint(), Toast.LENGTH_LONG).show()
