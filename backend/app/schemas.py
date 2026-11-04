@@ -2,14 +2,16 @@ from pydantic import BaseModel, ConfigDict
 from typing import List, Dict, Any, Optional
 
 class LoginRequest(BaseModel):
-    student_hash_id: str
-    institution_id: str
+    student_hash_id: str 
+    institution_id: str  
+    password: str        
     role: str = "STUDENT"
 
 class RegisterRequest(BaseModel):
-    student_hash_id: str
-    institution_id: str
-    password_hash: str = ""
+    student_hash_id: str 
+    institution_id: str  
+    password: str
+    role: str = "STUDENT"
 
 class LoginResponse(BaseModel):
     student_hash_id: str
