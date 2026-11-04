@@ -23,7 +23,11 @@ class CompanyAdapter(
         val c = items[pos]
         h.b.tvCompanyName.text = c.name
         h.b.tvCompanyTags.text = c.tags
-        h.b.tvChallengeCount.text = "${c.challengeCount} challenges"
+        
+        // Fix pluralization based on the real count
+        val countText = if (c.challengeCount == 1) "1 challenge" else "${c.challengeCount} challenges"
+        h.b.tvChallengeCount.text = countText
+        
         h.b.tvLogoText.text = c.name.take(3).uppercase()
 
         val tileColor = when (pos % 4) {
