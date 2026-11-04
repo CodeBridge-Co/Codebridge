@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical"
-                android:text="24 Solved · 87% Avg"
+                android:text="0 Solved · 0% Avg"
                 android:textColor="@color/cb_green_dark" />
         </FrameLayout>
 
@@ -84,6 +84,7 @@
 
         <!-- SECTION: In Progress Challenges -->
         <TextView
+            android:id="@+id/tvInProgressTitle"
             style="@style/CbText.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,97 +92,17 @@
             android:text="In Progress (Started / Unfinished)"
             android:textSize="13sp" />
 
+        <!-- DYNAMIC CONTAINER FOR IN PROGRESS -->
         <LinearLayout
+            android:id="@+id/llInProgressContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:background="@drawable/bg_card_outline"
-            android:orientation="vertical"
-            android:padding="12dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/CbText.Strong"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1. Two Sum"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        style="@style/CbText.Caption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Stage 1 completed · 68% progress"
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnResume1"
-                    style="@style/CbButton.Green.Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:text="Resume →"
-                    android:textSize="10sp" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="10dp"
-                android:background="@color/cb_line" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/CbText.Strong"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="3. Longest Substring"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        style="@style/CbText.Caption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Draft saved · 40% progress"
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnResume2"
-                    style="@style/CbButton.Green.Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:text="Resume →"
-                    android:textSize="10sp" />
-            </LinearLayout>
-        </LinearLayout>
+            android:orientation="vertical" />
 
         <!-- SECTION: Completed Challenges -->
         <TextView
+            android:id="@+id/tvCompletedTitle"
             style="@style/CbText.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -189,114 +110,13 @@
             android:text="Completed Challenges"
             android:textSize="13sp" />
 
+        <!-- DYNAMIC CONTAINER FOR COMPLETED -->
         <LinearLayout
+            android:id="@+id/llCompletedContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:background="@drawable/bg_card"
-            android:orientation="vertical"
-            android:padding="12dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_cb_check"
-                    app:tint="@color/cb_green_dark" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/CbText.Strong"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="5. Valid Anagram"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        style="@style/CbText.Caption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cleared on 1st try · Score: 94%"
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <TextView
-                    style="@style/CbText.Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_tag_dark"
-                    android:paddingHorizontal="6dp"
-                    android:paddingVertical="3dp"
-                    android:text="Easy"
-                    android:textColor="@color/cb_green"
-                    android:textSize="9sp" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="8dp"
-                android:background="@color/cb_line" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_cb_check"
-                    app:tint="@color/cb_green_dark" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/CbText.Strong"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="8. Reverse Linked List"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        style="@style/CbText.Caption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cleared · Score: 88%"
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <TextView
-                    style="@style/CbText.Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_tag_dark"
-                    android:paddingHorizontal="6dp"
-                    android:paddingVertical="3dp"
-                    android:text="Easy"
-                    android:textColor="@color/cb_green"
-                    android:textSize="9sp" />
-            </LinearLayout>
-        </LinearLayout>
+            android:orientation="vertical" />
 
         <!-- SECTION: Improvement Tips & AI Insights -->
         <TextView
@@ -329,20 +149,22 @@
                     app:tint="@color/cb_green_dark" />
 
                 <TextView
+                    android:id="@+id/tvAiTipTitle"
                     style="@style/CbText.Strong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Tip: Hash Map Trade-offs"
+                    android:text="Analyzing Profile..."
                     android:textSize="12sp" />
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tvAiTipBody"
                 style="@style/CbText.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="In Array challenges, always explain why trading O(N) space for O(N) time using Hash Maps is optimal for technical interviews."
+                android:text="Complete a challenge to receive personalized AI insights."
                 android:textSize="11sp" />
         </LinearLayout>
     </LinearLayout>
