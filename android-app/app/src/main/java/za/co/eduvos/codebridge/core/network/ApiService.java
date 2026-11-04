@@ -7,7 +7,6 @@ import retrofit2.http.*;
 
 public interface ApiService {
 
-    // The backend (and MockApiInterceptor) return these bare, not wrapped in ApiResponse.
     @POST("/auth/register")
     Call<LoginResponse> register(@Body RegisterRequest request);
 
