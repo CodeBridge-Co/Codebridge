@@ -7,11 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import za.co.eduvos.codebridge.R
+import za.co.eduvos.codebridge.core.network.RetrofitClient
+import za.co.eduvos.codebridge.core.network.dto.AiAssistRequest
+import za.co.eduvos.codebridge.core.network.dto.AiAssistResponse
 import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.databinding.DialogCodemateChatBinding
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class CodeMateBottomSheet : BottomSheetDialogFragment() {
 
@@ -20,10 +27,24 @@ class CodeMateBottomSheet : BottomSheetDialogFragment() {
 
     private var remainingAttempts: Int = 3
     private var onAttemptUsed: ((Int) -> Unit)? = null
+    
+    // NEW: Variables to hold the context for the AI
+    private var sessionId: String = "1"
+    private var problemTitle: String = "Unknown"
+    private var currentCode: String = ""
 
     companion object {
-        fun newInstance(attemptsLeft: Int, onAttemptUsed: (Int) -> Unit): CodeMateBottomSheet {
+        fun newInstance(
+            sessionId: String,
+            problemTitle: String,
+            currentCode: String,
+            attemptsLeft: Int, 
+            onAttemptUsed: (Int) -> Unit
+        ): CodeMateBottomSheet {
             val sheet = CodeMateBottomSheet()
+            sheet.sessionId = sessionId
+            sheet.problemTitle = problemTitle
+            sheet.currentCode = currentCode
             sheet.remainingAttempts = attemptsLeft
             sheet.onAttemptUsed = onAttemptUsed
             return sheet
@@ -57,7 +78,7 @@ class CodeMateBottomSheet : BottomSheetDialogFragment() {
             if (remainingAttempts > 0) sendMessage("Can you show me a code example?")
         }
         binding.chipHint2.setOnClickListener {
-            if (remainingAttempts > 0) sendMessage("Can you explain how HashMaps work in Java?")
+            if (remainingAttempts > 0) sendMessage("Can you explain how HashMaps work?")
         }
         binding.chipHint3.setOnClickListener {
             if (remainingAttempts > 0) sendMessage("Help me debug my solution")
@@ -70,24 +91,49 @@ class CodeMateBottomSheet : BottomSheetDialogFragment() {
     private fun sendMessage(userMsg: String) {
         if (remainingAttempts <= 0) return
 
-        remainingAttempts--
-        onAttemptUsed?.invoke(remainingAttempts)
-        binding.tvAttemptsLeft.text = "$remainingAttempts left"
-
-        // Add user chat bubble
+        // Add user chat bubble and clear input
         addUserBubble(userMsg)
         binding.etChatMessage.text?.clear()
 
-        // Generate BridgeAI response
-        val aiResponse = when {
-            userMsg.contains("HashMap", ignoreCase = true) || userMsg.contains("explain", ignoreCase = true) ->
-                "BridgeAI: Of course! Here's a simple explanation of how HashMaps work in Java:\n\nWhat is a HashMap?\nA HashMap is a data structure that stores key-value pairs using a hash function.\n\nHashMap<String, Integer> map = new HashMap<>();\nmap.put(\"apple\", 1);\nmap.get(\"apple\"); // returns 1"
-            userMsg.contains("debug", ignoreCase = true) ->
-                "BridgeAI: Make sure you handle edge cases such as empty inputs or missing target keys before indexing!"
-            else ->
-                "BridgeAI: Here is a quick code example:\n\nMap<Integer, Integer> map = new HashMap<>();\nif (map.containsKey(target - nums[i])) return new int[]{map.get(target - nums[i]), i};"
-        }
-        addAiBubble(aiResponse)
+        // Temporarily disable UI while waiting for AI
+        binding.btnSend.isEnabled = false
+        binding.tvAttemptsLeft.text = "Thinking..."
+
+        // CALL THE REAL AI BACKEND
+        val request = AiAssistRequest(sessionId, problemTitle, currentCode)
+        
+        RetrofitClient.getInstance().apiService.askAi(request).enqueue(object : Callback<AiAssistResponse> {
+            override fun onResponse(call: Call<AiAssistResponse>, response: Response<AiAssistResponse>) {
+                if (_binding == null) return
+                binding.btnSend.isEnabled = true
+
+                if (response.isSuccessful && response.body() != null) {
+                    val aiResponse = response.body()!!
+                    
+                    if (aiResponse.isAllowed) {
+                        remainingAttempts = aiResponse.remainingUses
+                        onAttemptUsed?.invoke(remainingAttempts)
+                        binding.tvAttemptsLeft.text = "$remainingAttempts left"
+                        
+                        // Add the AI's real hint to the chat
+                        addAiBubble(aiResponse.hintText)
+                    } else {
+                        binding.tvAttemptsLeft.text = "0 left"
+                        addAiBubble("BridgeAI: You have reached your AI limit for this challenge.")
+                    }
+                } else {
+                    binding.tvAttemptsLeft.text = "$remainingAttempts left"
+                    addAiBubble("BridgeAI: I couldn't reach the server. Please try again.")
+                }
+            }
+
+            override fun onFailure(call: Call<AiAssistResponse>, t: Throwable) {
+                if (_binding == null) return
+                binding.btnSend.isEnabled = true
+                binding.tvAttemptsLeft.text = "$remainingAttempts left"
+                addAiBubble("BridgeAI: Network error. Check your connection.")
+            }
+        })
     }
 
     private fun addUserBubble(msg: String) {
