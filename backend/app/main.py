@@ -11,6 +11,8 @@ from jose import jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
 
+import google.generativeai as genai # AI IMPORT
+
 from app.models import (
     Base, SyncLog, Student, Problem, AssessmentSession,
     TelemetryLog, RewardProgress, Company, Event
@@ -23,10 +25,14 @@ from app.schemas import (
 )
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://codebridge_user:password@postgres:5432/codebridge_db")
-
 SECRET_KEY = os.getenv("SECRET_KEY", "super-secret-codebridge-key-2026")
 ALGORITHM = "HS256"
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# GEMINI SETUP
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
 
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -55,27 +61,18 @@ async def seed_data(session: AsyncSession):
     existing = await session.execute(select(Problem))
     if existing.first() is None:
         session.add_all([
-            Problem(problem_id=1, title="Two Sum", difficulty_level="Easy",
-                    test_cases_json='{"cases":[{"input":"[2,7,11,15], 9","expected":"[0,1]"}]}',
-                    description="Find two numbers that add to target.", example_input="[2,7,11,15], 9", example_output="[0,1]", initial_code="function solve(nums, target) {\n  // code\n}"),
-            Problem(problem_id=2, title="Reverse String", difficulty_level="Easy",
-                    test_cases_json='{"cases":[{"input":"hello","expected":"olleh"}]}',
-                    description="Reverse a string.", example_input="hello", example_output="olleh", initial_code="function solve(s) {\n  // code\n}"),
-            Problem(problem_id=3, title="Merge Intervals", difficulty_level="Medium",
-                    test_cases_json='{"cases":[{"input":"[[1,3],[2,6]]","expected":"[[1,6]]"}]}',
-                    description="Merge overlapping intervals.", example_input="[[1,3],[2,6]]", example_output="[[1,6]]", initial_code="function solve(intervals) {\n  // code\n}"),
+            Problem(problem_id=1, title="Two Sum", difficulty_level="Easy", test_cases_json='{"cases":[{"input":"[2,7,11,15], 9","expected":"[0,1]"}]}', description="Find two numbers that add to target.", example_input="[2,7,11,15], 9", example_output="[0,1]", initial_code="function solve(nums, target) {\n  // code\n}"),
+            Problem(problem_id=2, title="Reverse String", difficulty_level="Easy", test_cases_json='{"cases":[{"input":"hello","expected":"olleh"}]}', description="Reverse a string.", example_input="hello", example_output="olleh", initial_code="function solve(s) {\n  // code\n}"),
+            Problem(problem_id=3, title="Merge Intervals", difficulty_level="Medium", test_cases_json='{"cases":[{"input":"[[1,3],[2,6]]","expected":"[[1,6]]"}]}', description="Merge overlapping intervals.", example_input="[[1,3],[2,6]]", example_output="[[1,6]]", initial_code="function solve(intervals) {\n  // code\n}"),
         ])
-
     demo = await session.get(Student, "demo-student-001")
     if demo is None:
         session.add(Student(student_hash_id="demo-student-001", institution_id="eduvos", password_hash=pwd_context.hash("password123")))
         session.add(RewardProgress(student_hash_id="demo-student-001", streak_count=5, xp_points=1200, badges_json="[]"))
-
     admin_email = "admin@codebridge.com"
     result = await session.execute(select(Company).where(Company.email == admin_email))
     if result.scalars().first() is None:
         session.add(Company(name="CodeBridge Admin", email=admin_email, password_hash=pwd_context.hash("ournames"), is_admin=True))
-
     await session.commit()
 
 @asynccontextmanager
@@ -136,19 +133,14 @@ async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
 @app.post("/auth/register-company", response_model=LoginResponse)
 async def register_company(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
     email = req.student_hash_id
-    company_name = req.institution_id
-    password = req.password_hash
-    
     result = await db.execute(select(Company).where(Company.email == email))
     if result.scalars().first() is not None:
         raise HTTPException(status_code=400, detail="Company already registered")
-        
-    hashed_pw = pwd_context.hash(password)
-    new_company = Company(name=company_name, email=email, password_hash=hashed_pw, is_admin=False)
+    hashed_pw = pwd_context.hash(req.password_hash)
+    new_company = Company(name=req.institution_id, email=email, password_hash=hashed_pw, is_admin=False)
     db.add(new_company)
     await db.commit()
     await db.refresh(new_company)
-    
     token = create_access_token({"sub": new_company.email, "company_id": new_company.company_id, "role": "COMPANY"})
     return LoginResponse(student_hash_id=new_company.email, token=token)
 
@@ -165,20 +157,14 @@ async def get_problems(db: AsyncSession = Depends(get_db)):
 @app.get("/problems/{problem_id}", response_model=ProblemDto)
 async def get_problem(problem_id: int, db: AsyncSession = Depends(get_db)):
     p = await db.get(Problem, problem_id)
-    if p is None:
-        raise HTTPException(status_code=404, detail="Problem not found")
+    if p is None: raise HTTPException(status_code=404, detail="Problem not found")
     return p
 
 @app.post("/problems", response_model=ProblemDto)
 async def create_problem(problem: ProblemCreate, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(func.max(Problem.problem_id)))
     max_id = result.scalar() or 0
-    new_problem = Problem(
-        problem_id=max_id + 1, title=problem.title, difficulty_level=problem.difficulty_level,
-        test_cases_json=problem.test_cases_json, company_id=problem.company_id,
-        description=problem.description, example_input=problem.example_input,
-        example_output=problem.example_output, initial_code=problem.initial_code
-    )
+    new_problem = Problem(problem_id=max_id + 1, title=problem.title, difficulty_level=problem.difficulty_level, test_cases_json=problem.test_cases_json, company_id=problem.company_id, description=problem.description, example_input=problem.example_input, example_output=problem.example_output, initial_code=problem.initial_code)
     db.add(new_problem)
     await db.commit()
     await db.refresh(new_problem)
@@ -226,9 +212,38 @@ async def sync_data(payload: SyncPayload, db: AsyncSession = Depends(get_db)):
     await db.commit()
     return {"status": "success", "synced_items": saved}
 
+# THE PROMPT-PROOFED AI ENDPOINT
 @app.post("/ai-assist", response_model=AiAssistResponse)
 async def ai_assist(req: AiAssistRequest = Body(...)):
     used = ai_usage.get(req.session_id, 0)
-    if used >= AI_LIMIT: return AiAssistResponse(allowed=False, remaining_uses=0)
+    if used >= AI_LIMIT: 
+        return AiAssistResponse(allowed=False, remaining_uses=0, hint_text="AI limit reached.")
+    
     ai_usage[req.session_id] = used + 1
-    return AiAssistResponse(allowed=True, remaining_uses=AI_LIMIT - (used + 1))
+    
+    # Strict Prompt Engineering to prevent cheating
+    prompt = f"""
+    You are a strict senior software engineering tutor. 
+    The student is working on: '{req.problem_title}'.
+    Their current code is: 
+    {req.current_code}
+    
+    Provide a helpful hint. 
+    CRITICAL RULES:
+    1. DO NOT write the solution or provide full code.
+    2. Point out logical errors or suggest a data structure (like a Hash Map).
+    3. Keep the response under 3 sentences.
+    """
+    
+    try:
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content(prompt)
+        hint_text = response.text.strip()
+    except Exception as e:
+        hint_text = "Check your loop boundaries or consider if a different data structure would optimize this."
+        
+    return AiAssistResponse(
+        allowed=True, 
+        remaining_uses=AI_LIMIT - (used + 1), 
+        hint_text=hint_text
+    )
