@@ -45,7 +45,7 @@ public interface ApiService {
     Call<ApiResponse<SpeechResultDto>> transcribeSpeech();
 
     @POST("/ai-assist")
-    Call<ApiResponse<Map<String, Object>>> aiAssist();
+    Call<AiAssistResponse> askAi(@Body AiAssistRequest request);
 
     @GET("/health")
     Call<ApiResponse<String>> healthCheck();
