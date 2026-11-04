@@ -121,19 +121,20 @@ class ProblemsFragment : Fragment() {
 
         val openCodeMate = View.OnClickListener {
             if (aiAttemptsLeft > 0) {
-        // Pass the current code and title to the BottomSheet
-        val currentCode = binding.etCode.text?.toString().orEmpty()
-        CodeMateBottomSheet.newInstance(
-            sessionId = "1", // Temporary session ID
+                // Get the student's current code from the editor
+                val currentCodeText = binding.etCode.text?.toString().orEmpty()
+        
+            CodeMateBottomSheet.newInstance(
+            sessionId = "1", // Placeholder session
             problemTitle = detail.title,
-            currentCode = currentCode,
-            initialAttempts = aiAttemptsLeft
+            currentCode = currentCodeText,
+            attemptsLeft = aiAttemptsLeft
         ) { updatedAttempts ->
             aiAttemptsLeft = updatedAttempts
             binding.tvAiBannerTitle.text = "Slide right for AI assistance ($aiAttemptsLeft attempts left)"
         }.show(childFragmentManager, "CodeMateBottomSheet")
             } else {
-        Toast.makeText(requireContext(), "No CodeMate AI attempts remaining for this challenge", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No CodeMate AI attempts remaining for this challenge", Toast.LENGTH_SHORT).show()
             }
         }
 
