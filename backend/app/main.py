@@ -46,14 +46,20 @@ def create_access_token(data: dict):
 
 connect_args = {}
 if DATABASE_URL.startswith("postgresql"):
-    if "sslmode=require" in DATABASE_URL:
-        DATABASE_URL = DATABASE_URL.replace("?sslmode=require", "")
-        connect_args = {"ssl": True}
-
-    ca_path = os.path.join(os.path.dirname(__file__), "ca.pem")
-    if os.path.exists(ca_path):
-        ssl_context = ssl.create_default_context(cafile=ca_path)
-        connect_args = {"ssl": ssl_context}
+    # If this is a local Docker database (CI/CD), do NOT use SSL
+    if "localhost" in DATABASE_URL or "@postgres:" in DATABASE_URL:
+        pass
+    else:
+        # Cloud DB (Aiven)
+        if "sslmode=require" in DATABASE_URL:
+            DATABASE_URL = DATABASE_URL.replace("?sslmode=require", "")
+            
+        ca_path = os.path.join(os.path.dirname(__file__), "ca.pem")
+        if os.path.exists(ca_path):
+            ssl_context = ssl.create_default_context(cafile=ca_path)
+            connect_args = {"ssl": ssl_context}
+        else:
+            connect_args = {"ssl": True}
 
 engine = create_async_engine(DATABASE_URL, echo=False, connect_args=connect_args)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
