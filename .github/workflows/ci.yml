@@ -69,6 +69,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # FIX: Force the exact env variables needed for the test database
+      - name: Setup Test Environment Files
+        run: |
+          mkdir -p infra/env
+          echo "POSTGRES_USER=codebridge_user" > infra/env/postgres.env
+          echo "POSTGRES_PASSWORD=password" >> infra/env/postgres.env
+          echo "POSTGRES_DB=codebridge_db" >> infra/env/postgres.env
+          
+          echo "DATABASE_URL=postgresql+asyncpg://codebridge_user:password@postgres:5432/codebridge_db" > infra/env/backend.env
+          echo "SECRET_KEY=ci-test-secret" >> infra/env/backend.env
+
       - name: Start full stack
         run: |
           cd infra
