@@ -1,4 +1,5 @@
 package za.co.eduvos.codebridge.core.network;
+
 import za.co.eduvos.codebridge.core.network.dto.*;
 import java.util.List;
 import java.util.Map;
@@ -32,16 +33,16 @@ public interface ApiService {
     Call<ProblemDto> getProblem(@Path("problem_id") int problemId);
 
     @POST("/sessions")
-    Call<ApiResponse<SessionDto>> createSession(@Body SessionDto session);
+    Call<okhttp3.ResponseBody> createSession(@Body CreateSessionRequest session);
 
     @POST("/sync")
     Call<Map<String, Object>> syncData(@Body SyncPayload payload);
-    
+
     @GET("/leaderboard")
-    Call<ApiResponse<List<LeaderboardDto>>> getLeaderboard();
+    Call<List<LeaderboardDto>> getLeaderboard(); // Raw List
 
     @GET("/events")
-    Call<ApiResponse<List<EventDto>>> getEvents();
+    Call<List<EventDto>> getEvents(); // Raw List
 
     @POST("/speech/transcribe")
     Call<ApiResponse<SpeechResultDto>> transcribeSpeech();
@@ -51,4 +52,16 @@ public interface ApiService {
 
     @GET("/health")
     Call<ApiResponse<String>> healthCheck();
+
+    @POST("/rewards/complete-challenge")
+    Call<okhttp3.ResponseBody> completeChallenge(@Body ChallengeCompleteRequest request);
+
+    @POST("/ai-feedback")
+    Call<FeedbackResponse> getAiFeedback(@Body FeedbackRequest request);
+
+    @POST("/problems")
+    Call<ProblemDto> createProblem(@Body ProblemCreate request);
+
+    @POST("/events")
+    Call<EventDto> createEvent(@Body EventCreate request);
 }

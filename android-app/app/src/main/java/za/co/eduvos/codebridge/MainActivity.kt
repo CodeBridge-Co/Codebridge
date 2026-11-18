@@ -13,16 +13,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import za.co.eduvos.codebridge.databinding.ActivityMainBinding
 import za.co.eduvos.codebridge.feature.dashboard.DashboardFragment
+import za.co.eduvos.codebridge.feature.leaderboard.LeaderboardFragment
 import za.co.eduvos.codebridge.feature.leaderboard.ProgressFragment
 import za.co.eduvos.codebridge.feature.problems.ChallengesListFragment
 import za.co.eduvos.codebridge.feature.profile.ProfileFragment
-import za.co.eduvos.codebridge.feature.sandbox.SandboxFragment
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    enum class Tab { HOME, CHALLENGES, PRACTICE, PROGRESS, PROFILE }
+    // 🟢 Renamed PRACTICE to LEADERBOARD
+    enum class Tab { HOME, CHALLENGES, LEADERBOARD, PROGRESS, PROFILE }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,20 +39,19 @@ class MainActivity : AppCompatActivity() {
 
         binding.tabHome.setOnClickListener { selectTab(Tab.HOME) }
         binding.tabChallenges.setOnClickListener { selectTab(Tab.CHALLENGES) }
-        binding.tabPractice.setOnClickListener { selectTab(Tab.PRACTICE) }
+        binding.tabPractice.setOnClickListener { selectTab(Tab.LEADERBOARD) } // 🟢 Routes to Leaderboard
         binding.tabProgress.setOnClickListener { selectTab(Tab.PROGRESS) }
         binding.tabProfile.setOnClickListener { selectTab(Tab.PROFILE) }
 
         if (savedInstanceState == null) selectTab(Tab.HOME)
     }
 
-    /** Switch bottom-bar tab and clear the stage/detail back stack. */
     fun selectTab(tab: Tab) {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         val fragment: Fragment = when (tab) {
             Tab.HOME -> DashboardFragment()
             Tab.CHALLENGES -> ChallengesListFragment()
-            Tab.PRACTICE -> SandboxFragment()
+            Tab.LEADERBOARD -> LeaderboardFragment() // 🟢 Loads the Leaderboard here
             Tab.PROGRESS -> ProgressFragment()
             Tab.PROFILE -> ProfileFragment()
         }
@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity() {
         highlight(tab)
     }
 
-    /** Open a screen on top of the current one (stages, events list). */
     fun open(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, fragment)
@@ -73,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         val tabs = mapOf(
             Tab.HOME to binding.tabHome,
             Tab.CHALLENGES to binding.tabChallenges,
-            Tab.PRACTICE to binding.tabPractice,
+            Tab.LEADERBOARD to binding.tabPractice, // 🟢 Maps the UI element
             Tab.PROGRESS to binding.tabProgress,
             Tab.PROFILE to binding.tabProfile
         )
@@ -84,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             val on = t == tab
             val targetColor = if (on) activeColor else inactiveColor
 
-            if (t == Tab.PRACTICE) {
+            if (t == Tab.LEADERBOARD) {
                 val tv = layout.getChildAt(1) as? TextView
                 tv?.setTextColor(targetColor)
             } else {

@@ -1,10 +1,12 @@
 package za.co.eduvos.codebridge.feature.speech
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
@@ -38,25 +40,24 @@ class SpeechFragment : Fragment() {
     private var smoothedLevel = 0f
 
     private val questions = listOf(
-        "Explain your overall approach",
-        "Why did you choose a Hash Map?",
-        "What is the time and space complexity?"
+        "Explain your overall approach to solving this problem.",
+        "What is the time and space complexity of your solution?",
+        "How would you handle edge cases or empty inputs?"
     )
     private var currentQuestionIndex = 0
 
     companion object {
-        /** Placeholder until assessment sessions are created in the app; the answers are still stored. */
         private const val SESSION_ID = 1
         private const val TICK_MS = 100L
         private const val FINAL_RESULT_GRACE_MS = 600L
+        private const val FINAL_RESULT_WAIT_MS = 3500L
+        private const val POLL_MS = 200L
         private const val HINT = "Tap the microphone and explain your answer out loud."
     }
 
     private val micPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (_binding == null) return@registerForActivityResult
-        if (granted) {
-            startListening()
-        } else {
+        if (granted) startListening() else {
             binding.tvRecState.text = "MIC BLOCKED"
             Toast.makeText(requireContext(), "Allow the microphone to record your answer.", Toast.LENGTH_LONG).show()
         }
@@ -83,6 +84,10 @@ class SpeechFragment : Fragment() {
         recorder = SpeechRecorder { System.currentTimeMillis() }
         sink = RoomSpeechSink(AppDatabase.getInstance(ctx.applicationContext).speechTranscriptDao())
 
+        // Clear old speech data for this new session
+        val prefs = requireContext().getSharedPreferences("codebridge_prefs", Context.MODE_PRIVATE)
+        prefs.edit().putInt("speech_answers", 0).putFloat("speech_density_sum", 0f).apply()
+
         recognizerAvailable = SpeechRecognizerManager.isAvailable(ctx)
         if (recognizerAvailable) {
             recognizer = SpeechRecognizerManager(ctx, object : SpeechRecognizerManager.Listener {
@@ -93,8 +98,10 @@ class SpeechFragment : Fragment() {
                     if (_binding == null) return
                     if (fatal) pauseRecording()
                     Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-                    if (message.contains("no speech model", ignoreCase = true) || message.contains("not available", ignoreCase = true)) {
-                        promptTypedAnswer()
+                    if (message.contains("speech model", ignoreCase = true) ||
+                        message.contains("not available", ignoreCase = true) ||
+                        message.contains("isn't available", ignoreCase = true)) {
+                        promptTypedAnswer(message)
                     }
                 }
             })
@@ -107,6 +114,7 @@ class SpeechFragment : Fragment() {
         binding.btnPause.setOnClickListener { toggle() }
         binding.btnDiscard.setOnClickListener { discard() }
         binding.btnSubmitAnswer.setOnClickListener { submitAnswer() }
+
         binding.btnEnd.setOnClickListener {
             pauseRecording()
             (requireActivity() as MainActivity).open(ResultsFragment())
@@ -114,8 +122,6 @@ class SpeechFragment : Fragment() {
 
         loadQuestion(0)
     }
-
-    // ---- recording control ----
 
     private fun toggle() {
         if (recorder.state == SpeechRecorder.State.RECORDING) pauseRecording() else requestStart()
@@ -126,8 +132,7 @@ class SpeechFragment : Fragment() {
             promptTypedAnswer()
             return
         }
-        val granted = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) ==
-            PackageManager.PERMISSION_GRANTED
+        val granted = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
         if (granted) startListening() else micPermission.launch(Manifest.permission.RECORD_AUDIO)
     }
 
@@ -161,8 +166,7 @@ class SpeechFragment : Fragment() {
         binding.tvTranscript.text = HINT
     }
 
-    /** For devices with no speech recognizer: the answer is typed instead of spoken. */
-    private fun promptTypedAnswer() {
+    private fun promptTypedAnswer(reason: String? = null) {
         val input = EditText(requireContext()).apply {
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
             minLines = 4
@@ -170,7 +174,7 @@ class SpeechFragment : Fragment() {
         }
         AlertDialog.Builder(requireContext())
             .setTitle("Speech recognition isn't available")
-            .setMessage("This device can't transcribe speech. Type your answer instead.")
+            .setMessage((reason ?: "This device can't transcribe speech.") + "\n\nType your answer instead.")
             .setView(input)
             .setPositiveButton("Use this answer") { _, _ ->
                 if (_binding == null) return@setPositiveButton
@@ -184,36 +188,53 @@ class SpeechFragment : Fragment() {
             .show()
     }
 
-    // ---- answers ----
-
     private fun submitAnswer() {
         pauseRecording()
-        // The recognizer delivers its last words just after pause, so give it a moment.
-        handler.postDelayed({ if (_binding != null) finishAnswer() }, FINAL_RESULT_GRACE_MS)
+        val deadline = SystemClock.uptimeMillis() + FINAL_RESULT_WAIT_MS
+        fun poll() {
+            if (_binding == null) return
+            if (recorder.transcript().isNotBlank() || SystemClock.uptimeMillis() >= deadline) {
+                finishAnswer()
+            } else {
+                handler.postDelayed({ poll() }, POLL_MS)
+            }
+        }
+        handler.postDelayed({ poll() }, FINAL_RESULT_GRACE_MS)
     }
 
     private fun finishAnswer() {
         val transcript = recorder.transcript().trim()
         if (transcript.isEmpty()) {
-            Toast.makeText(requireContext(), "Record your answer first.", Toast.LENGTH_SHORT).show()
+            if (recorder.elapsedMs() > 2000) {
+                promptTypedAnswer("No words were recognised from your recording.")
+            } else {
+                Toast.makeText(requireContext(), "Record your answer first.", Toast.LENGTH_SHORT).show()
+            }
             return
         }
+
         val analysis = KeywordAnalyzer.analyze(transcript)
         sink.save(SESSION_ID, transcript, analysis.density, recorder.elapsedMs(), System.currentTimeMillis())
         recorder.stop()
 
+        // 🟢 SAVE THE REAL SPEECH METRICS TO PREFERENCES 🟢
+        val prefs = requireContext().getSharedPreferences("codebridge_prefs", Context.MODE_PRIVATE)
+        val currentAnswers = prefs.getInt("speech_answers", 0) + 1
+        val currentDensity = prefs.getFloat("speech_density_sum", 0f) + analysis.density.toFloat()
+
+        prefs.edit()
+            .putInt("speech_answers", currentAnswers)
+            .putFloat("speech_density_sum", currentDensity)
+            .putBoolean("stage3_completed", true)
+            .apply()
+
         val pct = Math.round(analysis.density * 100)
-        val terms = analysis.occurrences.keys.take(3).joinToString(", ")
-        Toast.makeText(
-            requireContext(),
-            "Answer ${currentQuestionIndex + 1} saved: $pct% technical terms" + if (terms.isEmpty()) "" else " ($terms)",
-            Toast.LENGTH_LONG
-        ).show()
+        Toast.makeText(requireContext(), "Answer ${currentQuestionIndex + 1} saved: $pct% density", Toast.LENGTH_LONG).show()
 
         if (currentQuestionIndex < questions.size - 1) {
             loadQuestion(currentQuestionIndex + 1)
         } else {
-            Toast.makeText(requireContext(), "All ${questions.size} answers recorded. Tap End to see results.", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "All answers recorded. Tap End to see results.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -245,7 +266,6 @@ class SpeechFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        // Never keep the microphone open while the screen is in the background.
         if (_binding != null && recorder.state == SpeechRecorder.State.RECORDING) pauseRecording()
     }
 

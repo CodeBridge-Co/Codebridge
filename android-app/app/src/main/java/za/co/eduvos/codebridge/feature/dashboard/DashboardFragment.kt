@@ -1,5 +1,6 @@
 package za.co.eduvos.codebridge.feature.dashboard
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +8,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.MainActivity
-import za.co.eduvos.codebridge.backend.ProgressRepository
 import za.co.eduvos.codebridge.data.UserIdentity
 import za.co.eduvos.codebridge.databinding.FragmentDashboardBinding
 import za.co.eduvos.codebridge.feature.events.EventsFragment
@@ -37,17 +37,16 @@ class DashboardFragment : Fragment() {
         binding.tvGreeting.text = "$greeting, $hashId."
         binding.tvAvatar.text = hashId.take(2).uppercase()
 
-        // 1. REAL DATA FOR DAILY PROGRESS
-        val realProgress = ProgressRepository.getOverallProgressPercent(hashId)
+        val prefs = requireContext().getSharedPreferences("codebridge_prefs", Context.MODE_PRIVATE)
+        val realProgress = prefs.getInt("progress_$hashId", 0)
+
         binding.progressDaily.progress = realProgress
         binding.tvDailyProgress.text = "$realProgress%"
 
-        // 2. FIX THE SEARCH BAR
         binding.etSearch.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = binding.etSearch.text.toString().trim()
                 if (query.isNotEmpty()) {
-                    // Open Challenges list and pass the query
                     val fragment = ChallengesListFragment()
                     val bundle = Bundle().apply { putString("SEARCH_QUERY", query) }
                     fragment.arguments = bundle
@@ -57,7 +56,6 @@ class DashboardFragment : Fragment() {
             } else false
         }
 
-        // Navigation
         binding.btnContinue.setOnClickListener { main().open(ProblemsFragment()) }
         binding.linkExploreAll.setOnClickListener { main().open(ExploreAllFragment()) }
         binding.link0.setOnClickListener { main().open(ChallengesListFragment()) }

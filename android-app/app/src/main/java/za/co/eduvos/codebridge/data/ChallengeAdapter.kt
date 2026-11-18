@@ -22,6 +22,8 @@ class ChallengeAdapter(
         h.b.tvTitle.text = "${c.id}. ${c.title}"
         h.b.tvDifficulty.text = c.difficulty
         h.b.tvCategory.text = c.category
+        val hasRate = c.acceptanceRate.isNotBlank() && c.acceptanceRate != "-"
+        h.b.tvAcceptance.visibility = if (hasRate) android.view.View.VISIBLE else android.view.View.GONE
         h.b.tvAcceptance.text = "Acceptance: ${c.acceptanceRate}"
 
         val diffColor = when (c.difficulty) {

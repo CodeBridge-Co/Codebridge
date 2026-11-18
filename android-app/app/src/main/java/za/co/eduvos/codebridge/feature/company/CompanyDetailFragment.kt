@@ -17,7 +17,6 @@ import retrofit2.Response
 import za.co.eduvos.codebridge.MainActivity
 import za.co.eduvos.codebridge.R
 import za.co.eduvos.codebridge.core.network.RetrofitClient
-import za.co.eduvos.codebridge.core.network.dto.ApiResponse
 import za.co.eduvos.codebridge.core.network.dto.LeaderboardDto
 import za.co.eduvos.codebridge.core.network.dto.ProblemDto
 import za.co.eduvos.codebridge.data.Challenge
@@ -107,20 +106,19 @@ class CompanyDetailFragment : Fragment() {
             binding.llFilters.visibility = View.GONE
             binding.rvCompanyChallenges.visibility = View.GONE
             binding.llLeaderboardContainer.visibility = View.VISIBLE
-            
+
             fetchLeaderboard()
         }
     }
 
     private fun fetchLiveChallenges() {
-        // 🟢 THIS ONE EXPECTS A RAW LIST
         RetrofitClient.getInstance().apiService.getProblems().enqueue(object : Callback<List<ProblemDto>> {
             override fun onResponse(call: Call<List<ProblemDto>>, response: Response<List<ProblemDto>>) {
                 if (_binding == null) return
-                
+
                 if (response.isSuccessful && response.body() != null) {
                     val companyProblems = response.body()!!.filter { it.companyId == companyId }
-                    
+
                     allChallenges = companyProblems.map {
                         Challenge(it.problemId, it.title, it.difficultyLevel, "General", "0%")
                     }
@@ -128,15 +126,15 @@ class CompanyDetailFragment : Fragment() {
                     adapter = ChallengeAdapter(allChallenges) { challenge ->
                         (requireActivity() as MainActivity).open(
                             ProblemsFragment.newInstance(
-                                challenge.id, 
-                                challenge.title, 
-                                challenge.difficulty, 
+                                challenge.id,
+                                challenge.title,
+                                challenge.difficulty,
                                 challenge.category
                             )
                         )
                     }
                     binding.rvCompanyChallenges.adapter = adapter
-                    
+
                     if (allChallenges.isEmpty()) {
                         Toast.makeText(requireContext(), "No challenges posted by $companyName yet.", Toast.LENGTH_LONG).show()
                     }
@@ -152,7 +150,7 @@ class CompanyDetailFragment : Fragment() {
 
     private fun fetchLeaderboard() {
         binding.llLeaderboardItems.removeAllViews()
-        
+
         val loadingTv = TextView(requireContext()).apply {
             text = "Loading leaderboard..."
             setPadding(16, 16, 16, 16)
@@ -160,15 +158,13 @@ class CompanyDetailFragment : Fragment() {
         }
         binding.llLeaderboardItems.addView(loadingTv)
 
-        // 🟢 THIS ONE EXPECTS AN ApiResponse WRAPPER
-        RetrofitClient.getInstance().apiService.getLeaderboard().enqueue(object : Callback<ApiResponse<List<LeaderboardDto>>> {
-            override fun onResponse(call: Call<ApiResponse<List<LeaderboardDto>>>, response: Response<ApiResponse<List<LeaderboardDto>>>) {
+        // 🟢 FIXED: Expects a raw List<LeaderboardDto>, not ApiResponse
+        RetrofitClient.getInstance().apiService.getLeaderboard().enqueue(object : Callback<List<LeaderboardDto>> {
+            override fun onResponse(call: Call<List<LeaderboardDto>>, response: Response<List<LeaderboardDto>>) {
                 if (_binding == null) return
                 binding.llLeaderboardItems.removeAllViews()
-                
-                // Unwrap the data
-                val list = response.body()?.data
-                
+
+                val list = response.body()
                 if (response.isSuccessful && list != null) {
                     if (list.isEmpty()) {
                         val emptyTv = TextView(requireContext()).apply {
@@ -184,7 +180,7 @@ class CompanyDetailFragment : Fragment() {
                                 setPadding(16, 24, 16, 24)
                                 gravity = Gravity.CENTER_VERTICAL
                             }
-                            
+
                             val rankTv = TextView(requireContext()).apply {
                                 text = "${index + 1}."
                                 textSize = 16f
@@ -192,41 +188,41 @@ class CompanyDetailFragment : Fragment() {
                                 setPadding(0, 0, 24, 0)
                                 setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_green_dark))
                             }
-                            
+
                             val infoLayout = LinearLayout(requireContext()).apply {
                                 orientation = LinearLayout.VERTICAL
                                 layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                             }
-                            
+
                             val nameTv = TextView(requireContext()).apply {
                                 text = entry.hashId
                                 textSize = 14f
                                 setTypeface(null, android.graphics.Typeface.BOLD)
                                 setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_ink))
                             }
-                            
+
                             val streakTv = TextView(requireContext()).apply {
                                 text = "${entry.streak} day streak 🔥"
                                 textSize = 12f
                                 setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_text_secondary))
                             }
-                            
+
                             val xpTv = TextView(requireContext()).apply {
                                 text = "${entry.xp} XP"
                                 textSize = 14f
                                 setTypeface(null, android.graphics.Typeface.BOLD)
                                 setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_green_dark))
                             }
-                            
+
                             infoLayout.addView(nameTv)
                             infoLayout.addView(streakTv)
-                            
+
                             row.addView(rankTv)
                             row.addView(infoLayout)
                             row.addView(xpTv)
-                            
+
                             binding.llLeaderboardItems.addView(row)
-                            
+
                             val divider = View(requireContext()).apply {
                                 layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 2)
                                 setBackgroundColor(Color.parseColor("#E0E0E0"))
@@ -237,7 +233,7 @@ class CompanyDetailFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<ApiResponse<List<LeaderboardDto>>>, t: Throwable) {
+            override fun onFailure(call: Call<List<LeaderboardDto>>, t: Throwable) {
                 if (_binding == null) return
                 binding.llLeaderboardItems.removeAllViews()
                 val errorTv = TextView(requireContext()).apply {

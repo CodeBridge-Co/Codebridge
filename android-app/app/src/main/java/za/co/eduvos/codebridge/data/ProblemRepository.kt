@@ -10,16 +10,10 @@ import za.co.eduvos.codebridge.core.data.mapper.ProblemMapper
 import za.co.eduvos.codebridge.core.database.AppDatabase
 import za.co.eduvos.codebridge.core.network.RetrofitClient
 import za.co.eduvos.codebridge.core.network.dto.ProblemDto
+import za.co.eduvos.codebridge.core.sandbox.ChallengeClock
 import za.co.eduvos.codebridge.core.sandbox.TestSuiteParser
 import java.util.concurrent.Executors
 
-/**
- * @param entryPoint     name of the function the user must define
- * @param testCasesJson  suite in the sandbox format, taken as-is from the backend
- *
- * The backend only supplies id, title, difficulty and test cases, so description, examples,
- * category and starter code are derived from the suite (see [ProblemDetailFactory]).
- */
 data class ProblemDetail(
     val id: Int,
     val title: String,
@@ -30,26 +24,37 @@ data class ProblemDetail(
     val example1Output: String,
     val example2Input: String,
     val example2Output: String,
+    val example3Input: String,
+    val example3Output: String,
     val entryPoint: String,
     val initialCode: String,
     val testCasesJson: String,
+    val timeLimitMinutes: Int = ChallengeClock.DEFAULT_EASY_MINUTES,
+    /** Speech questions. The problem's own, else the default ones. */
+    val interviewQuestions: List<String> = ProblemDetailFactory.DEFAULT_INTERVIEW_QUESTIONS,
     val totalAttempts: Int = 0,
     val successRate: String = "0%"
 )
 
 object ProblemDetailFactory {
-
     private const val DEFAULT_ENTRY_POINT = "solve"
 
-    fun fromDto(dto: ProblemDto): ProblemDetail {
-    val base = create(dto.problemId, dto.title, dto.difficultyLevel, dto.testCasesJson)
-    return base.copy(
-        description = dto.description ?: base.description,
-        example1Input = dto.exampleInput ?: base.example1Input,
-        example1Output = dto.exampleOutput ?: base.example1Output,
-        initialCode = dto.initialCode ?: base.initialCode
+    /** Questions that fit any problem. A problem can set its own with "interviewQuestions". */
+    val DEFAULT_INTERVIEW_QUESTIONS = listOf(
+        "Explain your overall approach to solving this problem",
+        "Why did you choose this data structure or algorithm?",
+        "What is the time and space complexity of your solution?"
     )
-}
+
+    fun fromDto(dto: ProblemDto): ProblemDetail {
+        val base = create(dto.problemId, dto.title, dto.difficultyLevel, dto.testCasesJson)
+        return base.copy(
+            description = if (dto.description.isNullOrBlank()) base.description else dto.description,
+            example1Input = if (dto.exampleInput.isNullOrBlank()) base.example1Input else dto.exampleInput,
+            example1Output = if (dto.exampleOutput.isNullOrBlank()) base.example1Output else dto.exampleOutput,
+            initialCode = if (dto.initialCode.isNullOrBlank()) base.initialCode else dto.initialCode
+        )
+    }
 
     fun create(id: Int, title: String?, difficulty: String?, testCasesJson: String?): ProblemDetail {
         val json = testCasesJson.orEmpty()
@@ -59,8 +64,10 @@ object ProblemDetailFactory {
             null
         }
         val entryPoint = suite?.entryPoint ?: DEFAULT_ENTRY_POINT
-        val first = suite?.cases?.firstOrNull()
-        val second = suite?.cases?.getOrNull(1) ?: first
+        val shown = suite?.visibleCases().orEmpty()
+        val first = shown.firstOrNull()
+        val second = shown.getOrNull(1) ?: first
+        val third = shown.getOrNull(2) ?: second // 🟢 Restored
 
         val argNames = (1..maxOf(1, countArgs(first?.input.orEmpty()))).joinToString(", ") { "arg$it" }
 
@@ -74,13 +81,18 @@ object ProblemDetailFactory {
             example1Output = first?.expected ?: "-",
             example2Input = second?.input ?: "-",
             example2Output = second?.expected ?: "-",
+            example3Input = third?.input ?: "-", // 🟢 Restored
+            example3Output = third?.expected ?: "-", // 🟢 Restored
             entryPoint = entryPoint,
             initialCode = "function $entryPoint($argNames) {\n  // Write your solution here\n}",
-            testCasesJson = json
+            testCasesJson = json,
+            timeLimitMinutes = suite?.timeLimitMinutes?.takeIf { it > 0 }
+                ?: ChallengeClock.defaultMinutes(difficulty),
+            interviewQuestions = suite?.interviewQuestions?.takeIf { it.isNotEmpty() }
+                ?: DEFAULT_INTERVIEW_QUESTIONS
         )
     }
 
-    /** Number of top-level, comma-separated arguments in a call's argument list. */
     internal fun countArgs(input: String): Int {
         if (input.isBlank()) return 0
         var depth = 0
@@ -104,12 +116,7 @@ object ProblemDetailFactory {
     }
 }
 
-/**
- * Problems come from the API (ApiService.getProblems). Each successful fetch is cached in Room;
- * if the network call fails, the cached rows are used so the app still works offline.
- */
 object ProblemRepository {
-
     @Volatile
     var problems: List<ProblemDetail> = emptyList()
         private set
@@ -119,10 +126,6 @@ object ProblemRepository {
 
     fun getById(id: Int): ProblemDetail? = problems.find { it.id == id }
 
-    /**
-     * Loads problems and reports on the main thread.
-     * @param onResult (problems, fromCache, error) where error is non-null when the network call failed.
-     */
     fun load(context: Context, onResult: (List<ProblemDetail>, Boolean, String?) -> Unit) {
         val app = context.applicationContext
         RetrofitClient.getInstance().apiService.getProblems().enqueue(object : Callback<List<ProblemDto>> {

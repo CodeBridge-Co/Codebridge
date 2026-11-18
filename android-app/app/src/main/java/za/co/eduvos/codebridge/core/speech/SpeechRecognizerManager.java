@@ -8,16 +8,16 @@ import android.os.Looper;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 
 import java.util.ArrayList;
 
 /**
- * Wraps android.speech.SpeechRecognizer for long, continuous answers. The platform recognizer stops
- * after each pause in speech, so this restarts it while the student is still "recording" and reports
- * partial text, finished utterances and microphone levels. Prefers on-device recognition, so it can
- * work offline where the device has a speech model installed.
+ * Wraps Android's SpeechRecognizer for long answers. Android stops listening after every pause, so
+ * this starts it again while the student is still recording. It reports words and mic levels.
+ * It tries offline recognition first.
  *
- * Must be created and used on the main thread.
+ * Use it on the main thread only.
  */
 public class SpeechRecognizerManager {
 
@@ -25,7 +25,7 @@ public class SpeechRecognizerManager {
         void onPartial(String text);
         void onFinal(String text);
         void onLevel(float rmsDb);
-        /** @param fatal true when listening has stopped and cannot continue without the user acting */
+        /** @param fatal true if listening stopped and the user has to act */
         void onError(String message, boolean fatal);
     }
 
@@ -47,7 +47,7 @@ public class SpeechRecognizerManager {
         return SpeechRecognizer.isRecognitionAvailable(context.getApplicationContext());
     }
 
-    /** Begin (or resume) listening. */
+    /** Start or resume listening. */
     public void start() {
         wantListening = true;
         if (recognizer == null) {
@@ -57,14 +57,14 @@ public class SpeechRecognizerManager {
         beginListening();
     }
 
-    /** Stop listening; the utterance in progress is still delivered through onFinal. */
+    /** Stop listening. Words already heard still arrive in onFinal. */
     public void pause() {
         wantListening = false;
         main.removeCallbacksAndMessages(null);
         if (recognizer != null) recognizer.stopListening();
     }
 
-    /** Release the recognizer. Call from onDestroyView. */
+    /** Free the recognizer. Call this in onDestroyView. */
     public void destroy() {
         wantListening = false;
         main.removeCallbacksAndMessages(null);
@@ -75,14 +75,39 @@ public class SpeechRecognizerManager {
         }
     }
 
+    /**
+     * Settings to try in order when there is a language or network error:
+     * offline SA English, online SA English, online US English. The one that works is kept.
+     */
+    private static final String[] LANGUAGES = {"en-ZA", "en-ZA", "en-US"};
+    private static final boolean[] PREFER_OFFLINE = {true, false, false};
+    private int attempt = 0;
+    private static final String TAG = "SpeechRecognizer";
+    /** Sound level (dB) above which we count it as speech, not silence. */
+    private static final float HEARD_SOUND_DB = 2f;
+    private static final int NO_MATCH_LIMIT = 3;
+    private int noMatchStreak = 0;
+    private boolean heardSound = false;
+
+    /** Switch to the next setting. Returns false if there are none left. */
+    private boolean tryNextConfiguration() {
+        if (attempt >= LANGUAGES.length - 1) return false;
+        attempt++;
+        if (recognizer != null) recognizer.cancel();
+        restartSoon(RESTART_DELAY_MS);
+        return true;
+    }
+
     private void beginListening() {
         if (recognizer == null || !wantListening) return;
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                 .putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-                .putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
+                .putExtra(RecognizerIntent.EXTRA_LANGUAGE, LANGUAGES[attempt])
+                .putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, PREFER_OFFLINE[attempt])
                 .putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
                 .putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, appContext.getPackageName());
+        Log.i(TAG, "startListening language=" + LANGUAGES[attempt] + " offline=" + PREFER_OFFLINE[attempt]);
         recognizer.startListening(intent);
     }
 
@@ -110,32 +135,59 @@ public class SpeechRecognizerManager {
 
         @Override
         public void onRmsChanged(float rmsdB) {
+            if (rmsdB > HEARD_SOUND_DB) heardSound = true;
             listener.onLevel(rmsdB);
         }
 
         @Override
         public void onPartialResults(Bundle partialResults) {
             String text = first(partialResults, SpeechRecognizer.RESULTS_RECOGNITION);
-            if (text != null) listener.onPartial(text);
+            if (text != null) {
+                noMatchStreak = 0;
+                Log.d(TAG, "partial: " + text);
+                listener.onPartial(text);
+            }
         }
 
         @Override
         public void onResults(Bundle results) {
             String text = first(results, SpeechRecognizer.RESULTS_RECOGNITION);
-            if (text != null) listener.onFinal(text);
+            if (text != null) {
+                noMatchStreak = 0;
+                Log.d(TAG, "final: " + text);
+                listener.onFinal(text);
+            }
+            heardSound = false;
             restartSoon(RESTART_DELAY_MS);
         }
 
         @Override
         public void onError(int error) {
+            Log.w(TAG, "onError " + error);
             switch (error) {
                 case SpeechRecognizer.ERROR_NO_MATCH:
                 case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
-                    // Silence or unintelligible audio: normal during a long answer, so keep going.
+                    // Silence is normal, so keep going. But if we keep hearing sound and get no
+                    // words, this setting isn't working. Try the next one, or tell the user.
+                    noMatchStreak++;
+                    Log.d(TAG, "no match/timeout (error " + error + "), streak=" + noMatchStreak + ", heardSound=" + heardSound);
+                    if (noMatchStreak >= NO_MATCH_LIMIT && heardSound) {
+                        noMatchStreak = 0;
+                        heardSound = false;
+                        if (tryNextConfiguration()) {
+                            listener.onError("Hearing you but no words came back. Trying another recognition setting...", false);
+                        } else {
+                            listener.onError("Hearing you but no words were recognised (error " + error + "). "
+                                    + "Check your internet connection and the phone's speech language, "
+                                    + "or tap Submit to type your answer instead.", false);
+                            restartSoon(RESTART_DELAY_MS);
+                        }
+                        return;
+                    }
                     restartSoon(RESTART_DELAY_MS);
                     return;
                 case SpeechRecognizer.ERROR_CLIENT:
-                    // Raised when we cancel or stop ourselves.
+                    // We caused this by cancelling, so ignore it.
                     return;
                 case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
                     if (recognizer != null) recognizer.cancel();
@@ -147,12 +199,14 @@ public class SpeechRecognizerManager {
                 case SpeechRecognizer.ERROR_NETWORK:
                 case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
                 case SpeechRecognizer.ERROR_SERVER:
-                    stopAfterError("Offline speech recognition isn't available on this device. "
+                    if (tryNextConfiguration()) return;
+                    stopAfterError("Speech recognition isn't available right now (error " + error + "). "
                             + "Connect to the internet or install an offline speech pack.");
                     return;
                 case 12: // ERROR_LANGUAGE_NOT_SUPPORTED (API 31+)
                 case 13: // ERROR_LANGUAGE_UNAVAILABLE (API 31+)
-                    stopAfterError("This device has no speech model for your language yet.");
+                    if (tryNextConfiguration()) return;
+                    stopAfterError("This device has no speech model for English yet (error " + error + ").");
                     return;
                 default:
                     stopAfterError("Speech recognition stopped (error " + error + ").");
@@ -161,6 +215,7 @@ public class SpeechRecognizerManager {
 
         private void stopAfterError(String message) {
             wantListening = false;
+            attempt = 0; // the next tap starts from the first configuration again
             listener.onError(message, true);
         }
     }

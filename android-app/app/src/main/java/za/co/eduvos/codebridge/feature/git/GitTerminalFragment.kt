@@ -7,18 +7,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import za.co.eduvos.codebridge.MainActivity
 import za.co.eduvos.codebridge.core.database.AppDatabase
 import za.co.eduvos.codebridge.core.git.CommandLogger
+import za.co.eduvos.codebridge.core.git.GitRepositoryState
 import za.co.eduvos.codebridge.core.git.GitSimulationManager
 import za.co.eduvos.codebridge.core.git.GitTelemetryReporter
 import za.co.eduvos.codebridge.core.git.GitTelemetryCollector
 import za.co.eduvos.codebridge.core.git.MergeConflictGenerator
 import za.co.eduvos.codebridge.core.git.RoomGitLogSink
+import za.co.eduvos.codebridge.data.SessionIds
 import za.co.eduvos.codebridge.data.UserIdentity
+import za.co.eduvos.codebridge.databinding.ItemCommitRowBinding
 import za.co.eduvos.codebridge.databinding.FragmentGitBinding
 import za.co.eduvos.codebridge.feature.speech.SpeechFragment
 import java.util.function.LongSupplier
@@ -36,8 +40,7 @@ class GitFragment : Fragment() {
     private var announcedComplete = false
 
     companion object {
-        // Placeholder until assessment sessions are created in the app
-        private const val SESSION_ID = 1
+        private const val MAX_COMMITS_SHOWN = 20
         private const val MAX_LINES = 80
         private const val GREY = "#9AA39C"
         private const val RED = "#FF8A8A"
@@ -52,7 +55,7 @@ class GitFragment : Fragment() {
         // Same student always gets the same exercise.
         val seed = UserIdentity.displayId(ctx).hashCode().toLong()
         val scenario = MergeConflictGenerator.generate(seed, clock)
-        val logger = CommandLogger(RoomGitLogSink(AppDatabase.getInstance(ctx).gitCommandDao()), SESSION_ID, clock)
+        val logger = CommandLogger(RoomGitLogSink(AppDatabase.getInstance(ctx).gitCommandDao()), SessionIds.localId(ctx), clock)
         git = GitSimulationManager(scenario, logger, GitTelemetryCollector(clock), clock)
 
         add(GREY, "Your branch ${git.state.currentBranch} has diverged from ${scenario.targetBranch}.")
@@ -105,7 +108,7 @@ class GitFragment : Fragment() {
             val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://git-scm.com/book/en/v2"))
             startActivity(intent)
         }
-        
+
         binding.btnPush.setOnClickListener { advance() }
 
         refresh()
@@ -134,13 +137,13 @@ class GitFragment : Fragment() {
             announcedComplete = true
             add(GREEN, "Merge resolved and pushed. You can advance to the interview stage.")
             // Queue the Git results for Lebo's sync worker (stored locally, sent when online).
-            GitTelemetryReporter.report(requireContext(), SESSION_ID, git.telemetry.snapshot())
+            GitTelemetryReporter.report(requireContext(), SessionIds.localId(requireContext()), git.telemetry.snapshot())
         }
         refresh()
         render()
     }
 
-    /** Resolves every conflict block in the open file in one tap, then saves it. Staging is still up to the student. */
+    /** Fixes every conflict in the open file in one tap and saves it. The student still has to stage it. */
     private fun keepSide(side: MergeConflictGenerator.Resolution, label: String) {
         val file = editingFile ?: return
         val resolved = MergeConflictGenerator.resolve(binding.etConflictEditor.text.toString(), side)
@@ -152,14 +155,14 @@ class GitFragment : Fragment() {
         render()
     }
 
-    /** Pushes the Git stage forward only once the merge is committed cleanly and pushed. */
+    /** Moves on only when the merge is committed and pushed. */
     private fun advance() {
         if (git.isTaskComplete) {
             // 🟢 SAVE 100% PROGRESS TO LOCAL STORAGE 🟢
             val prefs = requireContext().getSharedPreferences("codebridge_prefs", android.content.Context.MODE_PRIVATE)
             val hashId = UserIdentity.displayId(requireContext())
-            prefs.edit().putInt("progress_$hashId", 100).apply()
-            
+            prefs.edit().putInt("progress_$hashId", 100).putBoolean("git_completed", true).apply()
+
             // Move to the next stage
             (requireActivity() as MainActivity).open(SpeechFragment())
         } else {
@@ -199,15 +202,7 @@ class GitFragment : Fragment() {
         binding.tvCommittedSubtitle.text = if (toPush == 1) "1 Commit to push" else "$toPush Commits to push"
         binding.tvPushedSubtitle.text = if (st.isPushed) "Published" else "Not published"
 
-        val head = st.head
-        binding.cardCommitHistory.visibility = View.VISIBLE
-        binding.tvEmptyCommitHistory.visibility = View.GONE
-        binding.tvCommitMsg.text = head.message
-        binding.tvBranchTag.text = st.currentBranch
-        binding.tvCommitTime.text = DateUtils.getRelativeTimeSpanString(
-            head.time, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS
-        )
-        binding.tvCommitMeta.text = "${head.shortId()} · ${head.parents.size} parent(s)"
+        renderCommitHistory(st)
 
         val target = st.conflictedFiles.firstOrNull() ?: git.filesWithMarkers().firstOrNull()
         if (target == null) {
@@ -223,6 +218,41 @@ class GitFragment : Fragment() {
                 binding.tvConflictFile.text = target
                 binding.etConflictEditor.setText(current)
             }
+        }
+    }
+
+    /** Shows the commit list, newest first. */
+    private fun renderCommitHistory(st: GitRepositoryState) {
+        val container = binding.llCommitList
+        container.removeAllViews()
+        val history = st.history
+        binding.tvEmptyCommitHistory.visibility = if (history.isEmpty()) View.VISIBLE else View.GONE
+
+        val unpushed = st.unpushedCommitIds
+        val inflater = LayoutInflater.from(requireContext())
+        val now = System.currentTimeMillis()
+        history.take(MAX_COMMITS_SHOWN).forEachIndexed { i, commit ->
+            val row = ItemCommitRowBinding.inflate(inflater, container, false)
+            row.tvCommitMsg.text = commit.message
+            if (i == 0) {
+                row.tvHeadBadge.visibility = View.VISIBLE
+                row.tvBranchTag.visibility = View.VISIBLE
+                row.tvBranchTag.text = st.currentBranch
+            }
+            val kind = if (commit.parents.size > 1) "merge commit" else "commit"
+            val where = if (commit.id in unpushed) "local" else "pushed"
+            row.tvCommitMeta.text = "${commit.shortId()} · $kind · $where"
+            row.tvCommitTime.text = DateUtils.getRelativeTimeSpanString(
+                commit.time, now, DateUtils.MINUTE_IN_MILLIS
+            )
+            container.addView(row.root)
+        }
+        if (history.size > MAX_COMMITS_SHOWN) {
+            container.addView(TextView(requireContext()).apply {
+                text = "+ ${history.size - MAX_COMMITS_SHOWN} older commits"
+                textSize = 11f
+                setPadding(0, 12, 0, 0)
+            })
         }
     }
 

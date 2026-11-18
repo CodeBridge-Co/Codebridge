@@ -13,6 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.graphics.Color
 import za.co.eduvos.codebridge.R
 import za.co.eduvos.codebridge.core.network.RetrofitClient
 import za.co.eduvos.codebridge.core.network.dto.AiAssistRequest
@@ -141,8 +142,9 @@ class CodeMateBottomSheet : BottomSheetDialogFragment() {
             text = msg
             textSize = 13f
             setPadding(20, 14, 20, 14)
-            setTextColor(ContextCompat.getColor(requireContext(), R.color.cb_ink))
-            setBackgroundResource(R.drawable.bg_chip_selected)
+            text = msg
+            setTextColor(android.graphics.Color.WHITE)
+            setBackgroundResource(R.drawable.bg_dark_card)
         }
         val lp = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,

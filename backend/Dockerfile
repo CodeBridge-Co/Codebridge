@@ -5,8 +5,9 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# System deps: build tools for asyncpg/psycopg, curl for healthcheck
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# 🟢 UPDATED: Split apt-get to survive network drops and added --fix-missing
+RUN apt-get update --fix-missing
+RUN apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
     curl \

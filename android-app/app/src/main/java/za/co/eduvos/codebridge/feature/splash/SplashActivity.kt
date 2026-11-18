@@ -1,5 +1,6 @@
 package za.co.eduvos.codebridge.feature.splash
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -13,6 +14,8 @@ import androidx.core.content.ContextCompat
 import za.co.eduvos.codebridge.MainActivity
 import za.co.eduvos.codebridge.R
 import za.co.eduvos.codebridge.data.UserIdentity
+import za.co.eduvos.codebridge.feature.auth.AuthActivity
+import za.co.eduvos.codebridge.feature.auth.CompanyDashboardActivity
 import za.co.eduvos.codebridge.feature.onboarding.OnboardingActivity
 
 class SplashActivity : AppCompatActivity() {
@@ -30,8 +33,16 @@ class SplashActivity : AppCompatActivity() {
         }
 
         Handler(Looper.getMainLooper()).postDelayed({
-            if (UserIdentity.isLoggedIn(this)) {
-                startActivity(Intent(this, MainActivity::class.java))
+            val prefs = getSharedPreferences("codebridge_prefs", Context.MODE_PRIVATE)
+            val role = prefs.getString("user_role", "STUDENT")
+            val isLoggedIn = UserIdentity.isLoggedIn(this)
+
+            if (isLoggedIn) {
+                if (role == "COMPANY") {
+                    startActivity(Intent(this, CompanyDashboardActivity::class.java))
+                } else {
+                    startActivity(Intent(this, MainActivity::class.java))
+                }
             } else {
                 startActivity(Intent(this, OnboardingActivity::class.java))
             }

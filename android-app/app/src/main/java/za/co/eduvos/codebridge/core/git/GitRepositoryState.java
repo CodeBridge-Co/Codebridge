@@ -16,8 +16,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- * In-memory model of one repository: commits, branches, working tree, index and one remote ("origin").
- * Mutated only by GitSimulationManager; the UI reads it through the public getters.
+ * One repository kept in memory: commits, branches, files and one remote ("origin").
+ * Only GitSimulationManager changes it. The screen reads it with the getters.
  */
 public class GitRepositoryState {
 
@@ -106,6 +106,15 @@ public class GitRepositoryState {
         int n = 0;
         for (String id : reachable(branches.get(currentBranch))) if (!remoteSet.contains(id)) n++;
         return n;
+    }
+
+    /** Ids of commits that origin doesn't have yet. */
+    public Set<String> getUnpushedCommitIds() {
+        String remoteTip = remoteBranches.get(currentBranch);
+        Set<String> remoteSet = remoteTip == null ? new HashSet<String>() : reachable(remoteTip);
+        Set<String> out = new HashSet<>();
+        for (String id : reachable(branches.get(currentBranch))) if (!remoteSet.contains(id)) out.add(id);
+        return out;
     }
 
     public boolean isPushed() {

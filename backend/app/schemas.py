@@ -33,7 +33,6 @@ class ProblemCreate(BaseModel):
     title: str
     difficulty_level: str
     test_cases_json: str
-    company_id: int
     description: str = ""
     example_input: str = ""
     example_output: str = ""
@@ -47,7 +46,6 @@ class EventDto(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class EventCreate(BaseModel):
-    company_id: int
     title: str
     event_date: str
 

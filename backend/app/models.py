@@ -27,6 +27,7 @@ class AssessmentSession(Base):
     start_time = Column(String)
     end_time = Column(String, nullable=True)
     is_offline = Column(Integer, default=0)
+    ai_uses = Column(Integer, default=0)
 
 class TelemetryLog(Base):
     __tablename__ = "telemetry_logs"

@@ -1,5 +1,6 @@
 package za.co.eduvos.codebridge.feature.auth
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Spannable
@@ -59,11 +60,11 @@ class LoginFragment : Fragment() {
 
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
         binding.btnLogin.setOnClickListener { attemptLogin() }
-        
-        binding.tvRegisterLink.setOnClickListener { 
-            if (isCompanyMode) showCompanyRegistrationDialog() else showStudentRegistrationDialog() 
+
+        binding.tvRegisterLink.setOnClickListener {
+            if (isCompanyMode) showCompanyRegistrationDialog() else showStudentRegistrationDialog()
         }
-        
+
         binding.tvToggleMode.setOnClickListener { toggleMode() }
     }
 
@@ -99,29 +100,36 @@ class LoginFragment : Fragment() {
 
         val role = if (isCompanyMode) "COMPANY" else "STUDENT"
         val appContext = requireContext().applicationContext
-        
+
         // Only hash if it's a student
         val finalId = if (!isCompanyMode) {
             try { HashIdManager(appContext).generateHashId(idOrEmail) } catch (e: Exception) { return }
         } else { idOrEmail }
 
         binding.btnLogin.isEnabled = false
-        
-        // 🟢 FIX: Pass 4 arguments matching the new LoginRequest DTO
+
         val request = LoginRequest(finalId, institution, password, role)
-        
+
         RetrofitClient.getInstance().apiService.login(request)
             .enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     if (_binding == null) return
                     binding.btnLogin.isEnabled = true
                     val token = response.body()?.token
-                    
+
                     if (response.isSuccessful && !token.isNullOrEmpty()) {
                         TokenManager.saveToken(token)
                         UserIdentity.save(appContext, finalId)
-                        if (!isCompanyMode) startActivity(Intent(requireContext(), HashIdGeneratedActivity::class.java))
-                        else startActivity(Intent(requireContext(), AdminCompanyPortalActivity::class.java))
+
+                        // 🟢 SAVE ROLE FOR SPLASH ACTIVITY ROUTING 🟢
+                        val prefs = requireContext().getSharedPreferences("codebridge_prefs", Context.MODE_PRIVATE)
+                        prefs.edit().putString("user_role", role).apply()
+
+                        if (!isCompanyMode) {
+                            startActivity(Intent(requireContext(), HashIdGeneratedActivity::class.java))
+                        } else {
+                            startActivity(Intent(requireContext(), CompanyDashboardActivity::class.java))
+                        }
                         requireActivity().finish()
                     } else {
                         Toast.makeText(requireContext(), "Login failed (${response.code()})", Toast.LENGTH_LONG).show()
@@ -150,22 +158,24 @@ class LoginFragment : Fragment() {
                 val inst = etInstitution.text.toString().trim()
                 val pass = etPassword.text.toString().trim()
                 val confirmPass = etConfirmPassword.text.toString().trim()
-                
+
                 if (num.isNotEmpty() && inst.isNotEmpty() && pass.isNotEmpty()) {
                     if (pass != confirmPass) {
                         Toast.makeText(requireContext(), "Passwords do not match", Toast.LENGTH_SHORT).show()
                         return@setPositiveButton
                     }
                     val hashId = HashIdManager(requireContext().applicationContext).generateHashId(num)
-                    
-                    // 🟢 FIX: Pass 3 arguments matching the new RegisterStudentRequest DTO
                     val request = RegisterStudentRequest(hashId, inst, pass)
-                    
+
                     RetrofitClient.getInstance().apiService.registerStudent(request).enqueue(object : Callback<LoginResponse> {
                         override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                             if (response.isSuccessful && response.body() != null) {
                                 TokenManager.saveToken(response.body()!!.token)
                                 UserIdentity.save(requireContext().applicationContext, hashId)
+
+                                val prefs = requireContext().getSharedPreferences("codebridge_prefs", Context.MODE_PRIVATE)
+                                prefs.edit().putString("user_role", "STUDENT").apply()
+
                                 startActivity(Intent(requireContext(), HashIdGeneratedActivity::class.java))
                                 requireActivity().finish()
                             } else Toast.makeText(requireContext(), "Registration failed", Toast.LENGTH_SHORT).show()
@@ -193,7 +203,7 @@ class LoginFragment : Fragment() {
                 val email = etEmail.text.toString().trim()
                 val pass = etPassword.text.toString().trim()
                 val confirmPass = etConfirmPassword.text.toString().trim()
-                
+
                 if (name.isNotEmpty() && email.isNotEmpty() && pass.isNotEmpty()) {
                     if (pass != confirmPass) {
                         Toast.makeText(requireContext(), "Passwords do not match", Toast.LENGTH_SHORT).show()
@@ -204,7 +214,11 @@ class LoginFragment : Fragment() {
                         override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                             if (response.isSuccessful && response.body() != null) {
                                 TokenManager.saveToken(response.body()!!.token)
-                                startActivity(Intent(requireContext(), AdminCompanyPortalActivity::class.java))
+
+                                val prefs = requireContext().getSharedPreferences("codebridge_prefs", Context.MODE_PRIVATE)
+                                prefs.edit().putString("user_role", "COMPANY").apply()
+
+                                startActivity(Intent(requireContext(), CompanyDashboardActivity::class.java))
                                 requireActivity().finish()
                             } else Toast.makeText(requireContext(), "Registration failed", Toast.LENGTH_SHORT).show()
                         }

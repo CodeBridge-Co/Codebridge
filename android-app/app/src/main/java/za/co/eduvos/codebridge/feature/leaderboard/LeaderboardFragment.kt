@@ -7,6 +7,13 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import za.co.eduvos.codebridge.core.network.RetrofitClient
+import za.co.eduvos.codebridge.core.network.dto.LeaderboardDto
+import za.co.eduvos.codebridge.core.scoring.LeaderboardRank
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -38,7 +45,8 @@ class LeaderboardAdapter(private var list: List<LeaderboardEntry>) :
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = list[position]
         holder.binding.tvRank.text = "#${item.rank}"
-        holder.binding.tvHashId.text = if (item.isCurrentUser) "You: ${item.hashId}" else "Hash: ${item.hashId}"
+        val shown = item.hashId.take(8).uppercase()
+        holder.binding.tvHashId.text = if (item.isCurrentUser) "You: $shown" else "Hash: $shown"
         holder.binding.tvLevelPoints.text = "Level ${item.level}  ·  ${item.points} pts"
         holder.binding.tvStreak.text = "🔥 ${item.streakDays}d"
 
@@ -70,6 +78,8 @@ class LeaderboardFragment : Fragment() {
 
     private var allEntries = mutableListOf<LeaderboardEntry>()
     private lateinit var adapter: LeaderboardAdapter
+    private var myHashId: String? = null
+    private var myDisplayId: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLeaderboardBinding.inflate(inflater, container, false)
@@ -80,24 +90,16 @@ class LeaderboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+        binding.btnBack.visibility = View.GONE
 
-        val myHashId = UserIdentity.displayId(requireContext())
+        myHashId = UserIdentity.hashId(requireContext())
+        myDisplayId = UserIdentity.displayId(requireContext())
 
-        // Populate sample leaderboard matching screenshot 2
-        allEntries = mutableListOf(
-            LeaderboardEntry(1, "7F3A9C2B", 12, 980, 12),
-            LeaderboardEntry(2, "4E8D1F6A", 11, 870, 9),
-            LeaderboardEntry(3, "A6C2D9E4", 10, 760, 7),
-            LeaderboardEntry(4, "B3F7A1C0", 9, 690, 5),
-            LeaderboardEntry(5, "D2E6F8B7", 8, 620, 4),
-            LeaderboardEntry(6, "C8A1D3F9", 8, 590, 3),
-            LeaderboardEntry(7, "F1D3C5A7", 7, 540, 2),
-            LeaderboardEntry(8, "9B7E2D6F", 7, 510, 2),
-            LeaderboardEntry(42, myHashId, 12, 980, 12, isCurrentUser = true)
-        )
-
+        allEntries = mutableListOf()
         adapter = LeaderboardAdapter(allEntries)
         binding.rvLeaderboard.adapter = adapter
+        binding.tabFriends.visibility = View.GONE // there is no friends feature yet
+        loadLeaderboard()
 
         // Search bar listener: filter entries by typed Hash ID in real time!
         binding.etSearchHash.addTextChangedListener(object : TextWatcher {
@@ -111,13 +113,47 @@ class LeaderboardFragment : Fragment() {
         binding.tabGlobal.setOnClickListener { styleTab(binding.tabGlobal); adapter.submit(allEntries) }
         binding.tabMyRank.setOnClickListener {
             styleTab(binding.tabMyRank)
-            val myRankEntries = allEntries.filter { it.isCurrentUser || it.rank <= 5 }
-            adapter.submit(myRankEntries)
+            val me = allEntries.indexOfFirst { it.isCurrentUser }
+            if (me < 0) {
+                adapter.submit(emptyList())
+                Toast.makeText(requireContext(), "You are not on the leaderboard yet. Complete a challenge to earn XP.", Toast.LENGTH_LONG).show()
+            } else {
+                adapter.submit(allEntries.subList(maxOf(0, me - 2), minOf(allEntries.size, me + 3)))
+            }
         }
-        binding.tabFriends.setOnClickListener {
-            styleTab(binding.tabFriends)
-            adapter.submit(allEntries.take(3))
-        }
+    }
+
+    /** Loads the leaderboard from the server. Rank, level and points come from the XP. */
+    private fun loadLeaderboard() {
+        RetrofitClient.getInstance().apiService.getLeaderboard().enqueue(object : Callback<List<LeaderboardDto>> {
+            override fun onResponse(call: Call<List<LeaderboardDto>>, response: Response<List<LeaderboardDto>>) {
+                if (_binding == null) return
+                val list = response.body()
+                if (!response.isSuccessful || list == null) {
+                    Toast.makeText(requireContext(), "Could not load the leaderboard (error ${response.code()})", Toast.LENGTH_LONG).show()
+                    return
+                }
+                allEntries = list.map {
+                    LeaderboardEntry(
+                        rank = LeaderboardRank.rankOf(list, it.hashId, null),
+                        hashId = it.hashId,
+                        level = LeaderboardRank.levelFor(it.xp),
+                        points = it.xp,
+                        streakDays = it.streak,
+                        isCurrentUser = LeaderboardRank.isMe(it.hashId, myHashId, myDisplayId)
+                    )
+                }.toMutableList()
+                adapter.submit(allEntries)
+                if (allEntries.isEmpty()) {
+                    Toast.makeText(requireContext(), "No one is on the leaderboard yet.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<LeaderboardDto>>, t: Throwable) {
+                if (_binding == null) return
+                Toast.makeText(requireContext(), "Could not load the leaderboard: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     private fun filter(query: String) {

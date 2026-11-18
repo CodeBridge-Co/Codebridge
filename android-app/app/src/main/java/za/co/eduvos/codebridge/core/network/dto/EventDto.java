@@ -1,4 +1,5 @@
 package za.co.eduvos.codebridge.core.network.dto;
+
 import com.google.gson.annotations.SerializedName;
 
 public class EventDto {
@@ -6,13 +7,11 @@ public class EventDto {
     @SerializedName("company_id") private int companyId;
     @SerializedName("title") private String title;
     @SerializedName("event_date") private String eventDate;
+    @SerializedName("category") private String category;
 
     public int getEventId() { return eventId; }
-    public void setEventId(int eventId) { this.eventId = eventId; }
     public int getCompanyId() { return companyId; }
-    public void setCompanyId(int companyId) { this.companyId = companyId; }
     public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
     public String getEventDate() { return eventDate; }
-    public void setEventDate(String eventDate) { this.eventDate = eventDate; }
+    public String getCategory() { return category; }
 }

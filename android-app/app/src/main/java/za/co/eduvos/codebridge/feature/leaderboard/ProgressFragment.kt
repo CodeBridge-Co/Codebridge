@@ -30,6 +30,7 @@ class ProgressFragment : Fragment() {
     private var inProgressSessions: List<SessionHistoryDto> = emptyList()
     private var completedSessions: List<SessionHistoryDto> = emptyList()
     private var currentTab = "ALL" // ALL, IN_PROGRESS, COMPLETED
+    private var loadError: String? = null // set when the history could not be loaded
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -40,9 +41,9 @@ class ProgressFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         val hashId = UserIdentity.displayId(requireContext())
-        
+
         setupTabs()
         fetchSessionHistory(hashId)
     }
@@ -77,23 +78,35 @@ class ProgressFragment : Fragment() {
             .enqueue(object : Callback<List<SessionHistoryDto>> {
                 override fun onResponse(call: Call<List<SessionHistoryDto>>, response: Response<List<SessionHistoryDto>>) {
                     if (_binding == null) return
-                    
+
                     if (response.isSuccessful && response.body() != null) {
                         val allSessions = response.body()!!
                         inProgressSessions = allSessions.filter { !it.isCompleted }
                         completedSessions = allSessions.filter { it.isCompleted }
-                        
+
+                        loadError = null
                         updateSummary()
                         generateAiTip()
                         updateUI()
+                    } else {
+                        showLoadError("Couldn't load your history (error ${response.code()}).")
                     }
                 }
 
                 override fun onFailure(call: Call<List<SessionHistoryDto>>, t: Throwable) {
                     if (_binding == null) return
                     Toast.makeText(requireContext(), "Failed to load history", Toast.LENGTH_SHORT).show()
+                    showLoadError("Couldn't load your history: ${t.message ?: "no connection"}")
                 }
             })
+    }
+
+    /** Shows why the list is empty, so a failed load doesn't look like "no activity". */
+    private fun showLoadError(message: String) {
+        loadError = message
+        binding.tvAiTipTitle.text = "History unavailable"
+        binding.tvAiTipBody.text = "Check your internet connection and try again."
+        updateUI()
     }
 
     private fun updateSummary() {
@@ -128,12 +141,14 @@ class ProgressFragment : Fragment() {
 
         binding.tvInProgressTitle.visibility = if (showInProgress) View.VISIBLE else View.GONE
         binding.llInProgressContainer.visibility = if (showInProgress) View.VISIBLE else View.GONE
-        
+
         binding.tvCompletedTitle.visibility = if (showCompleted) View.VISIBLE else View.GONE
         binding.llCompletedContainer.visibility = if (showCompleted) View.VISIBLE else View.GONE
 
         if (showInProgress) {
-            if (inProgressSessions.isEmpty()) {
+            if (loadError != null) {
+                addEmptyState(binding.llInProgressContainer, loadError!!)
+            } else if (inProgressSessions.isEmpty()) {
                 addEmptyState(binding.llInProgressContainer, "No challenges in progress.")
             } else {
                 inProgressSessions.forEach { session ->
@@ -143,7 +158,9 @@ class ProgressFragment : Fragment() {
         }
 
         if (showCompleted) {
-            if (completedSessions.isEmpty()) {
+            if (loadError != null) {
+                addEmptyState(binding.llCompletedContainer, loadError!!)
+            } else if (completedSessions.isEmpty()) {
                 addEmptyState(binding.llCompletedContainer, "No completed challenges yet.")
             } else {
                 completedSessions.forEach { session ->
@@ -169,7 +186,7 @@ class ProgressFragment : Fragment() {
             gravity = Gravity.CENTER_VERTICAL
             setPadding(24, 24, 24, 24)
             setBackgroundResource(if (isCompleted) R.drawable.bg_card else R.drawable.bg_card_outline)
-            
+
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -205,7 +222,7 @@ class ProgressFragment : Fragment() {
             setBackgroundResource(if (isCompleted) R.drawable.bg_chip else R.drawable.bg_chip_selected)
             setPadding(20, 10, 20, 10)
             textSize = 11f
-            
+
             setOnClickListener {
                 if (!isCompleted) {
                     // Resume logic: Open the sandbox for this specific problem

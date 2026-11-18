@@ -13,9 +13,16 @@ public class TestResult {
     public final String error;
     public final String stdout;
     public final long durationMs;
+    /** True for a hidden case. Its details are blank. */
+    public final boolean hidden;
 
     public TestResult(int index, Status status, String input, String expected,
                       String actual, String error, String stdout, long durationMs) {
+        this(index, status, input, expected, actual, error, stdout, durationMs, false);
+    }
+
+    public TestResult(int index, Status status, String input, String expected,
+                      String actual, String error, String stdout, long durationMs, boolean hidden) {
         this.index = index;
         this.status = status;
         this.input = input;
@@ -24,6 +31,7 @@ public class TestResult {
         this.error = error;
         this.stdout = stdout;
         this.durationMs = durationMs;
+        this.hidden = hidden;
     }
 
     public boolean isPassed() {

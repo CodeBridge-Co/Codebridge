@@ -12,10 +12,7 @@ import org.mozilla.javascript.ScriptableObject;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Runs one test case against pre-compiled user code in a fresh scope.
- * Must be called on a thread that already has a Rhino Context entered (see CodeExecutionEngine).
- */
+/** Runs one test case against the student's code in a fresh scope. */
 public class TestCaseRunner {
     public static class SandboxTimeoutError extends Error {
         public SandboxTimeoutError() {
@@ -27,10 +24,20 @@ public class TestCaseRunner {
             "function __cbArgs(s){try{return JSON.parse('['+s+']');}catch(e){return [s];}}\n"
                     + "function __cbCanon(v){if(typeof v==='string')return v;if(v===undefined)return 'undefined';"
                     + "try{var j=JSON.stringify(v);return j===undefined?String(v):j;}catch(e){return String(v);}}\n"
-                    + "function __cbExpected(s){try{return __cbCanon(JSON.parse(s));}catch(e){return s;}}\n";
+                    + "function __cbExpected(s){try{return __cbCanon(JSON.parse(s));}catch(e){return s;}}\n"
+                    + "function __cbUnordered(s){var v;try{v=JSON.parse(s);}catch(e){return s;}"
+                    + "if(!Array.isArray(v))return s;var p=[];for(var i=0;i<v.length;i++)p.push(__cbCanon(v[i]));"
+                    + "p.sort();return '['+p.join(',')+']';}\n"
+                    + "function __cbDecode(s){try{return JSON.parse(s);}catch(e){return s;}}\n";
 
     public TestResult run(Context cx, Script userScript, TestSuite.Case testCase, int index,
                           String entryPoint, OutputCapture out) {
+        return run(cx, userScript, testCase, index, new TestSuite(java.util.Collections.singletonList(testCase), entryPoint), out);
+    }
+
+    public TestResult run(Context cx, Script userScript, TestSuite.Case testCase, int index,
+                          TestSuite suite, OutputCapture out) {
+        String entryPoint = suite.entryPoint;
         long start = System.nanoTime();
         String actual = null;
         try {
@@ -45,10 +52,26 @@ public class TestCaseRunner {
             Object result = fn.call(cx, scope, scope, args);
 
             actual = Context.toString(callHelper(cx, scope, "__cbCanon", result));
-            String expected = Context.toString(callHelper(cx, scope, "__cbExpected", testCase.expected));
-            TestResult.Status status = actual.equals(expected)
-                    ? TestResult.Status.PASSED : TestResult.Status.FAILED;
+            boolean ok;
+            switch (suite.mode) {
+                case CHECKER:
+                    ok = runChecker(cx, suite, testCase, actual);
+                    break;
+                case UNORDERED: {
+                    String expected = Context.toString(callHelper(cx, scope, "__cbExpected", testCase.expected));
+                    ok = Context.toString(callHelper(cx, scope, "__cbUnordered", actual))
+                            .equals(Context.toString(callHelper(cx, scope, "__cbUnordered", expected)));
+                    break;
+                }
+                default: {
+                    String expected = Context.toString(callHelper(cx, scope, "__cbExpected", testCase.expected));
+                    ok = actual.equals(expected);
+                }
+            }
+            TestResult.Status status = ok ? TestResult.Status.PASSED : TestResult.Status.FAILED;
             return result(index, status, testCase, actual, null, out, start);
+        } catch (IllegalStateException e) {
+            return result(index, TestResult.Status.ERROR, testCase, null, e.getMessage(), out, start);
         } catch (TestSuiteSetupException e) {
             return result(index, TestResult.Status.ERROR, testCase, null, e.getMessage(), out, start);
         } catch (SandboxTimeoutError e) {
@@ -60,7 +83,25 @@ public class TestCaseRunner {
         }
     }
 
+    /** Runs the problem's checker in its own scope, so student code can't change it. An error is never a pass. */
+    private boolean runChecker(Context cx, TestSuite suite, TestSuite.Case testCase, String actualCanon) {
+        ScriptableObject scope = cx.initSafeStandardObjects();
+        cx.evaluateString(scope, HELPERS, "helpers", 1, null);
+        cx.evaluateString(scope, suite.checkerSource, "checker.js", 1, null);
+        Object f = scope.get("check", scope);
+        if (!(f instanceof Function)) {
+            throw new IllegalStateException("The problem's checker does not define check(args, actual)");
+        }
+        Object args = callHelper(cx, scope, "__cbArgs", testCase.input);
+        Object actual = callHelper(cx, scope, "__cbDecode", actualCanon);
+        Object verdict = ((Function) f).call(cx, scope, scope, new Object[]{args, actual});
+        return Context.toBoolean(verdict);
+    }
+
     public static TestResult skipped(int index, TestSuite.Case testCase) {
+        if (testCase.hidden) {
+            return new TestResult(index, TestResult.Status.SKIPPED, "", "", null, null, "", 0, true);
+        }
         return new TestResult(index, TestResult.Status.SKIPPED, testCase.input, testCase.expected,
                 null, null, "", 0);
     }
@@ -68,6 +109,11 @@ public class TestCaseRunner {
     private static TestResult result(int index, TestResult.Status status, TestSuite.Case tc,
                                      String actual, String error, OutputCapture out, long startNanos) {
         long ms = (System.nanoTime() - startNanos) / 1_000_000L;
+        if (tc.hidden) {
+            // Hide everything about a hidden case from the student.
+            return new TestResult(index, status, "", "", null,
+                    error == null ? null : "Error on a hidden test", "", ms, true);
+        }
         return new TestResult(index, status, tc.input, tc.expected, actual, error, out.drain(), ms);
     }
 

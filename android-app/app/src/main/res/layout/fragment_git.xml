@@ -607,101 +607,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="No commit history yet. Run 'git commit' to create a commit."
+                android:text="No commits yet."
                 android:textColor="@color/cb_text_secondary"
                 android:textSize="11sp" />
 
-            <!-- Dynamic Commit Entry Item -->
+            <!-- Commit rows are added here by GitFragment (see item_commit_row.xml) -->
             <LinearLayout
-                android:id="@+id/cardCommitHistory"
+                android:id="@+id/llCommitList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_tile"
-                    android:backgroundTint="#E5E7EB"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/ic_cb_branch"
-                        app:tint="@color/cb_ink" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/tvCommitMsg"
-                            style="@style/CbText.Strong"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="solution"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            style="@style/CbText.Mono"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:background="@drawable/bg_chip"
-                            android:paddingHorizontal="6dp"
-                            android:paddingVertical="2dp"
-                            android:text="HEAD"
-                            android:textSize="9sp" />
-
-                        <TextView
-                            style="@style/CbText.Mono"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:background="@drawable/bg_tag_dark"
-                            android:paddingHorizontal="6dp"
-                            android:paddingVertical="2dp"
-                            android:id="@+id/tvBranchTag"
-                            android:text="solution"
-                            android:textColor="@color/cb_bg"
-                            android:textSize="9sp" />
-
-                        <TextView
-                            android:id="@+id/tvCommitTime"
-                            style="@style/CbText.Caption"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="end"
-                            android:text="Just now"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvCommitMeta"
-                        style="@style/CbText.Caption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="c8d4e2 · Committed via Git Terminal"
-                        android:textSize="11sp" />
-                </LinearLayout>
-            </LinearLayout>
+                android:orientation="vertical" />
         </LinearLayout>
 
         <!-- Need Help? Card -->
