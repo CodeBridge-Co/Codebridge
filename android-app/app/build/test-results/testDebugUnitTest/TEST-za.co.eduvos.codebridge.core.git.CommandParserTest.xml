@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="za.co.eduvos.codebridge.core.git.CommandParserTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-15T18:49:52.365Z" hostname="LAPTOP-IEFRG44A" time="0.012">
+  <properties/>
+  <testcase name="parsesCommitWithQuotedMessage" classname="za.co.eduvos.codebridge.core.git.CommandParserTest" time="0.002"/>
+  <testcase name="parsesLongMessageForms" classname="za.co.eduvos.codebridge.core.git.CommandParserTest" time="0.001"/>
+  <testcase name="parsesAddCheckoutMergeAndFlags" classname="za.co.eduvos.codebridge.core.git.CommandParserTest" time="0.001"/>
+  <testcase name="parsesSingleQuotesAndCombinedAmFlag" classname="za.co.eduvos.codebridge.core.git.CommandParserTest" time="0.001"/>
+  <testcase name="knownButUnimplementedCommandsAreFlagged" classname="za.co.eduvos.codebridge.core.git.CommandParserTest" time="0.001"/>
+  <testcase name="shellHelpers" classname="za.co.eduvos.codebridge.core.git.CommandParserTest" time="0.0"/>
+  <testcase name="rejectsBadInput" classname="za.co.eduvos.codebridge.core.git.CommandParserTest" time="0.001"/>
+  <testcase name="emptyLineIsAnEmptyParseException" classname="za.co.eduvos.codebridge.core.git.CommandParserTest" time="0.001"/>
+  <testcase name="extraWhitespaceIsIgnored" classname="za.co.eduvos.codebridge.core.git.CommandParserTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

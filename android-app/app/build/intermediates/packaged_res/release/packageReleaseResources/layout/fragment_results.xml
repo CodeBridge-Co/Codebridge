@@ -1,0 +1,84 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/cb_bg" android:fillViewport="true" android:overScrollMode="never">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="20dp" android:paddingTop="12dp" android:paddingEnd="20dp" android:paddingBottom="28dp">
+        <ImageButton android:id="@+id/btnBack" android:layout_width="40dp" android:layout_height="40dp" android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="Back" android:src="@drawable/ic_cb_back"/>
+        <za.co.eduvos.codebridge.ui.StepperView android:id="@+id/stepper" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Label" android:text="Challenge complete" android:layout_marginTop="16dp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="4dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" style="@style/CbText.Hero" android:text="Challenge results" android:layout_weight="1"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btnShare" android:layout_width="wrap_content" android:layout_height="38dp" style="@style/CbButton.Outline" android:text="Share" app:icon="@drawable/ic_cb_up" app:iconSize="14dp" app:iconTint="@color/cb_ink"/>
+        </LinearLayout>
+        <TextView android:id="@+id/tvCelebrate" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Body" android:text="Nice work — you cleared all four stages!" android:layout_marginTop="4dp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:background="@drawable/bg_card" android:gravity="center_vertical" android:padding="16dp" android:layout_marginTop="16dp">
+            <FrameLayout android:layout_width="116dp" android:layout_height="116dp">
+                <com.google.android.material.progressindicator.CircularProgressIndicator android:id="@+id/ringScore" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:indeterminate="false" android:progress="87" app:indicatorColor="@color/cb_green" app:indicatorSize="112dp" app:trackColor="@color/cb_line" app:trackCornerRadius="8dp" app:trackThickness="12dp"/>
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_gravity="center" android:gravity="center_horizontal">
+                    <TextView android:id="@+id/tvScore" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Title" android:text="87%" android:textSize="26sp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="OVERALL" android:textSize="9sp" android:letterSpacing="0.08"/>
+                </LinearLayout>
+            </FrameLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1" android:layout_marginStart="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Strong" android:text="Score breakdown" android:textSize="13sp"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="12dp">
+                    <TextView android:layout_width="88dp" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="Code" android:textColor="@color/cb_text_secondary"/>
+                    <com.google.android.material.progressindicator.LinearProgressIndicator android:id="@+id/barCode" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:indeterminate="false" android:progress="92" app:indicatorColor="@color/cb_green" app:trackColor="@color/cb_line" app:trackCornerRadius="3dp" app:trackThickness="6dp"/>
+                    <TextView android:id="@+id/pctCode" android:layout_width="32dp" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="92%" android:layout_marginStart="8dp" android:textColor="@color/cb_text_secondary"/>
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="12dp">
+                    <TextView android:layout_width="88dp" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="Git workflow" android:textColor="@color/cb_text_secondary"/>
+                    <com.google.android.material.progressindicator.LinearProgressIndicator android:id="@+id/barGit" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:indeterminate="false" android:progress="85" app:indicatorColor="@color/cb_green" app:trackColor="@color/cb_line" app:trackCornerRadius="3dp" app:trackThickness="6dp"/>
+                    <TextView android:id="@+id/pctGit" android:layout_width="32dp" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="85%" android:layout_marginStart="8dp" android:textColor="@color/cb_text_secondary"/>
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="12dp">
+                    <TextView android:layout_width="88dp" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="Verbal" android:textColor="@color/cb_text_secondary"/>
+                    <com.google.android.material.progressindicator.LinearProgressIndicator android:id="@+id/barVerbal" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:indeterminate="false" android:progress="86" app:indicatorColor="@color/cb_green" app:trackColor="@color/cb_line" app:trackCornerRadius="3dp" app:trackThickness="6dp"/>
+                    <TextView android:id="@+id/pctVerbal" android:layout_width="32dp" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="86%" android:layout_marginStart="8dp" android:textColor="@color/cb_text_secondary"/>
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="12dp">
+                    <TextView android:layout_width="88dp" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="Complexity" android:textColor="@color/cb_text_secondary"/>
+                    <com.google.android.material.progressindicator.LinearProgressIndicator android:id="@+id/barComplexity" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:indeterminate="false" android:progress="84" app:indicatorColor="@color/cb_green" app:trackColor="@color/cb_line" app:trackCornerRadius="3dp" app:trackThickness="6dp"/>
+                    <TextView android:id="@+id/pctComplexity" android:layout_width="32dp" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="84%" android:layout_marginStart="8dp" android:textColor="@color/cb_text_secondary"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:background="@drawable/bg_card_outline" android:layout_marginTop="12dp">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center_horizontal" android:layout_weight="1" android:paddingTop="14dp" android:paddingBottom="14dp">
+                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_cb_clock" app:tint="@color/cb_ink" android:importantForAccessibility="no"/>
+                <TextView android:id="@+id/tvTime" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Strong" android:text="18 min" android:layout_marginTop="6dp" android:textSize="13sp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="Time taken" android:textSize="10sp"/>
+            </LinearLayout>
+            <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/cb_line"/>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center_horizontal" android:layout_weight="1" android:paddingTop="14dp" android:paddingBottom="14dp">
+                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_cb_code" app:tint="@color/cb_ink" android:importantForAccessibility="no"/>
+                <TextView android:id="@+id/tvDifficulty" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Strong" android:text="Easy" android:layout_marginTop="6dp" android:textSize="13sp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="Difficulty" android:textSize="10sp"/>
+            </LinearLayout>
+            <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/cb_line"/>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center_horizontal" android:layout_weight="1" android:paddingTop="14dp" android:paddingBottom="14dp">
+                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_cb_chart" app:tint="@color/cb_ink" android:importantForAccessibility="no"/>
+                <TextView android:id="@+id/tvRank" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Strong" android:text="Top 18%" android:layout_marginTop="6dp" android:textSize="13sp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="Rank" android:textSize="10sp"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="16dp" android:layout_weight="1" android:minHeight="130dp">
+                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_cb_check" app:tint="@color/cb_green_dark" android:importantForAccessibility="no"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Strong" android:text="Strengths" android:layout_marginTop="14dp"/>
+                <TextView android:id="@+id/tvStrengths" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="Clear algorithm and strong trade-off explanation." android:layout_marginTop="4dp"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_card" android:padding="16dp" android:layout_weight="1" android:layout_marginStart="10dp" android:minHeight="130dp">
+                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_cb_arrow" app:tint="@color/cb_green_dark" android:importantForAccessibility="no"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Strong" android:text="Area to improve" android:layout_marginTop="14dp"/>
+                <TextView android:id="@+id/tvImprove" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="Explain edge cases before writing code." android:layout_marginTop="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/bg_ai_hint" android:padding="16dp" android:layout_marginTop="12dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+                <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cb_spark" app:tint="@color/cb_ink" android:importantForAccessibility="no"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" style="@style/CbText.Strong" android:text="AI feedback" android:layout_marginStart="8dp" android:layout_weight="1"/>
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnFullFeedback" android:layout_width="wrap_content" android:layout_height="32dp" style="@style/CbButton.White.Small" android:text="View full feedback" android:textSize="10sp"/>
+            </LinearLayout>
+            <TextView android:id="@+id/tvAiFeedback" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Body" android:text="Your solution is efficient and your explanation shows solid understanding. Next time, open with the complexity and call out duplicate values earlier." android:layout_marginTop="10dp" android:lineSpacingMultiplier="1.15" android:textSize="12sp"/>
+        </LinearLayout>
+        <com.google.android.material.button.MaterialButton android:id="@+id/btnContinue" android:layout_width="match_parent" android:layout_height="50dp" style="@style/CbButton.Black" android:text="Continue learning →" android:layout_marginTop="16dp"/>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

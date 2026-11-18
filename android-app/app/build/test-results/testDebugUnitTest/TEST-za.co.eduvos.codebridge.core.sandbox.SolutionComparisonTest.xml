@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" tests="20" skipped="0" failures="0" errors="0" timestamp="2026-11-15T18:49:58.140Z" hostname="LAPTOP-IEFRG44A" time="0.828">
+  <properties/>
+  <testcase name="parserReadsModeHiddenAndChecker" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.003"/>
+  <testcase name="unorderedStillRejectsWrongContents" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.018"/>
+  <testcase name="infiniteLoopInCheckerTimesOut" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.502"/>
+  <testcase name="checkerThatThrowsIsAnErrorNotAPass" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.019"/>
+  <testcase name="parserRejectsUnknownModeAndCheckerWithoutFunction" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.001"/>
+  <testcase name="studentCannotOverrideTheChecker" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.019"/>
+  <testcase name="hiddenPassStaysPassed" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.016"/>
+  <testcase name="checkerAcceptsAnyValidAnswer" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.017"/>
+  <testcase name="hiddenFailureRevealsNothing" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.009"/>
+  <testcase name="unorderedAcceptsAnyOrder" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.008"/>
+  <testcase name="hiddenErrorMessageIsGeneric" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.011"/>
+  <testcase name="checkerRejectsInvalidAnswer" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.016"/>
+  <testcase name="exactModeRejectsDifferentOrder" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.014"/>
+  <testcase name="checkerWithoutCheckFunctionIsAnError" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.036"/>
+  <testcase name="exactModeIgnoresWhitespaceAndNumberFormatting" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.009"/>
+  <testcase name="hiddenCasesStillCount" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.015"/>
+  <testcase name="unorderedLeavesNonArraysAlone" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.027"/>
+  <testcase name="parserDefaultsToExactAndVisible" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.001"/>
+  <testcase name="visibleResultsStillShowDetails" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.028"/>
+  <testcase name="unorderedStillCountsDuplicates" classname="za.co.eduvos.codebridge.core.sandbox.SolutionComparisonTest" time="0.044"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

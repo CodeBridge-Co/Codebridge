@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" tests="23" skipped="0" failures="0" errors="0" timestamp="2026-11-15T18:49:52.564Z" hostname="LAPTOP-IEFRG44A" time="0.128">
+  <properties/>
+  <testcase name="shellHelpersListAndShowFiles" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.009"/>
+  <testcase name="nonFastForwardPushIsRejected" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.002"/>
+  <testcase name="addValidatesPaths" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.002"/>
+  <testcase name="pushToUnknownRemoteFails" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.001"/>
+  <testcase name="fullWorkflowResolveCommitAndPush" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.003"/>
+  <testcase name="commitDashAStagesTrackedChanges" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.001"/>
+  <testcase name="fastForwardAndUpToDateMerges" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.002"/>
+  <testcase name="stagingFileThatStillHasMarkersWarnsAndTheTaskIsNotComplete" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.004"/>
+  <testcase name="switchingWithDirtyTreeIsRefused" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.001"/>
+  <testcase name="blankLineDoesNothingAndIsNotLogged" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.002"/>
+  <testcase name="commitWithoutMessageDuringMergeUsesDefaultMergeMessage" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.002"/>
+  <testcase name="mergeProducesRealConflictAndStagesTheCleanFile" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.002"/>
+  <testcase name="everyCommandIsLoggedWithItsErrorFlagAndSession" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.004"/>
+  <testcase name="mergeAbortRestoresTheCleanTree" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.002"/>
+  <testcase name="cannotCommitWhileConflictsRemain" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.003"/>
+  <testcase name="branchingAndSwitching" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.003"/>
+  <testcase name="startsCleanOnTheFeatureBranch" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.002"/>
+  <testcase name="normalEditStageCommitCycle" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.005"/>
+  <testcase name="logShowsMergeCommitFirstWithHeadMarker" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.056"/>
+  <testcase name="telemetryTracksConflictLifecycle" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.003"/>
+  <testcase name="unsupportedAndUnknownCommandsAreErrorsAndCounted" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.001"/>
+  <testcase name="cannotStartASecondMergeOrSwitchBranchMidConflict" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.001"/>
+  <testcase name="nothingToCommitIsAnError" classname="za.co.eduvos.codebridge.core.git.GitSimulationManagerTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

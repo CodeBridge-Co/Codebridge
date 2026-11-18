@@ -1,0 +1,646 @@
+[
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_sandbox.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_sandbox.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_plus.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_plus.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_chev.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_chev.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_user.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_user.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_dialog_codemate_chat.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/dialog_codemate_chat.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_down.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_down.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_item_commit_row.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_commit_row.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_commit.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_commit.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_lock.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_lock.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_login.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_login.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_extrabold.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_extrabold.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_brief.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_brief.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_dialog_post_challenge.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/dialog_post_challenge.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_term.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_term.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_activity_splash.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_copy.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_copy.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_item_event.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_event.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_item_company.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_company.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xhdpi_code_launcher.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xhdpi/code_launcher.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_x.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_x.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xhdpi_code_launcher_round.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xhdpi/code_launcher_round.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_cloud.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_cloud.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_splash.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_splash.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-mdpi_code_launcher_round.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-mdpi/code_launcher_round.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_progress.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_progress.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_extralight_italic.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_extralight_italic.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-mdpi_code_launcher_monochrome.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-mdpi/code_launcher_monochrome.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_arrow.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_arrow.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_brace.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_brace.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_circle_grey.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_circle_grey.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_dot_green.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/dot_green.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_tile.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_tile.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xhdpi_code_launcher_foreground.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xhdpi/code_launcher_foreground.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xxhdpi_code_launcher.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xxhdpi/code_launcher.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_light.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_light.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_mic.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_mic.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-anydpi-v26_code_launcher_round.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-anydpi-v26/code_launcher_round.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_filt.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_filt.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_chart.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_chart.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_speech_bubble.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_speech_bubble.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_italic_variable.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_italic_variable.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_users.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_users.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_topic_subcategories.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_topic_subcategories.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_problem_overview.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_problem_overview.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_activity_admin_portal.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_admin_portal.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_dark_card.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_dark_card.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_search.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_search.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_google.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_google.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xxhdpi_code_launcher_monochrome.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xxhdpi/code_launcher_monochrome.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_circle_green.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_circle_green.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_semibold.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_semibold.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_pause.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_pause.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_spark.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_spark.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_branch.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_branch.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_cal.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_cal.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_week3_label.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_week3_label.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_pin.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_pin.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_activity_auth.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_auth.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_arrow_back.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_arrow_back.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-hdpi_code_launcher_foreground.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-hdpi/code_launcher_foreground.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_profile.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xhdpi_code_launcher_monochrome.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xhdpi/code_launcher_monochrome.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_up.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_up.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_results.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_results.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_dialog_register_company.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/dialog_register_company.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_extrabold_italic.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_extrabold_italic.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_light_italic.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_light_italic.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_explore_all.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_explore_all.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xxhdpi_code_launcher_round.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xxhdpi/code_launcher_round.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_code_brackets.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_code_brackets.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_trend.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_trend.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-anydpi-v26_code_launcher.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-anydpi-v26/code_launcher.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/xml_backup_rules.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_problems.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_problems.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_home.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_home.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_medium.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_medium.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_challenges_list.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_challenges_list.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_regular.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_regular.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_tag_dark.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_tag_dark.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_wave_bottom.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/wave_bottom.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xxxhdpi_code_launcher_foreground.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xxxhdpi/code_launcher_foreground.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_box_stroke.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/box_stroke.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_item_challenge.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_challenge.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xxxhdpi_code_launcher_round.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xxxhdpi/code_launcher_round.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_extralight.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_extralight.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_dashboard.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_dashboard.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_dialog_post_event.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/dialog_post_event.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-anydpi_ic_launcher.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-anydpi/ic_launcher.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_chip.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_chip.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-mdpi_code_launcher_foreground.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-mdpi/code_launcher_foreground.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_zap.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_zap.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_bold.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_bold.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_trash.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_trash.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-hdpi_code_launcher_round.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-hdpi/code_launcher_round.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_dialog_register_student.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/dialog_register_student.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_mono_chip.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_mono_chip.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_git.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_git.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_email.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_email.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_help.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_help.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_leaderboard.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_leaderboard.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_max.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_max.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_code_launcher.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/code_launcher.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_activity_main.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_main.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-hdpi_code_launcher.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-hdpi/code_launcher.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-hdpi_code_launcher_monochrome.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-hdpi/code_launcher_monochrome.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_green_tile.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_green_tile.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_events.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_events.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_activity_company_dashboard.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_company_dashboard.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xxxhdpi_code_launcher.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xxxhdpi/code_launcher.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_item_leaderboard_entry.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_leaderboard_entry.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_clock.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_clock.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xxhdpi_code_launcher_foreground.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xxhdpi/code_launcher_foreground.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-mdpi_code_launcher.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-mdpi/code_launcher.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_folder.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_folder.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_company_challenges.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_company_challenges.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_semibold_italic.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_semibold_italic.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/xml_data_extraction_rules.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_bottom_nav.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_bottom_nav.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_activity_onboarding.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_onboarding.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_launcher_background.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_speech.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_speech.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_variable.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_variable.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_ext.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_ext.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_check.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_check.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_card.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_card.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_code_input.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_code_input.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_flame.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_flame.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_medium_italic.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_medium_italic.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_black.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_black.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_code.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_code.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_code_panel.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_code_panel.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_lock.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_lock.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_chip_selected.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_chip_selected.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_bold_italic.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_bold_italic.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_activity_hash_id_generated.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_hash_id_generated.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_play.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_play.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_black_italic.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_black_italic.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_activity_admin_company_portal.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_admin_company_portal.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_item_subtopic.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_subtopic.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/font_nunito_italic.ttf.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/font/nunito_italic.ttf"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_fragment_company_detail.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_company_detail.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/mipmap-anydpi_ic_launcher_round.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/mipmap-anydpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_circle_black.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_circle_black.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_back.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_back.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_card_outline.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_card_outline.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_book.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_book.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/layout_item_company_challenge.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_company_challenge.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_bg_ai_hint.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/bg_ai_hint.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-release-50:/drawable_ic_cb_net.xml.flat",
+        "source": "za.co.eduvos.codebridge.app-main-51:/drawable/ic_cb_net.xml"
+    }
+]

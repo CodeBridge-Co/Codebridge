@@ -1,0 +1,150 @@
+[
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_login.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_login.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_speech.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_speech.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/item_challenge.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_challenge.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/activity_hash_id_generated.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_hash_id_generated.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/item_event.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_event.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_challenges_list.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_challenges_list.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_company_detail.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_company_detail.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/item_company.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_company.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_problem_overview.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_problem_overview.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/dialog_post_challenge.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/dialog_post_challenge.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/activity_auth.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_auth.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/activity_company_dashboard.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_company_dashboard.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_topic_subcategories.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_topic_subcategories.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_progress.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_progress.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_dashboard.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_dashboard.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_explore_all.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_explore_all.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_events.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_events.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/dialog_post_event.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/dialog_post_event.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_company_challenges.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_company_challenges.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/item_commit_row.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_commit_row.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/dialog_codemate_chat.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/dialog_codemate_chat.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/item_leaderboard_entry.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_leaderboard_entry.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_git.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_git.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/dialog_register_company.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/dialog_register_company.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_problems.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_problems.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/activity_main.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_main.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_sandbox.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_sandbox.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/activity_onboarding.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_onboarding.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_leaderboard.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_leaderboard.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/item_subtopic.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_subtopic.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/activity_splash.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/dialog_register_student.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/dialog_register_student.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_profile.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/item_company_challenge.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/item_company_challenge.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/activity_admin_portal.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_admin_portal.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/activity_admin_company_portal.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/activity_admin_company_portal.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeReleaseResources-49:/layout/fragment_results.xml",
+        "source": "za.co.eduvos.codebridge.app-main-51:/layout/fragment_results.xml"
+    }
+]

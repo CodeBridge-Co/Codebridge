@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp" android:background="@drawable/bg_card_outline" android:gravity="center_vertical" android:orientation="horizontal" android:padding="10dp">
+    <FrameLayout android:id="@+id/tile" android:layout_width="112dp" android:layout_height="112dp" android:background="@drawable/bg_tile" android:backgroundTint="@color/cb_tile_lime">
+        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_cb_code" app:tint="@color/cb_ink" android:importantForAccessibility="no" android:layout_margin="12dp"/>
+        <View android:layout_width="22dp" android:layout_height="3dp" android:layout_marginStart="12dp" android:layout_marginTop="38dp" android:background="@color/cb_ink"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="bottom|end" android:layout_margin="10dp" android:alpha="0.55" android:fontFamily="@font/nunito_extrabold" android:text="CB" android:textColor="@color/cb_ink" android:textSize="22sp"/>
+    </FrameLayout>
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1" android:layout_marginStart="12dp">
+        <TextView android:id="@+id/tvCompany" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="" android:textColor="@color/cb_green_dark" android:fontFamily="@font/nunito_bold" android:textSize="10sp"/>
+        <TextView android:id="@+id/tvTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Section" android:text="" android:layout_marginTop="4dp" android:maxLines="2" android:textSize="16sp"/>
+        <TextView android:id="@+id/tvDesc" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="" android:layout_marginTop="4dp" android:maxLines="2" android:ellipsize="end" android:textSize="11sp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="10dp">
+            <ImageView android:layout_width="12dp" android:layout_height="12dp" android:src="@drawable/ic_cb_cal" app:tint="@color/cb_text_secondary" android:importantForAccessibility="no"/>
+            <TextView android:id="@+id/tvDate" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="" android:layout_marginStart="4dp" android:textSize="10sp"/>
+            <TextView android:id="@+id/tvVenue" android:layout_width="0dp" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="" android:layout_marginStart="8dp" android:layout_weight="1" android:textSize="10sp" android:textColor="@color/cb_green_dark" android:maxLines="1"/>
+            <TextView android:id="@+id/tvType" android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/CbText.Caption" android:text="" android:background="@drawable/bg_tag_dark" android:paddingStart="8dp" android:paddingEnd="8dp" android:paddingTop="5dp" android:paddingBottom="5dp" android:textColor="@color/cb_bg" android:fontFamily="@font/nunito_extrabold" android:textSize="9sp"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="za.co.eduvos.codebridge.core.git.GitConflictRecoveryTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-15T18:49:52.508Z" hostname="LAPTOP-IEFRG44A" time="0.041">
+  <properties/>
+  <testcase name="resolveLeavesNoMarkersAndIgnoresPlainText" classname="za.co.eduvos.codebridge.core.git.GitConflictRecoveryTest" time="0.007"/>
+  <testcase name="taskIsNotCompleteBeforeTheMergeEvenIfPushed" classname="za.co.eduvos.codebridge.core.git.GitConflictRecoveryTest" time="0.002"/>
+  <testcase name="checkoutOursKeepsTheStudentsVersion" classname="za.co.eduvos.codebridge.core.git.GitConflictRecoveryTest" time="0.008"/>
+  <testcase name="checkoutTheirsTakesMainsVersionAndCompletesTheTask" classname="za.co.eduvos.codebridge.core.git.GitConflictRecoveryTest" time="0.003"/>
+  <testcase name="resolveKeepsOneSideOrBothForEveryBlock" classname="za.co.eduvos.codebridge.core.git.GitConflictRecoveryTest" time="0.002"/>
+  <testcase name="stagingEarlyClearsTheConflictButMarkersAreStillReported" classname="za.co.eduvos.codebridge.core.git.GitConflictRecoveryTest" time="0.004"/>
+  <testcase name="checkoutSideDoesNotMarkTheFileResolvedUntilItIsAdded" classname="za.co.eduvos.codebridge.core.git.GitConflictRecoveryTest" time="0.002"/>
+  <testcase name="checkoutSideReportsMistakes" classname="za.co.eduvos.codebridge.core.git.GitConflictRecoveryTest" time="0.004"/>
+  <testcase name="committingMarkersByMistakeCanBeFixedWithAFollowUpCommit" classname="za.co.eduvos.codebridge.core.git.GitConflictRecoveryTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

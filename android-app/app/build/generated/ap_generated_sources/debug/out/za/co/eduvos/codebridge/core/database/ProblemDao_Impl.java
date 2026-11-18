@@ -24,6 +24,8 @@ public final class ProblemDao_Impl implements ProblemDao {
 
   private final EntityInsertionAdapter<ProblemEntity> __insertionAdapterOfProblemEntity;
 
+  private final EntityInsertionAdapter<ProblemEntity> __insertionAdapterOfProblemEntity_1;
+
   public ProblemDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
     this.__insertionAdapterOfProblemEntity = new EntityInsertionAdapter<ProblemEntity>(__db) {
@@ -31,6 +33,34 @@ public final class ProblemDao_Impl implements ProblemDao {
       @NonNull
       protected String createQuery() {
         return "INSERT OR ABORT INTO `problems` (`problemId`,`title`,`difficultyLevel`,`testCasesJson`) VALUES (?,?,?,?)";
+      }
+
+      @Override
+      protected void bind(@NonNull final SupportSQLiteStatement statement,
+          final ProblemEntity entity) {
+        statement.bindLong(1, entity.problemId);
+        if (entity.title == null) {
+          statement.bindNull(2);
+        } else {
+          statement.bindString(2, entity.title);
+        }
+        if (entity.difficultyLevel == null) {
+          statement.bindNull(3);
+        } else {
+          statement.bindString(3, entity.difficultyLevel);
+        }
+        if (entity.testCasesJson == null) {
+          statement.bindNull(4);
+        } else {
+          statement.bindString(4, entity.testCasesJson);
+        }
+      }
+    };
+    this.__insertionAdapterOfProblemEntity_1 = new EntityInsertionAdapter<ProblemEntity>(__db) {
+      @Override
+      @NonNull
+      protected String createQuery() {
+        return "INSERT OR REPLACE INTO `problems` (`problemId`,`title`,`difficultyLevel`,`testCasesJson`) VALUES (?,?,?,?)";
       }
 
       @Override
@@ -62,6 +92,18 @@ public final class ProblemDao_Impl implements ProblemDao {
     __db.beginTransaction();
     try {
       __insertionAdapterOfProblemEntity.insert(problem);
+      __db.setTransactionSuccessful();
+    } finally {
+      __db.endTransaction();
+    }
+  }
+
+  @Override
+  public void insertAll(final List<ProblemEntity> problems) {
+    __db.assertNotSuspendingTransaction();
+    __db.beginTransaction();
+    try {
+      __insertionAdapterOfProblemEntity_1.insert(problems);
       __db.setTransactionSuccessful();
     } finally {
       __db.endTransaction();

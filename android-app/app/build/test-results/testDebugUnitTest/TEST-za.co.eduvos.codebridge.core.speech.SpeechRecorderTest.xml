@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="za.co.eduvos.codebridge.core.speech.SpeechRecorderTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-15T18:49:59.047Z" hostname="LAPTOP-IEFRG44A" time="0.015">
+  <properties/>
+  <testcase name="levelOnlyTracksWhileRecordingAndDropsToZeroOnPause" classname="za.co.eduvos.codebridge.core.speech.SpeechRecorderTest" time="0.009"/>
+  <testcase name="partialsAreIgnoredWhenNotRecordingAndNothingIsAcceptedWhenIdle" classname="za.co.eduvos.codebridge.core.speech.SpeechRecorderTest" time="0.0"/>
+  <testcase name="partialResultsReplaceEachOtherAndFinalCommits" classname="za.co.eduvos.codebridge.core.speech.SpeechRecorderTest" time="0.001"/>
+  <testcase name="stopWhilePausedKeepsElapsed" classname="za.co.eduvos.codebridge.core.speech.SpeechRecorderTest" time="0.0"/>
+  <testcase name="blankAndNullResultsAddNothing" classname="za.co.eduvos.codebridge.core.speech.SpeechRecorderTest" time="0.0"/>
+  <testcase name="elapsedTimeCountsOnlyRecordingTime" classname="za.co.eduvos.codebridge.core.speech.SpeechRecorderTest" time="0.002"/>
+  <testcase name="illegalTransitionsAreRejectedWithoutSideEffects" classname="za.co.eduvos.codebridge.core.speech.SpeechRecorderTest" time="0.0"/>
+  <testcase name="resetReturnsToABlankIdleSession" classname="za.co.eduvos.codebridge.core.speech.SpeechRecorderTest" time="0.0"/>
+  <testcase name="rmsIsNormalisedAndClamped" classname="za.co.eduvos.codebridge.core.speech.SpeechRecorderTest" time="0.001"/>
+  <testcase name="startsIdleWithNothingRecorded" classname="za.co.eduvos.codebridge.core.speech.SpeechRecorderTest" time="0.0"/>
+  <testcase name="lateFinalResultAfterPauseOrStopIsStillKept" classname="za.co.eduvos.codebridge.core.speech.SpeechRecorderTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

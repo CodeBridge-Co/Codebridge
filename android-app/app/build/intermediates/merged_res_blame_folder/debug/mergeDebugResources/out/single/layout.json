@@ -1,0 +1,154 @@
+[
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_login.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_login.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\activity_hash_id_generated.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\activity_hash_id_generated.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_speech.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_speech.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_events.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_events.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\activity_main.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_company_detail.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_company_detail.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_company_challenges.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_company_challenges.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_sandbox.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_sandbox.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\item_subtopic.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\item_subtopic.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\item_challenge.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\item_challenge.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_challenges_list.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_challenges_list.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\dialog_register_company.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\dialog_register_company.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_explore_all.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_explore_all.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\dialog_register_student.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\dialog_register_student.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\dialog_codemate_chat.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\dialog_codemate_chat.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\activity_splash.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\activity_splash.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\item_company_challenge.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\item_company_challenge.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_git.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_git.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\activity_onboarding.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\activity_onboarding.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_leaderboard.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_leaderboard.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\activity_admin_portal.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\activity_admin_portal.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_profile.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_profile.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\item_commit_row.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\item_commit_row.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\activity_admin_company_portal.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\activity_admin_company_portal.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_dashboard.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_dashboard.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_topic_subcategories.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_topic_subcategories.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\item_company.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\item_company.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\item_leaderboard_entry.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\item_leaderboard_entry.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_problems.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_problems.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\item_event.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\item_event.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\activity_company_dashboard.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\activity_company_dashboard.xml"
+    },
+    {
+        "merged": "za.co.eduvos.codebridge.app-mergeDebugResources-49:/layout/activity_main.xml",
+        "source": "za.co.eduvos.codebridge.app-main-52:/layout/activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\activity_auth.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\activity_auth.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_results.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_results.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_problem_overview.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_problem_overview.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\dialog_post_event.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\dialog_post_event.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\fragment_progress.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\fragment_progress.xml"
+    },
+    {
+        "merged": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-mergeDebugResources-49:\\layout\\dialog_post_challenge.xml",
+        "source": "C:\\Users\\lebok\\.gradle\\daemon\\8.13\\za.co.eduvos.codebridge.app-main-52:\\layout\\dialog_post_challenge.xml"
+    }
+]

@@ -1,3 +1,0 @@
-za.co.eduvos.codebridge.test
-style WhiteBackgroundDialogTheme
-style WhiteBackgroundTheme

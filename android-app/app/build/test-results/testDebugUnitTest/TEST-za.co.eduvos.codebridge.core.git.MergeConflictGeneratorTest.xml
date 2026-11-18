@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="za.co.eduvos.codebridge.core.git.MergeConflictGeneratorTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-15T18:49:52.701Z" hostname="LAPTOP-IEFRG44A" time="0.023">
+  <properties/>
+  <testcase name="identicalChangeOnBothSidesIsNotAConflict" classname="za.co.eduvos.codebridge.core.git.MergeConflictGeneratorTest" time="0.001"/>
+  <testcase name="independentEditsMergeCleanly" classname="za.co.eduvos.codebridge.core.git.MergeConflictGeneratorTest" time="0.0"/>
+  <testcase name="bothAddDifferentContentToEmptyBaseConflicts" classname="za.co.eduvos.codebridge.core.git.MergeConflictGeneratorTest" time="0.001"/>
+  <testcase name="insertionsAndDeletionsAnchorOnUnchangedLines" classname="za.co.eduvos.codebridge.core.git.MergeConflictGeneratorTest" time="0.0"/>
+  <testcase name="markerDetectionIgnoresNormalText" classname="za.co.eduvos.codebridge.core.git.MergeConflictGeneratorTest" time="0.001"/>
+  <testcase name="sameLineEditedDifferentlyConflictsWithRealMarkers" classname="za.co.eduvos.codebridge.core.git.MergeConflictGeneratorTest" time="0.0"/>
+  <testcase name="scenariosAreDeterministicAndEveryOneConflicts" classname="za.co.eduvos.codebridge.core.git.MergeConflictGeneratorTest" time="0.017"/>
+  <testcase name="changeOnOneSideOnlyIsTaken" classname="za.co.eduvos.codebridge.core.git.MergeConflictGeneratorTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

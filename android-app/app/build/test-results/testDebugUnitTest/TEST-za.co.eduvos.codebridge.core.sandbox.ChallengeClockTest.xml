@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="za.co.eduvos.codebridge.core.sandbox.ChallengeClockTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-15T18:49:52.777Z" hostname="LAPTOP-IEFRG44A" time="0.02">
+  <properties/>
+  <testcase name="parserReadsTimeLimitAndDefaultsToZero" classname="za.co.eduvos.codebridge.core.sandbox.ChallengeClockTest" time="0.008"/>
+  <testcase name="levelTurnsWarningThenCritical" classname="za.co.eduvos.codebridge.core.sandbox.ChallengeClockTest" time="0.004"/>
+  <testcase name="countsDownFromTheLimit" classname="za.co.eduvos.codebridge.core.sandbox.ChallengeClockTest" time="0.001"/>
+  <testcase name="rejectsNonPositiveLimit" classname="za.co.eduvos.codebridge.core.sandbox.ChallengeClockTest" time="0.001"/>
+  <testcase name="formatsMinutesSecondsAndRoundsPartialSecondsUp" classname="za.co.eduvos.codebridge.core.sandbox.ChallengeClockTest" time="0.002"/>
+  <testcase name="expiresExactlyAtTheLimitAndStaysClamped" classname="za.co.eduvos.codebridge.core.sandbox.ChallengeClockTest" time="0.001"/>
+  <testcase name="parserRejectsNonPositiveTimeLimit" classname="za.co.eduvos.codebridge.core.sandbox.ChallengeClockTest" time="0.001"/>
+  <testcase name="defaultLimitsFollowDifficulty" classname="za.co.eduvos.codebridge.core.sandbox.ChallengeClockTest" time="0.001"/>
+  <testcase name="clockSetBackwardsNeverGoesNegativeOrAboveTheLimit" classname="za.co.eduvos.codebridge.core.sandbox.ChallengeClockTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
