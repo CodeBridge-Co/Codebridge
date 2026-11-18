@@ -45,14 +45,15 @@ def create_access_token(data: dict):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 connect_args = {}
-if "sslmode=require" in DATABASE_URL:
-    DATABASE_URL = DATABASE_URL.replace("?sslmode=require", "")
-    connect_args = {"ssl": True}
+if DATABASE_URL.startswith("postgresql"):
+    if "sslmode=require" in DATABASE_URL:
+        DATABASE_URL = DATABASE_URL.replace("?sslmode=require", "")
+        connect_args = {"ssl": True}
 
-ca_path = os.path.join(os.path.dirname(__file__), "ca.pem")
-if os.path.exists(ca_path):
-    ssl_context = ssl.create_default_context(cafile=ca_path)
-    connect_args = {"ssl": ssl_context}
+    ca_path = os.path.join(os.path.dirname(__file__), "ca.pem")
+    if os.path.exists(ca_path):
+        ssl_context = ssl.create_default_context(cafile=ca_path)
+        connect_args = {"ssl": ssl_context}
 
 engine = create_async_engine(DATABASE_URL, echo=False, connect_args=connect_args)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
